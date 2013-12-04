@@ -1,0 +1,4 @@
+
+- Replace custom callback Hashtable with the default one.
+- Fix memory leaks that force to use the USE_ZEND_ALLOC=0 on runtime.
+

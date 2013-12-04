@@ -1,0 +1,7 @@
+
+LTLIBRARY_NAME        = libopengl.la
+LTLIBRARY_SOURCES     = php_convert.c php_opengl.c php_glu.c
+LTLIBRARY_SHARED_NAME = opengl.la
+LTLIBRARY_SHARED_LIBADD  = $(OPENGL_SHARED_LIBADD)
+
+include $(top_srcdir)/build/dynlib.mk
