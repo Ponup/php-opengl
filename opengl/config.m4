@@ -80,6 +80,6 @@ if test "$PHP_OPENGL" != "no"; then
   PHP_ADD_INCLUDE($OPENGL_DIR/include)
 
   PHP_SUBST(OPENGL_SHARED_LIBADD)
-  PHP_EXTENSION(opengl,$ext_shared)
+  PHP_NEW_EXTENSION(opengl, php_convert.c php_glu.c php_opengl.c, $ext_shared)
 fi
 

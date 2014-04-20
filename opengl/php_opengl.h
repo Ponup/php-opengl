@@ -26,6 +26,10 @@ extern zend_module_entry opengl_module_entry;
 #define opengl_module_ptr &opengl_module_entry
 #define phpext_opengl_ptr opengl_module_ptr
 
+#ifdef ZTS
+#include "TSRM.h"
+#endif
+
 /* Functions */
 
 PHP_MINIT_FUNCTION(opengl);
