@@ -69,14 +69,6 @@ void *php_array_to_c_array(zval *param,int type,int size,int *array_size);
 int gl_pixel_size(GLenum format);
 int gl_type_size(GLenum type);
 
-#define ZERO_PARAM() \
-	if(ZEND_NUM_ARGS() != 0) \
- 		WRONG_PARAM_COUNT; 
-
-#define ONE_PARAM(p) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &p) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
 #define TWO_PARAM(p,p1) \
 	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zz", &p, &p1) == FAILURE) \
 		WRONG_PARAM_COUNT; 

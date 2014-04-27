@@ -1429,8 +1429,9 @@ PHP_FUNCTION(glenableclientstate)
 /* {{{ void glend() */
 PHP_FUNCTION(glend)
 {
-	
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glEnd();
 }
 /* }}} */
@@ -1438,8 +1439,9 @@ PHP_FUNCTION(glend)
 /* {{{ void glendlist() */
 PHP_FUNCTION(glendlist)
 {
-	
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glEndList();
 }
 /* }}} */
@@ -1600,8 +1602,9 @@ PHP_FUNCTION(glfeedbackbuffer)
 /* {{{ void glfinish() */
 PHP_FUNCTION(glfinish)
 {
-	
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glFinish();
 }
 /* }}} */
@@ -1609,8 +1612,9 @@ PHP_FUNCTION(glfinish)
 /* {{{ void glflush() */
 PHP_FUNCTION(glflush)
 {
-	
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glFlush();
 }
 /* }}} */
@@ -1764,7 +1768,9 @@ PHP_FUNCTION(glgetdoublev)
 PHP_FUNCTION(glgeterror)
 {
 	int return_int;
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	return_int = glGetError();
 	RETURN_LONG(return_int);
 }
@@ -2336,7 +2342,9 @@ PHP_FUNCTION(glindexubv)
 /* {{{ void glinitnames() */
 PHP_FUNCTION(glinitnames)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glInitNames();
 }
 /* }}} */
@@ -2526,8 +2534,9 @@ PHP_FUNCTION(gllistbase)
 /* {{{ void glloadidentity() */
 PHP_FUNCTION(glloadidentity)
 {
-	
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glLoadIdentity();
 }
 /* }}} */
@@ -3123,7 +3132,9 @@ PHP_FUNCTION(glpolygonstipple)
 /* {{{ void glpopattrib() */
 PHP_FUNCTION(glpopattrib)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glPopAttrib();
 }
 /* }}} */
@@ -3131,7 +3142,9 @@ PHP_FUNCTION(glpopattrib)
 /* {{{ void glpopclientattrib() */
 PHP_FUNCTION(glpopclientattrib)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glPopClientAttrib();
 }
 /* }}} */
@@ -3139,7 +3152,9 @@ PHP_FUNCTION(glpopclientattrib)
 /* {{{ void glpopmatrix() */
 PHP_FUNCTION(glpopmatrix)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glPopMatrix();
 }
 /* }}} */
@@ -3147,7 +3162,9 @@ PHP_FUNCTION(glpopmatrix)
 /* {{{ void glpopname() */
 PHP_FUNCTION(glpopname)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glPopName();
 }
 /* }}} */
@@ -3191,8 +3208,9 @@ PHP_FUNCTION(glpushclientattrib)
 /* {{{ void glpushmatrix() */
 PHP_FUNCTION(glpushmatrix)
 {
-	
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glPushMatrix();
 }
 /* }}} */

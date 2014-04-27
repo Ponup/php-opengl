@@ -364,35 +364,33 @@ PHP_FUNCTION(glutinit)
 /* {{{ void glutinitwindowsize(long width, long height) */
 PHP_FUNCTION(glutinitwindowsize)
 {
-	zval *width,*height;
-	TWO_PARAM(width,height);
-	convert_to_long(width);
-	convert_to_long(height);
-	glutInitWindowSize(Z_LVAL_P(width),Z_LVAL_P(height));
+	long width, height;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &width, &height) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glutInitWindowSize(width, height);
 }
 /* }}} */
-
-
 
 /* {{{ void glutinitwindowposition(long x, long y) */
 PHP_FUNCTION(glutinitwindowposition)
 {
-	zval *x,*y;
-	TWO_PARAM(x,y);
-	convert_to_long(x);
-	convert_to_long(y);
-	glutInitWindowPosition(Z_LVAL_P(x),Z_LVAL_P(y));
+	long x, y;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &x, &y) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glutInitWindowPosition(x, y);
 }
 /* }}} */
-
 
 /* {{{ void glutinitdisplaymode(long disp) */
 PHP_FUNCTION(glutinitdisplaymode)
 {
-	zval *disp;
-	ONE_PARAM(disp);
-	convert_to_long(disp);
-	glutInitDisplayMode((unsigned int)Z_LVAL_P(disp));
+	long disp;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &disp) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glutInitDisplayMode((unsigned int)disp);
 }
 /* }}} */
 
@@ -400,7 +398,9 @@ PHP_FUNCTION(glutinitdisplaymode)
 /* {{{ void glutmainloop() */
 PHP_FUNCTION(glutmainloop)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutMainLoop();
 }
 /* }}} */
@@ -409,11 +409,12 @@ PHP_FUNCTION(glutmainloop)
 /* {{{ long glutcreatewindow(string name) */
 PHP_FUNCTION(glutcreatewindow)
 {
-	zval *name;
-	int win;
-	ONE_PARAM(name);
-	convert_to_string(name);
-	win = glutCreateWindow(Z_STRVAL_P(name));
+	char *name = NULL;
+	int name_len, win;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	win = glutCreateWindow(name);
 	RETURN_LONG(win);
 }
 /* }}} */
@@ -437,10 +438,11 @@ PHP_FUNCTION(glutcreatesubwindow)
 /* {{{ void glutsetwindow(long win) */
 PHP_FUNCTION(glutsetwindow)
 {
-	zval *win;
-	ONE_PARAM(win);
-	convert_to_long(win);
-	glutSetWindow(Z_LVAL_P(win));
+	long win;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &win) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glutSetWindow(win);
 }
 /* }}} */
 
@@ -456,18 +458,20 @@ PHP_FUNCTION(glutgetwindow)
 /* {{{ void glutdestroywindow(long win) */
 PHP_FUNCTION(glutdestroywindow)
 {
-	zval *win;
-	ONE_PARAM(win);
-	convert_to_long(win);
-	glutDestroyWindow(Z_LVAL_P(win));
+	long win;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &win) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glutDestroyWindow(win);
 }
 /* }}} */
-
 
 /* {{{ void glutpostredisplay() */
 PHP_FUNCTION(glutpostredisplay)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutPostRedisplay();
 }
 /* }}} */
@@ -476,7 +480,9 @@ PHP_FUNCTION(glutpostredisplay)
 /* {{{ void glutswapbuffers() */
 PHP_FUNCTION(glutswapbuffers)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutSwapBuffers();
 }
 /* }}} */
@@ -509,7 +515,9 @@ PHP_FUNCTION(glutreshapewindow)
 /* {{{ void glutfullscreen() */
 PHP_FUNCTION(glutfullscreen)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutFullScreen();
 }
 /* }}} */
@@ -518,7 +526,9 @@ PHP_FUNCTION(glutfullscreen)
 /* {{{ void glutpopwindow() */
 PHP_FUNCTION(glutpopwindow)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutPopWindow();
 }
 /* }}} */
@@ -527,7 +537,9 @@ PHP_FUNCTION(glutpopwindow)
 /* {{{ void glutpushwindow() */
 PHP_FUNCTION(glutpushwindow)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutPushWindow();
 }
 /* }}} */
@@ -536,7 +548,9 @@ PHP_FUNCTION(glutpushwindow)
 /* {{{ void glutshowwindow() */
 PHP_FUNCTION(glutshowwindow)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutShowWindow();
 }
 /* }}} */
@@ -545,7 +559,9 @@ PHP_FUNCTION(glutshowwindow)
 /* {{{ void gluthidewindow() */
 PHP_FUNCTION(gluthidewindow)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutHideWindow();
 }
 /* }}} */
@@ -554,7 +570,9 @@ PHP_FUNCTION(gluthidewindow)
 /* {{{ void gluticonifywindow() */
 PHP_FUNCTION(gluticonifywindow)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutIconifyWindow();
 }
 /* }}} */
@@ -563,40 +581,46 @@ PHP_FUNCTION(gluticonifywindow)
 /* {{{ void glutsetwindowtitle(string name) */
 PHP_FUNCTION(glutsetwindowtitle)
 {
-	zval *name;
-	ONE_PARAM(name);
-	convert_to_string(name);
-	glutSetWindowTitle(Z_STRVAL_P(name));
+	char *name = NULL;
+	int name_len;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glutSetWindowTitle(name);
 }
 /* }}} */
-
 
 /* {{{ void glutseticontitle(string name) */
 PHP_FUNCTION(glutseticontitle)
 {
-	zval *name;
-	ONE_PARAM(name);
-	convert_to_string(name);
-	glutSetIconTitle(Z_STRVAL_P(name));
+	char *name = NULL;
+	int name_len;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutSetIconTitle(name);
 }
 /* }}} */
-
 
 /* {{{ void glutsetcursor(long cursor) */
 PHP_FUNCTION(glutsetcursor)
 {
-	zval *cursor;
-	ONE_PARAM(cursor);
-	convert_to_long(cursor);
-	glutSetCursor(Z_LVAL_P(cursor));
+	long cursor;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &cursor) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutSetCursor(cursor);
 }
 /* }}} */
-
 
 /* {{{ void glutestablishoverlay() */
 PHP_FUNCTION(glutestablishoverlay)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutEstablishOverlay();
 }
 /* }}} */
@@ -605,18 +629,21 @@ PHP_FUNCTION(glutestablishoverlay)
 /* {{{ void glutuselayer(long layer) */
 PHP_FUNCTION(glutuselayer)
 {
-	zval *layer;
-	ONE_PARAM(layer);
-	convert_to_long(layer);
-	glutUseLayer(Z_LVAL_P(layer));
+	long layer;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &layer) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutUseLayer(layer);
 }
 /* }}} */
-
 
 /* {{{ void glutremoveoverlay() */
 PHP_FUNCTION(glutremoveoverlay)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutRemoveOverlay();
 }
 /* }}} */
@@ -625,7 +652,9 @@ PHP_FUNCTION(glutremoveoverlay)
 /* {{{ void glutpostoverlayredisplay() */
 PHP_FUNCTION(glutpostoverlayredisplay)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutPostOverlayRedisplay();
 }
 /* }}} */
@@ -634,7 +663,9 @@ PHP_FUNCTION(glutpostoverlayredisplay)
 /* {{{ void glutshowoverlay() */
 PHP_FUNCTION(glutshowoverlay)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutShowOverlay();
 }
 /* }}} */
@@ -643,7 +674,9 @@ PHP_FUNCTION(glutshowoverlay)
 /* {{{ void gluthideoverlay() */
 PHP_FUNCTION(gluthideoverlay)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutHideOverlay();
 }
 /* }}} */
@@ -683,30 +716,35 @@ PHP_FUNCTION(glutcreatemenu)
 {
 	zval *callback;
 	int menu_id;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	IS_CALLBACK(callback, 1);
 	HASH_MENU_CALLBACK(callback, 1, menu_id = glutCreateMenu(menu_callback));
 	RETURN_LONG(menu_id);
 }
 /* }}} */
 
-
 /* {{{ void glutsetmenu(long menu) */
 PHP_FUNCTION(glutsetmenu)
 {
-	zval *menu;
-	ONE_PARAM(menu);
-	convert_to_long(menu);
-	glutSetMenu(Z_LVAL_P(menu));
+	long menu;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &menu) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutSetMenu(menu);
 }
 /* }}} */
-
 
 /* {{{ long glutgetmenu() */
 PHP_FUNCTION(glutgetmenu)
 {
 	int menu;
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	menu = glutGetMenu();
 	RETURN_LONG(menu);
 }
@@ -716,10 +754,12 @@ PHP_FUNCTION(glutgetmenu)
 /* {{{ void glutdestroymenu(long menu) */
 PHP_FUNCTION(glutdestroymenu)
 {
-	zval *menu;
-	ONE_PARAM(menu);
-	convert_to_long(menu);
-	glutDestroyMenu(Z_LVAL_P(menu));
+	long menu;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &menu) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutDestroyMenu(menu);
 }
 /* }}} */
 
@@ -791,10 +831,12 @@ PHP_FUNCTION(glutchangetosubmenu)
 /* {{{ void glutremovemenuitem(long entry) */
 PHP_FUNCTION(glutremovemenuitem)
 {
-	zval *entry;
-	ONE_PARAM(entry);
-	convert_to_long(entry);
-	glutRemoveMenuItem(Z_LVAL_P(entry));
+	long entry;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &entry) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutRemoveMenuItem(entry);
 }
 /* }}} */
 
@@ -802,10 +844,12 @@ PHP_FUNCTION(glutremovemenuitem)
 /* {{{ void glutattachmenu(long button) */
 PHP_FUNCTION(glutattachmenu)
 {
-	zval *button;
-	ONE_PARAM(button);
-	convert_to_long(button);
-	glutAttachMenu(Z_LVAL_P(button));
+	long button;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &button) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutAttachMenu(button);
 }
 /* }}} */
 
@@ -813,13 +857,14 @@ PHP_FUNCTION(glutattachmenu)
 /* {{{ void glutdetachmenu(long button) */
 PHP_FUNCTION(glutdetachmenu)
 {
-	zval *button;
-	ONE_PARAM(button);
-	convert_to_long(button);
-	glutDetachMenu(Z_LVAL_P(button));
+	long button;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &button) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutDetachMenu(button);
 }
 /* }}} */
-
 
 void glutdisplayfunction_callback()
 {
@@ -857,7 +902,10 @@ void glutoverlaydisplayfunc_callback()
 PHP_FUNCTION(glutoverlaydisplayfunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_OVERLAY_DISPLAY_CALLBACK);
 	glutOverlayDisplayFunc((void*)glutoverlaydisplayfunc_callback);
 	RETURN_TRUE;
@@ -1042,7 +1090,10 @@ void glutpassivemotionfunc_callback(int x,int y)
 PHP_FUNCTION(glutpassivemotionfunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_PASSIVE_MOTION_CALLBACK);
 	glutPassiveMotionFunc(glutpassivemotionfunc_callback);
 	RETURN_TRUE;
@@ -1096,7 +1147,10 @@ void glutentryfunc_callback(int state)
 PHP_FUNCTION(glutentryfunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_ENTRY_CALLBACK);
 	glutEntryFunc(glutentryfunc_callback);
 	RETURN_TRUE;
@@ -1163,7 +1217,10 @@ void glutspaceballmotionfunc_callback(int x,int y,int z)
 PHP_FUNCTION(glutspaceballmotionfunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_SPACEBALLMOTION_CALLBACK);
 	glutSpaceballMotionFunc(glutspaceballmotionfunc_callback);
 	RETURN_TRUE;
@@ -1187,7 +1244,10 @@ void glutspaceballrotatefunc_callback(int x,int y,int z)
 PHP_FUNCTION(glutspaceballrotatefunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_SPACEBALLROTATE_CALLBACK);
 	glutSpaceballRotateFunc(glutspaceballmotionfunc_callback);
 	RETURN_TRUE;
@@ -1209,7 +1269,10 @@ void glutspaceballbuttonfunc_callback(int button,int state)
 PHP_FUNCTION(glutspaceballbuttonfunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_SPACEBALLBUTTON_CALLBACK);
 	glutSpaceballButtonFunc(glutspaceballbuttonfunc_callback);
 	RETURN_TRUE;
@@ -1231,7 +1294,10 @@ void glutbuttonboxfunc_callback(int button,int state)
 PHP_FUNCTION(glutbuttonboxfunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_BUTTONBOX_CALLBACK);
 	glutButtonBoxFunc(glutbuttonboxfunc_callback);
 	RETURN_TRUE;
@@ -1253,7 +1319,10 @@ void glutdialsfunc_callback(int dial,int value)
 PHP_FUNCTION(glutdialsfunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_DIALS_CALLBACK);
 	glutDialsFunc(glutdialsfunc_callback);
 	RETURN_TRUE;
@@ -1275,7 +1344,10 @@ void gluttabletmotionfunc_callback(int x,int y)
 PHP_FUNCTION(gluttabletmotionfunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_TABLETMOTION_CALLBACK);
 	glutTabletMotionFunc(gluttabletmotionfunc_callback);
 	RETURN_TRUE;
@@ -1301,7 +1373,10 @@ void gluttabletbuttonfunc_callback(int button,int state,int x,int y)
 PHP_FUNCTION(gluttabletbuttonfunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_TABLETBUTTON_CALLBACK);
 	glutTabletButtonFunc(gluttabletbuttonfunc_callback);
 	RETURN_TRUE;
@@ -1326,7 +1401,10 @@ void glutmenustatusfunc_callback(int state,int x,int y)
 PHP_FUNCTION(glutmenustatusfunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_MENUSTATUS_CALLBACK);
 	glutMenuStatusFunc(glutmenustatusfunc_callback);
 	RETURN_TRUE;
@@ -1346,7 +1424,10 @@ void glutmenustatefunc_callback(int state)
 PHP_FUNCTION(glutmenustatefunc)
 {
 	zval *callback;
-	ONE_PARAM(callback);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 1, GLUT_MENUSTATE_CALLBACK);
 	glutMenuStateFunc(glutmenustatefunc_callback);
 	RETURN_TRUE;
@@ -1433,10 +1514,12 @@ PHP_FUNCTION(glutgetcolor)
 /* {{{ void glutcopycolormap(long win) */
 PHP_FUNCTION(glutcopycolormap)
 {
-	zval *win;
-	ONE_PARAM(win);
-	convert_to_long(win);
-	glutCopyColormap(Z_LVAL_P(win));
+	long win;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &win) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutCopyColormap(win);
 }
 /* }}} */
 
@@ -1444,10 +1527,12 @@ PHP_FUNCTION(glutcopycolormap)
 /* {{{ void glutget(long state) */
 PHP_FUNCTION(glutget)
 {
-	zval *state;
-	ONE_PARAM(state);
-	convert_to_long(state);
-	glutGet(Z_LVAL_P(state));
+	long state;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &state) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutGet(state);
 }
 /* }}} */
 
@@ -1455,10 +1540,12 @@ PHP_FUNCTION(glutget)
 /* {{{ void glutlayerget(long info) */
 PHP_FUNCTION(glutlayerget)
 {
-	zval *info;
-	ONE_PARAM(info);
-	convert_to_long(info);
-	glutLayerGet(Z_LVAL_P(info));
+	long info;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &info) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutLayerGet(info);
 }
 /* }}} */
 
@@ -1466,10 +1553,12 @@ PHP_FUNCTION(glutlayerget)
 /* {{{ void glutdeviceget(long info) */
 PHP_FUNCTION(glutdeviceget)
 {
-	zval *info;
-	ONE_PARAM(info);
-	convert_to_long(info);
-	glutDeviceGet(Z_LVAL_P(info));
+	long info;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &info) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutDeviceGet(info);
 }
 /* }}} */
 
@@ -1478,7 +1567,9 @@ PHP_FUNCTION(glutdeviceget)
 PHP_FUNCTION(glutgetmodifiers)
 {
 	int mod;
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	mod = glutGetModifiers();
 	RETURN_LONG(mod);
 }
@@ -1488,11 +1579,13 @@ PHP_FUNCTION(glutgetmodifiers)
 /* {{{ long glutextensionsupported(string ext) */
 PHP_FUNCTION(glutextensionsupported)
 {
-	zval *ext;
-	int ret;
-	ONE_PARAM(ext);
-	convert_to_string(ext);
-	ret = glutExtensionSupported(Z_STRVAL_P(ext));
+	char *ext = NULL;
+	int ext_len, ret;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &ext, &ext_len) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	ret = glutExtensionSupported(ext);
 	RETURN_LONG(ret);
 }
 /* }}} */
@@ -1579,10 +1672,12 @@ PHP_FUNCTION(glutwiresphere)
 /* {{{ void glutsolidcube(double size) */
 PHP_FUNCTION(glutsolidcube)
 {
-	zval *size;
-	ONE_PARAM(size);
-	convert_to_double(size);
-	glutSolidCube(Z_DVAL_P(size));
+	double size;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &size) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutSolidCube(size);
 }
 /* }}} */
 
@@ -1590,10 +1685,12 @@ PHP_FUNCTION(glutsolidcube)
 /* {{{ void glutwirecube(double size) */
 PHP_FUNCTION(glutwirecube)
 {
-	zval *size;
-	ONE_PARAM(size);
-	convert_to_double(size);
-	glutWireCube(Z_DVAL_P(size));
+	double size;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &size) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutWireCube(size);
 }
 /* }}} */
 
@@ -1657,7 +1754,9 @@ PHP_FUNCTION(glutwiretorus)
 /* {{{ void glutsoliddodecahedron() */
 PHP_FUNCTION(glutsoliddodecahedron)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutSolidDodecahedron();
 }
 /* }}} */
@@ -1666,7 +1765,9 @@ PHP_FUNCTION(glutsoliddodecahedron)
 /* {{{ void glutwiredodecahedron() */
 PHP_FUNCTION(glutwiredodecahedron)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutWireDodecahedron();
 }
 /* }}} */
@@ -1675,7 +1776,9 @@ PHP_FUNCTION(glutwiredodecahedron)
 /* {{{ void glutsolidoctahedron() */
 PHP_FUNCTION(glutsolidoctahedron)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutSolidOctahedron();
 }
 /* }}} */
@@ -1684,7 +1787,9 @@ PHP_FUNCTION(glutsolidoctahedron)
 /* {{{ void glutwireoctahedron() */
 PHP_FUNCTION(glutwireoctahedron)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutWireOctahedron();
 }
 /* }}} */
@@ -1693,7 +1798,9 @@ PHP_FUNCTION(glutwireoctahedron)
 /* {{{ void glutsolidtetrahedron() */
 PHP_FUNCTION(glutsolidtetrahedron)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutSolidTetrahedron();
 }
 /* }}} */
@@ -1702,7 +1809,9 @@ PHP_FUNCTION(glutsolidtetrahedron)
 /* {{{ void glutwiretetrahedron() */
 PHP_FUNCTION(glutwiretetrahedron)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutWireTetrahedron();
 }
 /* }}} */
@@ -1711,7 +1820,9 @@ PHP_FUNCTION(glutwiretetrahedron)
 /* {{{ void glutsolidicosahedron() */
 PHP_FUNCTION(glutsolidicosahedron)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutSolidIcosahedron();
 }
 /* }}} */
@@ -1720,7 +1831,9 @@ PHP_FUNCTION(glutsolidicosahedron)
 /* {{{ void glutwireicosahedron() */
 PHP_FUNCTION(glutwireicosahedron)
 {
-	ZERO_PARAM();
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
 	glutWireIcosahedron();
 }
 /* }}} */
@@ -1729,10 +1842,12 @@ PHP_FUNCTION(glutwireicosahedron)
 /* {{{ void glutsolidteapot(double size) */
 PHP_FUNCTION(glutsolidteapot)
 {
-	zval *size;
-	ONE_PARAM(size);
-	convert_to_double(size);
-	glutSolidTeapot(Z_DVAL_P(size));
+	double size;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &size) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutSolidTeapot(size);
 }
 /* }}} */
 
@@ -1740,10 +1855,12 @@ PHP_FUNCTION(glutsolidteapot)
 /* {{{ void glutwireteapot(double size) */
 PHP_FUNCTION(glutwireteapot)
 {
-	zval *size;
-	ONE_PARAM(size);
-	convert_to_double(size);
-	glutWireTeapot(Z_DVAL_P(size));
+	double size;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &size) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutWireTeapot(size);
 }
 /* }}} */
 
