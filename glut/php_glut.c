@@ -17,7 +17,6 @@
   +----------------------------------------------------------------------+
 */
 
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -30,7 +29,6 @@
 
 static HashTable *call_backs;
 
-static HashTable *menu_callbacks;
 static HashTable *menu_entry_callbacks;
 static unsigned long unique_menu_entry_id = 0;
 
@@ -47,6 +45,9 @@ zend_fcall_info_cache reshape_fci_cache;
 /* */
 zend_fcall_info keyboard_fci;
 zend_fcall_info_cache keyboard_fci_cache;
+
+zend_fcall_info createmenu_fci;
+zend_fcall_info_cache createmenu_fci_cache;
 
 zend_fcall_info special_fci;
 zend_fcall_info_cache special_fci_cache;
@@ -330,11 +331,8 @@ PHP_MINIT_FUNCTION(glut)
 	call_backs = (HashTable*)emalloc(sizeof(HashTable));
 //	zend_hash_init(call_backs, 0, NULL, ZVAL_PTR_DTOR, 0);
 	
-	menu_callbacks = (HashTable*)emalloc(sizeof(HashTable));
-//	zend_hash_init(menu_callbacks, 0, NULL, ZVAL_PTR_DTOR, 0);
-	
 	ALLOC_HASHTABLE( menu_entry_callbacks  );
-//	zend_hash_init(menu_entry_callbacks, 0, NULL, ZVAL_PTR_DTOR, 0);
+	zend_hash_init(menu_entry_callbacks, 0, NULL, ZVAL_PTR_DTOR, 0);
 
 	return SUCCESS;
 }
@@ -700,10 +698,6 @@ void menu_callback(int selection)
 		php_error(E_WARNING, "can't find menu_parameter");
 		return;
 	}
-	if (zend_hash_index_find(menu_callbacks, Z_LVAL_PP(z_menu_id), (void **)&z_menu_function) != SUCCESS) {
-		php_error(E_WARNING, "unknown menu callback %d", z_menu_id);
-		return;
-	}
 	MAKE_STD_ZVAL(params[0]);
 	ZVAL_LONG(params[0], Z_LVAL_PP(z_menu_parameter));
 	if (call_user_function(CG(function_table), NULL, z_menu_function, &retval, 1, params TSRMLS_CC) != SUCCESS)
@@ -711,17 +705,42 @@ void menu_callback(int selection)
 	efree(params[0]);
 }
 
+#define HASH_CALLBACK(callback,param_num,hash_key) \
+	{ \
+		zval_add_ref(&callback); \
+		zend_hash_index_update(call_backs, hash_key, callback, sizeof(zval), NULL); \
+	}
+
+void glutcreatemenu_callback(int value)
+{
+	zval ***params;
+	zval *retval = NULL;
+
+	params = (zval***)safe_emalloc(1, sizeof(zval**), 0);
+	params[0] = (zval *)emalloc(sizeof(zval*));
+
+	MAKE_STD_ZVAL(*params[0]);
+	ZVAL_LONG(*params[0], value);
+
+	createmenu_fci.param_count = 1;
+	createmenu_fci.params = params;
+	createmenu_fci.retval_ptr_ptr = &retval;
+
+	if (zend_call_function(&createmenu_fci, &createmenu_fci_cache TSRMLS_CC) != SUCCESS) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
+	}
+}
+
 /* {{{ long glutcreatemenu(mixed menu_callback) */
 PHP_FUNCTION(glutcreatemenu)
 {
-	zval *callback;
 	int menu_id;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f", &createmenu_fci, &createmenu_fci_cache) == FAILURE)
+	{
 		WRONG_PARAM_COUNT;
 	}
 
-	IS_CALLBACK(callback, 1);
-	HASH_MENU_CALLBACK(callback, 1, menu_id = glutCreateMenu(menu_callback));
+	menu_id = glutCreateMenu(glutcreatemenu_callback);
 	RETURN_LONG(menu_id);
 }
 /* }}} */
@@ -767,25 +786,15 @@ PHP_FUNCTION(glutdestroymenu)
 /* {{{ bool glutaddmenuentry(string name, long value) */
 PHP_FUNCTION(glutaddmenuentry)
 {
-	zval *name, *value, *menu_entry;
-	int current_menu;
+	char *name = NULL;
+	int name_len;
+	long value;
 
-	TWO_PARAM(name,value);
-	convert_to_string(name);
-	convert_to_long(value);
-
-	if (0 == ( current_menu = glutGetMenu())) {
-		php_error(E_WARNING, "%s() no current glutMenu; call glutcreatemenu() first",
-				get_active_function_name(TSRMLS_C));
-		RETURN_FALSE;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &name, &name_len, &value ) == FAILURE) {
+		WRONG_PARAM_COUNT;
 	}
-	MAKE_STD_ZVAL(menu_entry);
-	array_init(menu_entry);
-	add_index_long(menu_entry, 0, current_menu);
-	add_index_long(menu_entry, 1, Z_LVAL_P(value));
-	zend_hash_index_update(menu_entry_callbacks, unique_menu_entry_id, menu_entry, sizeof(zval), NULL);
-	glutAddMenuEntry(Z_STRVAL_P(name), unique_menu_entry_id++);
-	RETURN_TRUE;
+
+	glutAddMenuEntry(name, (int)value);
 }
 /* }}} */
 
@@ -793,11 +802,13 @@ PHP_FUNCTION(glutaddmenuentry)
 /* {{{ void glutaddsubmenu(string name, long value) */
 PHP_FUNCTION(glutaddsubmenu)
 {
-	zval *name,*value;
-	TWO_PARAM(name,value);
-	convert_to_string(name);
-	convert_to_long(value);
-	glutAddSubMenu(Z_STRVAL_P(name),Z_LVAL_P(value));
+	char *name = NULL;
+	int name_len;
+	long value;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &name, &name_len, &value) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glutAddSubMenu(name,value);
 }
 /* }}} */
 

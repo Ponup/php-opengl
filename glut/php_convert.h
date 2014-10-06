@@ -109,28 +109,3 @@ int gl_type_size(GLenum type);
 	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzzzzzzzz", &p, &p1, &p2, &p4, &p5, &p6, &p7, &p8, &p9, &p10, &p11) == FAILURE) \
 		WRONG_PARAM_COUNT; 
 
-#define IS_CALLBACK(callback, param_num) \
-	{ \
-		char *callback_name; \
-		if (!zend_is_callable(callback, 0, &callback_name TSRMLS_CC)) { \
-			php_error(E_WARNING, "%s() requires argument %d, '%s', to be a valid callback", \
-				get_active_function_name(TSRMLS_C), param_num, callback_name); \
-			RETURN_FALSE; \
-		}\
-	}
-			//efree(callback_name); \
-		//efree(callback_name); \
-
-#define HASH_CALLBACK(callback,param_num,hash_key) \
-	{ \
-		IS_CALLBACK(callback,param_num); \
-		zval_add_ref(&callback); \
-		zend_hash_index_update(call_backs, hash_key, callback, sizeof(zval), NULL); \
-	}
-
-#define HASH_MENU_CALLBACK(callback,param_num,menu_id) \
-	{ \
-		IS_CALLBACK(callback,param_num); \
-		zval_add_ref(&callback); \
-		zend_hash_index_update(menu_callbacks, menu_id, callback, sizeof(zval), NULL); \
-	}

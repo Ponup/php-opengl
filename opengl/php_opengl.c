@@ -17,7 +17,6 @@
   +----------------------------------------------------------------------+
 */
 
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -498,20 +497,22 @@ PHP_FUNCTION(glaretexturesresident)
 /* {{{ void glarrayelement(long i) */
 PHP_FUNCTION(glarrayelement)
 {
-	zval *i;
-	ONE_PARAM(i);
-	convert_to_long(i);
-	glArrayElement((int)Z_LVAL_P(i));
+	long i;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &i) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glArrayElement((int)i);
 }
 /* }}} */
 
 /* {{{ void glbegin(long mode) */
 PHP_FUNCTION(glbegin)
 {
-	zval *mode;
-	ONE_PARAM(mode);
-	convert_to_long(mode);
-	glBegin((int)Z_LVAL_P(mode));
+	long mode;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glBegin((int)mode);
 }
 /* }}} */
 
@@ -556,10 +557,11 @@ PHP_FUNCTION(glblendfunc)
 /* {{{ void glcalllist(long list) */
 PHP_FUNCTION(glcalllist)
 {
-	zval *list;
-	ONE_PARAM(list);
-	convert_to_long(list);
-	glCallList((unsigned int)Z_LVAL_P(list));
+	long list;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &list) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glCallList((unsigned int)list);
 }
 /* }}} */
 
@@ -605,10 +607,11 @@ PHP_FUNCTION(glcalllists)
 /* {{{ void glclear(long mask) */
 PHP_FUNCTION(glclear)
 {
-	zval *mask;
-	ONE_PARAM(mask);
-	convert_to_long(mask);
-	glClear(Z_LVAL_P(mask));
+	long mask;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glClear(mask);
 }
 /* }}} */
 
@@ -641,30 +644,33 @@ PHP_FUNCTION(glclearcolor)
 /* {{{ void glcleardepth(double depth) */
 PHP_FUNCTION(glcleardepth)
 {
-	zval *depth;
-	ONE_PARAM(depth);
-	convert_to_double(depth);
-	glClearDepth(Z_DVAL_P(depth));
+	double depth;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &depth) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glClearDepth(depth);
 }
 /* }}} */
 
 /* {{{ void glclearindex(double c) */
 PHP_FUNCTION(glclearindex)
 {
-	zval *c;
-	ONE_PARAM(c);
-	convert_to_double(c);
-	glClearIndex((float)Z_DVAL_P(c));
+	double c;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glClearIndex((float)c);
 }
 /* }}} */
 
 /* {{{ void glclearstencil(long s) */
 PHP_FUNCTION(glclearstencil)
 {
-	zval *s;
-	ONE_PARAM(s);
-	convert_to_long(s);
-	glClearStencil((int)Z_LVAL_P(s));
+	long s;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &s) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glClearStencil((int)s);
 }
 /* }}} */
 
@@ -698,7 +704,9 @@ PHP_FUNCTION(glcolor3bv)
 {
 	zval *v;
 	GLbyte *v_v;
-	ONE_PARAM(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	convert_to_array(v);
 	v_v = php_array_to_schar_array(v);
 	glColor3bv(v_v);
@@ -722,7 +730,9 @@ PHP_FUNCTION(glcolor3dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	convert_to_array(v);
 	v_v = php_array_to_double_array(v);
 	glColor3dv(v_v);
@@ -746,7 +756,9 @@ PHP_FUNCTION(glcolor3fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	convert_to_array(v);
 	v_v = php_array_to_float_array(v);
 	glColor3fv(v_v);
@@ -770,8 +782,9 @@ PHP_FUNCTION(glcolor3iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glColor3iv(v_v);
 }
@@ -794,8 +807,9 @@ PHP_FUNCTION(glcolor3sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glColor3sv(v_v);
 }
@@ -818,8 +832,9 @@ PHP_FUNCTION(glcolor3ubv)
 {
 	zval *v;
 	GLubyte *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_uchar_array(v);
 	glColor3ubv(v_v);
 }
@@ -842,8 +857,9 @@ PHP_FUNCTION(glcolor3uiv)
 {
 	zval *v;
 	GLuint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_uint_array(v);
 	glColor3uiv(v_v);
 }
@@ -866,8 +882,9 @@ PHP_FUNCTION(glcolor3usv)
 {
 	zval *v;
 	GLushort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_ushort_array(v);
 	glColor3usv(v_v);
 }
@@ -891,8 +908,9 @@ PHP_FUNCTION(glcolor4bv)
 {
 	zval *v;
 	GLbyte *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_schar_array(v);
 	glColor4bv(v_v);
 }
@@ -916,8 +934,9 @@ PHP_FUNCTION(glcolor4dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glColor4dv(v_v);
 }
@@ -941,8 +960,9 @@ PHP_FUNCTION(glcolor4fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glColor4fv(v_v);
 }
@@ -966,8 +986,9 @@ PHP_FUNCTION(glcolor4iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glColor4iv(v_v);
 }
@@ -991,8 +1012,9 @@ PHP_FUNCTION(glcolor4sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glColor4sv(v_v);
 }
@@ -1016,8 +1038,9 @@ PHP_FUNCTION(glcolor4ubv)
 {
 	zval *v;
 	GLubyte *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_uchar_array(v);
 	glColor4ubv(v_v);
 }
@@ -1041,8 +1064,9 @@ PHP_FUNCTION(glcolor4uiv)
 {
 	zval *v;
 	GLuint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_uint_array(v);
 	glColor4uiv(v_v);
 }
@@ -1066,8 +1090,9 @@ PHP_FUNCTION(glcolor4usv)
 {
 	zval *v;
 	GLushort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_ushort_array(v);
 	glColor4usv(v_v);
 }
@@ -1225,10 +1250,11 @@ PHP_FUNCTION(glcopytexsubimage2d)
 /* {{{ void glcullface(long mode) */
 PHP_FUNCTION(glcullface)
 {
-	zval *mode;
-	ONE_PARAM(mode);
-	convert_to_long(mode);
-	glCullFace((int)Z_LVAL_P(mode));
+	long mode;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glCullFace((int)mode);
 }
 /* }}} */
 
@@ -1259,20 +1285,22 @@ PHP_FUNCTION(gldeletetextures)
 /* {{{ void gldepthfunc(long func) */
 PHP_FUNCTION(gldepthfunc)
 {
-	zval *func;
-	ONE_PARAM(func);
-	convert_to_long(func);
-	glDepthFunc((int)Z_LVAL_P(func));
+	long func;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &func) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glDepthFunc((int)func);
 }
 /* }}} */
 
 /* {{{ void gldepthmask(boolean flag) */
 PHP_FUNCTION(gldepthmask)
 {
-	zval *flag;
-	ONE_PARAM(flag);
-	convert_to_boolean(flag);
-	glDepthMask(Z_BVAL_P(flag));
+	zend_bool flag;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "b", &flag) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glDepthMask(flag);
 }
 /* }}} */
 
@@ -1290,20 +1318,22 @@ PHP_FUNCTION(gldepthrange)
 /* {{{ void gldisable(long cap) */
 PHP_FUNCTION(gldisable)
 {
-	zval *cap;
-	ONE_PARAM(cap);
-	convert_to_long(cap);
-	glDisable((int)Z_LVAL_P(cap));
+	long cap;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &cap) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glDisable((int)cap);
 }
 /* }}} */
 
 /* {{{ void gldisableclientstate(long array) */
 PHP_FUNCTION(gldisableclientstate)
 {
-	zval *array;
-	ONE_PARAM(array);
-	convert_to_long(array);
-	glDisableClientState((int)Z_LVAL_P(array));
+	long array;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &array) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glDisableClientState((int)array);
 }
 /* }}} */
 
@@ -1322,10 +1352,11 @@ PHP_FUNCTION(gldrawarrays)
 /* {{{ void gldrawbuffer(long mode) */
 PHP_FUNCTION(gldrawbuffer)
 {
-	zval *mode;
-	ONE_PARAM(mode);
-	convert_to_long(mode);
-	glDrawBuffer((int)Z_LVAL_P(mode));
+	long mode;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glDrawBuffer((int)mode);
 }
 /* }}} */
 
@@ -1374,10 +1405,11 @@ PHP_FUNCTION(gldrawpixels)
 /* {{{ void gledgeflag(boolean flag) */
 PHP_FUNCTION(gledgeflag)
 {
-	zval *flag;
-	ONE_PARAM(flag);
-	convert_to_boolean(flag);
-	glEdgeFlag(Z_BVAL_P(flag));
+	zend_bool flag;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "b", &flag) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glEdgeFlag(flag);
 }
 /* }}} */
 
@@ -1399,8 +1431,9 @@ PHP_FUNCTION(gledgeflagv)
 {
 	zval *flag;
 	GLboolean *v_flag;
-	ONE_PARAM(flag);
-	convert_to_array(flag);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &flag) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_flag = php_array_to_uchar_array(flag);
 	glEdgeFlagv(v_flag);
 }
@@ -1409,20 +1442,22 @@ PHP_FUNCTION(gledgeflagv)
 /* {{{ void glenable(long cap) */
 PHP_FUNCTION(glenable)
 {
-	zval *cap;
-	ONE_PARAM(cap);
-	convert_to_long(cap);
-	glEnable((int)Z_LVAL_P(cap));
+	long cap;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &cap) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glEnable((int)cap);
 }
 /* }}} */
 
 /* {{{ void glenableclientstate(long array) */
 PHP_FUNCTION(glenableclientstate)
 {
-	zval *array;
-	ONE_PARAM(array);
-	convert_to_long(array);
-	glEnableClientState((int)Z_LVAL_P(array));
+	long array;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &array) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glEnableClientState((int)array);
 }
 /* }}} */
 
@@ -1449,10 +1484,11 @@ PHP_FUNCTION(glendlist)
 /* {{{ void glevalcoord1d(double u) */
 PHP_FUNCTION(glevalcoord1d)
 {
-	zval *u;
-	ONE_PARAM(u);
-	convert_to_double(u);
-	glEvalCoord1d(Z_DVAL_P(u));
+	double u;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &u) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glEvalCoord1d(u);
 }
 /* }}} */
 
@@ -1461,8 +1497,9 @@ PHP_FUNCTION(glevalcoord1dv)
 {
 	zval *u;
 	GLdouble *v_u;
-	ONE_PARAM(u);
-	convert_to_array(u);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &u) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_u = php_array_to_double_array(u);
 	glEvalCoord1dv(v_u);
 }
@@ -1471,10 +1508,11 @@ PHP_FUNCTION(glevalcoord1dv)
 /* {{{ void glevalcoord1f(double u) */
 PHP_FUNCTION(glevalcoord1f)
 {
-	zval *u;
-	ONE_PARAM(u);
-	convert_to_double(u);
-	glEvalCoord1f((float)Z_DVAL_P(u));
+	double u;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &u) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glEvalCoord1f((float)u);
 }
 /* }}} */
 
@@ -1483,8 +1521,9 @@ PHP_FUNCTION(glevalcoord1fv)
 {
 	zval *u;
 	GLfloat *v_u;
-	ONE_PARAM(u);
-	convert_to_array(u);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &u) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_u = php_array_to_float_array(u);
 	glEvalCoord1fv(v_u);
 }
@@ -1506,8 +1545,9 @@ PHP_FUNCTION(glevalcoord2dv)
 {
 	zval *u;
 	GLdouble *v_u;
-	ONE_PARAM(u);
-	convert_to_array(u);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &u) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_u = php_array_to_double_array(u);
 	glEvalCoord2dv(v_u);
 }
@@ -1529,8 +1569,9 @@ PHP_FUNCTION(glevalcoord2fv)
 {
 	zval *u;
 	GLfloat *v_u;
-	ONE_PARAM(u);
-	convert_to_array(u);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &u) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_u = php_array_to_float_array(u);
 	glEvalCoord2fv(v_u);
 }
@@ -1565,10 +1606,11 @@ PHP_FUNCTION(glevalmesh2)
 /* {{{ void glevalpoint1(long i) */
 PHP_FUNCTION(glevalpoint1)
 {
-	zval *i;
-	ONE_PARAM(i);
-	convert_to_long(i);
-	glEvalPoint1((int)Z_LVAL_P(i));
+	long i;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &i) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glEvalPoint1((int)i);
 }
 /* }}} */
 
@@ -1670,10 +1712,11 @@ PHP_FUNCTION(glfogiv)
 /* {{{ void glfrontface(long mode) */
 PHP_FUNCTION(glfrontface)
 {
-	zval *mode;
-	ONE_PARAM(mode);
-	convert_to_long(mode);
-	glFrontFace((int)Z_LVAL_P(mode));
+	long mode;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glFrontFace((int)mode);
 }
 /* }}} */
 
@@ -1695,11 +1738,12 @@ PHP_FUNCTION(glfrustum)
 /* {{{ long glgenlists(long range) */
 PHP_FUNCTION(glgenlists)
 {
-	zval *range;
+	long range;
 	unsigned int return_unsigned_int;
-	ONE_PARAM(range);
-	convert_to_long(range);
-	return_unsigned_int = glGenLists((int)Z_LVAL_P(range));
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &range) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	return_unsigned_int = glGenLists((int)range);
 	RETURN_LONG(return_unsigned_int);
 }
 /* }}} */
@@ -2002,8 +2046,9 @@ PHP_FUNCTION(glgetpolygonstipple)
 	zval *mask;
 	GLubyte *v_mask;
 	v_mask = (GLubyte *)emalloc(32 * 32);
-	ONE_PARAM(mask);
-	convert_to_string(mask);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &mask) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	glGetPolygonStipple(v_mask);
 	ZVAL_STRING(mask,v_mask,0);
 }
@@ -2012,11 +2057,12 @@ PHP_FUNCTION(glgetpolygonstipple)
 /* {{{ string glgetstring(long name) */
 PHP_FUNCTION(glgetstring)
 {
-	zval *name;
+	long name;
 	GLubyte *ret;
-	ONE_PARAM(name);
-	convert_to_long(name);
-	ret = (GLubyte*)glGetString(Z_LVAL_P(name));
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &name) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	ret = (GLubyte*)glGetString(name);
 	RETURN_STRING((char*)ret,1);
 }
 /* }}} */
@@ -2194,10 +2240,11 @@ PHP_FUNCTION(glhint)
 /* {{{ void glindexmask(long mask) */
 PHP_FUNCTION(glindexmask)
 {
-	zval *mask;
-	ONE_PARAM(mask);
-	convert_to_long(mask);
-	glIndexMask((unsigned int)Z_LVAL_P(mask));
+	long mask;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glIndexMask((unsigned int)mask);
 }
 /* }}} */
 
@@ -2232,10 +2279,11 @@ PHP_FUNCTION(glindexpointer)
 /* {{{ void glindexd(double c) */
 PHP_FUNCTION(glindexd)
 {
-	zval *c;
-	ONE_PARAM(c);
-	convert_to_double(c);
-	glIndexd(Z_DVAL_P(c));
+	double c;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glIndexd(c);
 }
 /* }}} */
 
@@ -2244,8 +2292,9 @@ PHP_FUNCTION(glindexdv)
 {
 	zval *c;
 	GLdouble *v_c;
-	ONE_PARAM(c);
-	convert_to_array(c);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_c = php_array_to_double_array(c);
 	glIndexdv(v_c);
 }
@@ -2254,10 +2303,11 @@ PHP_FUNCTION(glindexdv)
 /* {{{ void glindexf(double c) */
 PHP_FUNCTION(glindexf)
 {
-	zval *c;
-	ONE_PARAM(c);
-	convert_to_double(c);
-	glIndexf((float)Z_DVAL_P(c));
+	double c;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glIndexf((float)c);
 }
 /* }}} */
 
@@ -2266,8 +2316,9 @@ PHP_FUNCTION(glindexfv)
 {
 	zval *c;
 	GLfloat *v_c;
-	ONE_PARAM(c);
-	convert_to_array(c);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_c = php_array_to_float_array(c);
 	glIndexfv(v_c);
 }
@@ -2276,10 +2327,11 @@ PHP_FUNCTION(glindexfv)
 /* {{{ void glindexi(long c) */
 PHP_FUNCTION(glindexi)
 {
-	zval *c;
-	ONE_PARAM(c);
-	convert_to_long(c);
-	glIndexi((int)Z_LVAL_P(c));
+	long c;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glIndexi((int)c);
 }
 /* }}} */
 
@@ -2288,8 +2340,9 @@ PHP_FUNCTION(glindexiv)
 {
 	zval *c;
 	GLint *v_c;
-	ONE_PARAM(c);
-	convert_to_array(c);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_c = php_array_to_int_array(c);
 	glIndexiv(v_c);
 }
@@ -2298,10 +2351,11 @@ PHP_FUNCTION(glindexiv)
 /* {{{ void glindexs(long c) */
 PHP_FUNCTION(glindexs)
 {
-	zval *c;
-	ONE_PARAM(c);
-	convert_to_long(c);
-	glIndexs((short)Z_LVAL_P(c));
+	long c;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glIndexs((short)c);
 }
 /* }}} */
 
@@ -2310,8 +2364,9 @@ PHP_FUNCTION(glindexsv)
 {
 	zval *c;
 	GLshort *v_c;
-	ONE_PARAM(c);
-	convert_to_array(c);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_c = php_array_to_short_array(c);
 	glIndexsv(v_c);
 }
@@ -2320,10 +2375,11 @@ PHP_FUNCTION(glindexsv)
 /* {{{ void glindexub(long c) */
 PHP_FUNCTION(glindexub)
 {
-	zval *c;
-	ONE_PARAM(c);
-	convert_to_long(c);
-	glIndexub((unsigned char)Z_LVAL_P(c));
+	long c;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glIndexub((unsigned char)c);
 }
 /* }}} */
 
@@ -2332,8 +2388,9 @@ PHP_FUNCTION(glindexubv)
 {
 	zval *c;
 	GLubyte *v_c;
-	ONE_PARAM(c);
-	convert_to_array(c);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &c) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_c = php_array_to_uchar_array(c);
 	glIndexubv(v_c);
 }
@@ -2367,11 +2424,12 @@ PHP_FUNCTION(glinterleavedarrays)
 /* {{{ bool glisenabled(long cap) */
 PHP_FUNCTION(glisenabled)
 {
-	zval *cap;
+	long cap;
 	int return_int;
-	ONE_PARAM(cap);
-	convert_to_long(cap);
-	return_int = glIsEnabled((int)Z_LVAL_P(cap));
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &cap) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	return_int = glIsEnabled((int)cap);
 	RETURN_BOOL(return_int);
 }
 /* }}} */
@@ -2379,11 +2437,12 @@ PHP_FUNCTION(glisenabled)
 /* {{{ bool glislist(long list) */
 PHP_FUNCTION(glislist)
 {
-	zval *list;
+	long list;
 	int return_int;
-	ONE_PARAM(list);
-	convert_to_long(list);
-	return_int = glIsList((unsigned int)Z_LVAL_P(list));
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &list) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	return_int = glIsList((unsigned int)list);
 	RETURN_BOOL(return_int);
 }
 /* }}} */
@@ -2391,11 +2450,12 @@ PHP_FUNCTION(glislist)
 /* {{{ bool glistexture(long texture) */
 PHP_FUNCTION(glistexture)
 {
-	zval *texture;
+	long texture;
 	int return_int;
-	ONE_PARAM(texture);
-	convert_to_long(texture);
-	return_int = glIsTexture((unsigned int)Z_LVAL_P(texture));
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &texture) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	return_int = glIsTexture((unsigned int)texture);
 	RETURN_BOOL(return_int);
 }
 /* }}} */
@@ -2514,20 +2574,22 @@ PHP_FUNCTION(gllinestipple)
 /* {{{ void gllinewidth(double width) */
 PHP_FUNCTION(gllinewidth)
 {
-	zval *width;
-	ONE_PARAM(width);
-	convert_to_double(width);
-	glLineWidth((float)Z_DVAL_P(width));
+	double width;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &width) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glLineWidth((float)width);
 }
 /* }}} */
 
 /* {{{ void gllistbase(long base) */
 PHP_FUNCTION(gllistbase)
 {
-	zval *base;
-	ONE_PARAM(base);
-	convert_to_long(base);
-	glListBase((unsigned int)Z_LVAL_P(base));
+	long base;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &base) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glListBase((unsigned int)base);
 }
 /* }}} */
 
@@ -2546,8 +2608,9 @@ PHP_FUNCTION(glloadmatrixd)
 {
 	zval *m;
 	GLdouble *v_m;
-	ONE_PARAM(m);
-	convert_to_array(m);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &m) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_m = php_array_to_double_array(m);
 	glLoadMatrixd(v_m);
 }
@@ -2558,8 +2621,9 @@ PHP_FUNCTION(glloadmatrixf)
 {
 	zval *m;
 	GLfloat *v_m;
-	ONE_PARAM(m);
-	convert_to_array(m);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &m) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_m = php_array_to_float_array(m);
 	glLoadMatrixf(v_m);
 }
@@ -2568,20 +2632,22 @@ PHP_FUNCTION(glloadmatrixf)
 /* {{{ void glloadname(long name) */
 PHP_FUNCTION(glloadname)
 {
-	zval *name;
-	ONE_PARAM(name);
-	convert_to_long(name);
-	glLoadName((unsigned int)Z_LVAL_P(name));
+	long name;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &name) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glLoadName((unsigned int)name);
 }
 /* }}} */
 
 /* {{{ void gllogicop(long opcode) */
 PHP_FUNCTION(gllogicop)
 {
-	zval *opcode;
-	ONE_PARAM(opcode);
-	convert_to_long(opcode);
-	glLogicOp((int)Z_LVAL_P(opcode));
+	long opcode;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &opcode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glLogicOp((int)opcode);
 }
 /* }}} */
 
@@ -2770,10 +2836,11 @@ PHP_FUNCTION(glmaterialiv)
 /* {{{ void glmatrixmode(long mode) */
 PHP_FUNCTION(glmatrixmode)
 {
-	zval *mode;
-	ONE_PARAM(mode);
-	convert_to_long(mode);
-	glMatrixMode((int)Z_LVAL_P(mode));
+	long mode;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glMatrixMode((int)mode);
 }
 /* }}} */
 
@@ -2782,8 +2849,9 @@ PHP_FUNCTION(glmultmatrixd)
 {
 	zval *m;
 	GLdouble *v_m;
-	ONE_PARAM(m);
-	convert_to_array(m);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &m) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_m = php_array_to_double_array(m);
 	glMultMatrixd(v_m);
 }
@@ -2794,8 +2862,9 @@ PHP_FUNCTION(glmultmatrixf)
 {
 	zval *m;
 	GLfloat *v_m;
-	ONE_PARAM(m);
-	convert_to_array(m);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &m) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_m = php_array_to_float_array(m);
 	glMultMatrixf(v_m);
 }
@@ -2829,8 +2898,9 @@ PHP_FUNCTION(glnormal3bv)
 {
 	zval *v;
 	GLbyte *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_schar_array(v);
 	glNormal3bv(v_v);
 }
@@ -2853,8 +2923,9 @@ PHP_FUNCTION(glnormal3dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glNormal3dv(v_v);
 }
@@ -2877,8 +2948,9 @@ PHP_FUNCTION(glnormal3fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glNormal3fv(v_v);
 }
@@ -2901,8 +2973,9 @@ PHP_FUNCTION(glnormal3iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glNormal3iv(v_v);
 }
@@ -2925,8 +2998,9 @@ PHP_FUNCTION(glnormal3sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glNormal3sv(v_v);
 }
@@ -2981,10 +3055,11 @@ PHP_FUNCTION(glortho)
 /* {{{ void glpassthrough(double token) */
 PHP_FUNCTION(glpassthrough)
 {
-	zval *token;
-	ONE_PARAM(token);
-	convert_to_double(token);
-	glPassThrough((float)Z_DVAL_P(token));
+	double token;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &token) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glPassThrough((float)token);
 }
 /* }}} */
 
@@ -3088,10 +3163,11 @@ PHP_FUNCTION(glpixelzoom)
 /* {{{ void glpointsize(double size) */
 PHP_FUNCTION(glpointsize)
 {
-	zval *size;
-	ONE_PARAM(size);
-	convert_to_double(size);
-	glPointSize((float)Z_DVAL_P(size));
+	double size;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &size) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glPointSize((float)size);
 }
 /* }}} */
 
@@ -3122,8 +3198,9 @@ PHP_FUNCTION(glpolygonstipple)
 {
 	zval *mask;
 	GLubyte *v_mask;
-	ONE_PARAM(mask);
-	convert_to_array(mask);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &mask) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_mask = php_array_to_uchar_array(mask);
 	glPolygonStipple(v_mask);
 }
@@ -3188,20 +3265,22 @@ PHP_FUNCTION(glprioritizetextures)
 /* {{{ void glpushattrib(long mask) */
 PHP_FUNCTION(glpushattrib)
 {
-	zval *mask;
-	ONE_PARAM(mask);
-	convert_to_long(mask);
-	glPushAttrib(Z_LVAL_P(mask));
+	long mask;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glPushAttrib(mask);
 }
 /* }}} */
 
 /* {{{ void glpushclientattrib(long mask) */
 PHP_FUNCTION(glpushclientattrib)
 {
-	zval *mask;
-	ONE_PARAM(mask);
-	convert_to_long(mask);
-	glPushClientAttrib(Z_LVAL_P(mask));
+	long mask;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glPushClientAttrib(mask);
 }
 /* }}} */
 
@@ -3218,10 +3297,11 @@ PHP_FUNCTION(glpushmatrix)
 /* {{{ void glpushname(long name) */
 PHP_FUNCTION(glpushname)
 {
-	zval *name;
-	ONE_PARAM(name);
-	convert_to_long(name);
-	glPushName((unsigned int)Z_LVAL_P(name));
+	long name;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &name) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glPushName((unsigned int)name);
 }
 /* }}} */
 
@@ -3241,8 +3321,9 @@ PHP_FUNCTION(glrasterpos2dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glRasterPos2dv(v_v);
 }
@@ -3264,8 +3345,9 @@ PHP_FUNCTION(glrasterpos2fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glRasterPos2fv(v_v);
 }
@@ -3287,8 +3369,9 @@ PHP_FUNCTION(glrasterpos2iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glRasterPos2iv(v_v);
 }
@@ -3310,8 +3393,9 @@ PHP_FUNCTION(glrasterpos2sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glRasterPos2sv(v_v);
 }
@@ -3334,8 +3418,9 @@ PHP_FUNCTION(glrasterpos3dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glRasterPos3dv(v_v);
 }
@@ -3358,8 +3443,9 @@ PHP_FUNCTION(glrasterpos3fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glRasterPos3fv(v_v);
 }
@@ -3382,8 +3468,9 @@ PHP_FUNCTION(glrasterpos3iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glRasterPos3iv(v_v);
 }
@@ -3406,8 +3493,9 @@ PHP_FUNCTION(glrasterpos3sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glRasterPos3sv(v_v);
 }
@@ -3431,8 +3519,9 @@ PHP_FUNCTION(glrasterpos4dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glRasterPos4dv(v_v);
 }
@@ -3456,8 +3545,9 @@ PHP_FUNCTION(glrasterpos4fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glRasterPos4fv(v_v);
 }
@@ -3481,8 +3571,9 @@ PHP_FUNCTION(glrasterpos4iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glRasterPos4iv(v_v);
 }
@@ -3506,8 +3597,9 @@ PHP_FUNCTION(glrasterpos4sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glRasterPos4sv(v_v);
 }
@@ -3516,10 +3608,11 @@ PHP_FUNCTION(glrasterpos4sv)
 /* {{{ void glreadbuffer(long mode) */
 PHP_FUNCTION(glreadbuffer)
 {
-	zval *mode;
-	ONE_PARAM(mode);
-	convert_to_long(mode);
-	glReadBuffer((int)Z_LVAL_P(mode));
+	long mode;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glReadBuffer((int)mode);
 }
 /* }}} */
 
@@ -3656,11 +3749,12 @@ PHP_FUNCTION(glrectsv)
 /* {{{ long glrendermode(long mode) */
 PHP_FUNCTION(glrendermode)
 {
-	zval *mode;
+	long mode;
 	int return_int;
-	ONE_PARAM(mode);
-	convert_to_long(mode);
-	return_int = glRenderMode((int)Z_LVAL_P(mode));
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	return_int = glRenderMode((int)mode);
 	RETURN_LONG(return_int);
 }
 /* }}} */
@@ -3694,24 +3788,22 @@ PHP_FUNCTION(glrotatef)
 /* {{{ void glscaled(double x, double y, double z) */
 PHP_FUNCTION(glscaled)
 {
-	zval *x, *y, *z;
-	THREE_PARAM(x, y, z);
-	convert_to_double(x);
-	convert_to_double(y);
-	convert_to_double(z);
-	glScaled(Z_DVAL_P(x),Z_DVAL_P(y),Z_DVAL_P(z));
+	double x, y, z;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddd", &x, &y, &z) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glScaled(x,y,z);
 }
 /* }}} */
 
 /* {{{ void glscalef(double x, double y, double z) */
 PHP_FUNCTION(glscalef)
 {
-	zval *x, *y, *z;
-	THREE_PARAM(x, y, z);
-	convert_to_double(x);
-	convert_to_double(y);
-	convert_to_double(z);
-	glScalef((float)Z_DVAL_P(x),(float)Z_DVAL_P(y),(float)Z_DVAL_P(z));
+	double x, y, z;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddd", &x, &y, &z) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glScalef((float)x,(float)y,(float)z);
 }
 /* }}} */
 
@@ -3744,10 +3836,11 @@ PHP_FUNCTION(glselectbuffer)
 /* {{{ void glshademodel(long mode) */
 PHP_FUNCTION(glshademodel)
 {
-	zval *mode;
-	ONE_PARAM(mode);
-	convert_to_long(mode);
-	glShadeModel((int)Z_LVAL_P(mode));
+	long mode;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glShadeModel((int)mode);
 }
 /* }}} */
 
@@ -3766,10 +3859,11 @@ PHP_FUNCTION(glstencilfunc)
 /* {{{ void glstencilmask(long mask) */
 PHP_FUNCTION(glstencilmask)
 {
-	zval *mask;
-	ONE_PARAM(mask);
-	convert_to_long(mask);
-	glStencilMask((unsigned int)Z_LVAL_P(mask));
+	long mask;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glStencilMask((unsigned int)mask);
 }
 /* }}} */
 
@@ -3788,10 +3882,11 @@ PHP_FUNCTION(glstencilop)
 /* {{{ void gltexcoord1d(double s) */
 PHP_FUNCTION(gltexcoord1d)
 {
-	zval *s;
-	ONE_PARAM(s);
-	convert_to_double(s);
-	glTexCoord1d(Z_DVAL_P(s));
+	double s;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &s) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glTexCoord1d(s);
 }
 /* }}} */
 
@@ -3800,8 +3895,9 @@ PHP_FUNCTION(gltexcoord1dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glTexCoord1dv(v_v);
 }
@@ -3810,10 +3906,11 @@ PHP_FUNCTION(gltexcoord1dv)
 /* {{{ void gltexcoord1f(double s) */
 PHP_FUNCTION(gltexcoord1f)
 {
-	zval *s;
-	ONE_PARAM(s);
-	convert_to_double(s);
-	glTexCoord1f((float)Z_DVAL_P(s));
+	double s;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &s) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glTexCoord1f((float)s);
 }
 /* }}} */
 
@@ -3822,8 +3919,9 @@ PHP_FUNCTION(gltexcoord1fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glTexCoord1fv(v_v);
 }
@@ -3832,10 +3930,11 @@ PHP_FUNCTION(gltexcoord1fv)
 /* {{{ void gltexcoord1i(long s) */
 PHP_FUNCTION(gltexcoord1i)
 {
-	zval *s;
-	ONE_PARAM(s);
-	convert_to_long(s);
-	glTexCoord1i((int)Z_LVAL_P(s));
+	long s;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &s) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glTexCoord1i((int)s);
 }
 /* }}} */
 
@@ -3844,8 +3943,9 @@ PHP_FUNCTION(gltexcoord1iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glTexCoord1iv(v_v);
 }
@@ -3854,10 +3954,11 @@ PHP_FUNCTION(gltexcoord1iv)
 /* {{{ void gltexcoord1s(long s) */
 PHP_FUNCTION(gltexcoord1s)
 {
-	zval *s;
-	ONE_PARAM(s);
-	convert_to_long(s);
-	glTexCoord1s((short)Z_LVAL_P(s));
+	long s;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &s) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glTexCoord1s((short)s);
 }
 /* }}} */
 
@@ -3866,8 +3967,9 @@ PHP_FUNCTION(gltexcoord1sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glTexCoord1sv(v_v);
 }
@@ -3889,8 +3991,9 @@ PHP_FUNCTION(gltexcoord2dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glTexCoord2dv(v_v);
 }
@@ -3912,8 +4015,9 @@ PHP_FUNCTION(gltexcoord2fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glTexCoord2fv(v_v);
 }
@@ -3935,8 +4039,9 @@ PHP_FUNCTION(gltexcoord2iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glTexCoord2iv(v_v);
 }
@@ -3958,8 +4063,9 @@ PHP_FUNCTION(gltexcoord2sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glTexCoord2sv(v_v);
 }
@@ -3982,8 +4088,9 @@ PHP_FUNCTION(gltexcoord3dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glTexCoord3dv(v_v);
 }
@@ -4006,8 +4113,9 @@ PHP_FUNCTION(gltexcoord3fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glTexCoord3fv(v_v);
 }
@@ -4030,8 +4138,9 @@ PHP_FUNCTION(gltexcoord3iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glTexCoord3iv(v_v);
 }
@@ -4054,8 +4163,9 @@ PHP_FUNCTION(gltexcoord3sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glTexCoord3sv(v_v);
 }
@@ -4079,8 +4189,9 @@ PHP_FUNCTION(gltexcoord4dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glTexCoord4dv(v_v);
 }
@@ -4104,8 +4215,9 @@ PHP_FUNCTION(gltexcoord4fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glTexCoord4fv(v_v);
 }
@@ -4129,8 +4241,9 @@ PHP_FUNCTION(gltexcoord4iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glTexCoord4iv(v_v);
 }
@@ -4154,8 +4267,9 @@ PHP_FUNCTION(gltexcoord4sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glTexCoord4sv(v_v);
 }
@@ -4452,24 +4566,22 @@ PHP_FUNCTION(gltexsubimage2d)
 /* {{{ void gltranslated(double x, double y, double z) */
 PHP_FUNCTION(gltranslated)
 {
-	zval *x, *y, *z;
-	THREE_PARAM(x, y, z);
-	convert_to_double(x);
-	convert_to_double(y);
-	convert_to_double(z);
-	glTranslated(Z_DVAL_P(x),Z_DVAL_P(y),Z_DVAL_P(z));
+	double x, y, z;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddd", &x, &y, &z) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glTranslated(x,y,z);
 }
 /* }}} */
 
 /* {{{ void gltranslatef(double x, double y, double z) */
 PHP_FUNCTION(gltranslatef)
 {
-	zval *x, *y, *z;
-	THREE_PARAM(x, y, z);
-	convert_to_double(x);
-	convert_to_double(y);
-	convert_to_double(z);
-	glTranslatef((float)Z_DVAL_P(x),(float)Z_DVAL_P(y),(float)Z_DVAL_P(z));
+	double x, y, z;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddd", &x, &y, &z) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glTranslatef((float)x,(float)y,(float)z);
 }
 /* }}} */
 
@@ -4489,8 +4601,9 @@ PHP_FUNCTION(glvertex2dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glVertex2dv(v_v);
 }
@@ -4512,8 +4625,9 @@ PHP_FUNCTION(glvertex2fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glVertex2fv(v_v);
 }
@@ -4535,8 +4649,9 @@ PHP_FUNCTION(glvertex2iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glVertex2iv(v_v);
 }
@@ -4558,8 +4673,9 @@ PHP_FUNCTION(glvertex2sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glVertex2sv(v_v);
 }
@@ -4582,8 +4698,9 @@ PHP_FUNCTION(glvertex3dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glVertex3dv(v_v);
 }
@@ -4606,8 +4723,9 @@ PHP_FUNCTION(glvertex3fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glVertex3fv(v_v);
 }
@@ -4630,8 +4748,9 @@ PHP_FUNCTION(glvertex3iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glVertex3iv(v_v);
 }
@@ -4654,8 +4773,9 @@ PHP_FUNCTION(glvertex3sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glVertex3sv(v_v);
 }
@@ -4679,8 +4799,9 @@ PHP_FUNCTION(glvertex4dv)
 {
 	zval *v;
 	GLdouble *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_double_array(v);
 	glVertex4dv(v_v);
 }
@@ -4704,8 +4825,9 @@ PHP_FUNCTION(glvertex4fv)
 {
 	zval *v;
 	GLfloat *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_float_array(v);
 	glVertex4fv(v_v);
 }
@@ -4729,8 +4851,9 @@ PHP_FUNCTION(glvertex4iv)
 {
 	zval *v;
 	GLint *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_int_array(v);
 	glVertex4iv(v_v);
 }
@@ -4754,8 +4877,9 @@ PHP_FUNCTION(glvertex4sv)
 {
 	zval *v;
 	GLshort *v_v;
-	ONE_PARAM(v);
-	convert_to_array(v);
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &v) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	v_v = php_array_to_short_array(v);
 	glVertex4sv(v_v);
 }

@@ -39,11 +39,12 @@ int quadric_callback = 0;
 /* {{{ string gluerrorstring(long errCode) */
 PHP_FUNCTION(gluerrorstring)
 {
-	zval *errCode;
+	long errCode;
 	GLubyte *str;
-	ONE_PARAM(errCode);
-	convert_to_long(errCode);
-	str = (GLubyte *)gluErrorString(Z_LVAL_P(errCode));
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "l", &errCode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	str = (GLubyte *)gluErrorString(errCode);
 	RETURN_STRING(str,1);
 }
 /* }}} */
@@ -52,10 +53,11 @@ PHP_FUNCTION(gluerrorstring)
 /* {{{ string gluerrorunicodestringext(long errCode) */
 PHP_FUNCTION(gluerrorunicodestringext)
 {
-	/*TODO: ??? */
 	/*zval *errCode;
 	wchar_t *str;
-	ONE_PARAM(errCode);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "l", &errCode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	convert_to_long(errCode);
 	str = (wchar_t *)gluErrorUnicodeStringEXT(Z_LVAL_P(errCode));
 	RETURN_STRING(str,1);*/
@@ -66,11 +68,13 @@ PHP_FUNCTION(gluerrorunicodestringext)
 /* {{{ string glugetstring(long errCode) */
 PHP_FUNCTION(glugetstring)
 {
-	zval *errCode;
+	long errCode;
 	GLubyte *str;
-	ONE_PARAM(errCode);
-	convert_to_long(errCode);
-	str = (GLubyte *)gluGetString(Z_LVAL_P(errCode));
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "l", &errCode) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	str = (GLubyte *)gluGetString(errCode);
 	RETURN_STRING(str,1);
 }
 /* }}} */
@@ -277,7 +281,9 @@ PHP_FUNCTION(glunewquadric)
 PHP_FUNCTION(gludeletequadric)
 {
 	zval *quad;
-	ONE_PARAM(quad);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &quad) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(quad) == IS_RESOURCE)
 	{
 		zend_list_delete(Z_RESVAL_P(quad));
@@ -487,7 +493,9 @@ PHP_FUNCTION(glunewtess)
 PHP_FUNCTION(gludeletetess)
 {
 	zval *tess;
-	ONE_PARAM(tess);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &tess) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(tess) == IS_RESOURCE)
 	{
 		zend_list_delete(Z_RESVAL_P(tess));
@@ -523,7 +531,9 @@ PHP_FUNCTION(glutessbegincontour)
 	GLUtesselator *glutess;
 	int type;
 
-	ONE_PARAM(tess);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &tess) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(tess) == IS_RESOURCE)
 	{
 		glutess = zend_list_find(Z_RESVAL_P(tess),&type);
@@ -566,7 +576,9 @@ PHP_FUNCTION(glutessendcontour)
 	GLUtesselator *glutess;
 	int type;
 
-	ONE_PARAM(tess);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &tess) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(tess) == IS_RESOURCE)
 	{
 		glutess = zend_list_find(Z_RESVAL_P(tess),&type);
@@ -586,7 +598,9 @@ PHP_FUNCTION(glutessendpolygon)
 	GLUtesselator *glutess;
 	int type;
 
-	ONE_PARAM(tess);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &tess) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(tess) == IS_RESOURCE)
 	{
 		glutess = zend_list_find(Z_RESVAL_P(tess),&type);
@@ -685,7 +699,9 @@ PHP_FUNCTION(glunewnurbsrenderer)
 PHP_FUNCTION(gludeletenurbsrenderer)
 {
 	zval *nurb;
-	ONE_PARAM(nurb);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &nurb) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(nurb) == IS_RESOURCE)
 	{
 		zend_list_delete(Z_RESVAL_P(nurb));
@@ -701,7 +717,9 @@ PHP_FUNCTION(glubeginsurface)
 	GLUnurbs *glunurb;
 	int type;
 
-	ONE_PARAM(nurb);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &nurb) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(nurb) == IS_RESOURCE)
 	{
 		glunurb = zend_list_find(Z_RESVAL_P(nurb),&type);
@@ -721,7 +739,9 @@ PHP_FUNCTION(glubegincurve)
 	GLUnurbs *glunurb;
 	int type;
 
-	ONE_PARAM(nurb);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &nurb) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(nurb) == IS_RESOURCE)
 	{
 		glunurb = zend_list_find(Z_RESVAL_P(nurb),&type);
@@ -741,7 +761,9 @@ PHP_FUNCTION(gluendcurve)
 	GLUnurbs *glunurb;
 	int type;
 
-	ONE_PARAM(nurb);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "l", &nurb) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(nurb) == IS_RESOURCE)
 	{
 		glunurb = zend_list_find(Z_RESVAL_P(nurb),&type);
@@ -761,7 +783,9 @@ PHP_FUNCTION(gluendsurface)
 	GLUnurbs *glunurb;
 	int type;
 
-	ONE_PARAM(nurb);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &nurb) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(nurb) == IS_RESOURCE)
 	{
 		glunurb = zend_list_find(Z_RESVAL_P(nurb),&type);
@@ -781,7 +805,9 @@ PHP_FUNCTION(glubegintrim)
 	GLUnurbs *glunurb;
 	int type;
 
-	ONE_PARAM(nurb);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &nurb) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(nurb) == IS_RESOURCE)
 	{
 		glunurb = zend_list_find(Z_RESVAL_P(nurb),&type);
@@ -801,7 +827,9 @@ PHP_FUNCTION(gluendtrim)
 	GLUnurbs *glunurb;
 	int type;
 
-	ONE_PARAM(nurb);
+	if( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC, "z", &nurb) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
 	if(Z_TYPE_P(nurb) == IS_RESOURCE)
 	{
 		glunurb = zend_list_find(Z_RESVAL_P(nurb),&type);
