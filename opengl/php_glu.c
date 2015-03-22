@@ -295,19 +295,18 @@ PHP_FUNCTION(gludeletequadric)
 /* {{{ void gluquadricnormals(resource quad, long normals) */
 PHP_FUNCTION(gluquadricnormals)
 {
-	zval *quad,*normals;
+	zval *quad;
+	long normals;
 	GLUquadric *gluquad;
 	int type;
 
-	TWO_PARAM(quad,normals);
-	if(Z_TYPE_P(quad) == IS_RESOURCE)
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &quad, &normals) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	gluquad = zend_list_find(Z_RESVAL_P(quad),&type);
+	if(gluquad != NULL && type == le_quad)
 	{
-		convert_to_long(normals);
-		gluquad = zend_list_find(Z_RESVAL_P(quad),&type);
-		if(gluquad != NULL && type == le_quad)
-		{
-			gluQuadricNormals(gluquad,Z_LVAL_P(normals));
-		}
+		gluQuadricNormals(gluquad,normals);
 	}
 }
 /* }}} */
@@ -316,19 +315,18 @@ PHP_FUNCTION(gluquadricnormals)
 /* {{{ void gluquadrictexture(resource quad, boolean textcords) */
 PHP_FUNCTION(gluquadrictexture)
 {
-	zval *quad,*textcords;
+	zval *quad;
+	zend_bool textrecords;
 	GLUquadric *gluquad;
 	int type;
 
-	TWO_PARAM(quad,textcords);
-	if(Z_TYPE_P(quad) == IS_RESOURCE)
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rb", &quad, &textrecords) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	gluquad = zend_list_find(Z_RESVAL_P(quad),&type);
+	if(gluquad != NULL && type == le_quad)
 	{
-		convert_to_boolean(textcords);
-		gluquad = zend_list_find(Z_RESVAL_P(quad),&type);
-		if(gluquad != NULL && type == le_quad)
-		{
-			gluQuadricTexture(gluquad,Z_BVAL_P(textcords));
-		}
+		gluQuadricTexture(gluquad,textrecords);
 	}
 }
 /* }}} */
@@ -337,19 +335,18 @@ PHP_FUNCTION(gluquadrictexture)
 /* {{{ void gluquadricorientation(resource quad, long orientation) */
 PHP_FUNCTION(gluquadricorientation)
 {
-	zval *quad,*orientation;
+	zval *quad;
+	long orientation;
 	GLUquadric *gluquad;
 	int type;
 
-	TWO_PARAM(quad,orientation);
-	if(Z_TYPE_P(quad) == IS_RESOURCE)
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &quad, &orientation) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	gluquad = zend_list_find(Z_RESVAL_P(quad),&type);
+	if(gluquad != NULL && type == le_quad)
 	{
-		convert_to_long(orientation);
-		gluquad = zend_list_find(Z_RESVAL_P(quad),&type);
-		if(gluquad != NULL && type == le_quad)
-		{
-			gluQuadricOrientation(gluquad,Z_LVAL_P(orientation));
-		}
+		gluQuadricOrientation(gluquad,orientation);
 	}
 }
 /* }}} */
@@ -358,19 +355,18 @@ PHP_FUNCTION(gluquadricorientation)
 /* {{{ void gluquadricdrawstyle(resource quad, long drawStyle) */
 PHP_FUNCTION(gluquadricdrawstyle)
 {
-	zval *quad,*drawStyle;
+	zval *quad;
+	long drawStyle;
 	GLUquadric *gluquad;
 	int type;
 
-	TWO_PARAM(quad,drawStyle);
-	if(Z_TYPE_P(quad) == IS_RESOURCE)
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &quad, &drawStyle) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	gluquad = zend_list_find(Z_RESVAL_P(quad),&type);
+	if(gluquad != NULL && type == le_quad)
 	{
-		convert_to_long(drawStyle);
-		gluquad = zend_list_find(Z_RESVAL_P(quad),&type);
-		if(gluquad != NULL && type == le_quad)
-		{
-			gluQuadricDrawStyle(gluquad,Z_LVAL_P(drawStyle));
-		}
+		gluQuadricDrawStyle(gluquad,drawStyle);
 	}
 }
 /* }}} */
@@ -511,14 +507,13 @@ PHP_FUNCTION(glutessbeginpolygon)
 	GLUtesselator *glutess;
 	int type;
 
-	TWO_PARAM(tess,data);
-	if(Z_TYPE_P(tess) == IS_RESOURCE)
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rz", &tess, &data) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glutess = zend_list_find(Z_RESVAL_P(tess),&type);
+	if(glutess != NULL && type == le_tess)
 	{
-		glutess = zend_list_find(Z_RESVAL_P(tess),&type);
-		if(glutess != NULL && type == le_tess)
-		{
-			gluTessBeginPolygon(glutess,NULL);
-		}
+		gluTessBeginPolygon(glutess,NULL);
 	}
 }
 /* }}} */

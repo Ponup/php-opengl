@@ -2,7 +2,7 @@
   +----------------------------------------------------------------------+
   | PHP Version 5                                                        |
   +----------------------------------------------------------------------+
-  | Copyright (c) 1997-2012 The PHP Group                                |
+  | Copyright (c) 1997-2015 The PHP Group                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -13,7 +13,7 @@
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
   | Author: Brad Lafountain                                              |
-  | Author: Santiago Lizardo <http://www.santiagolizardo.com>            |
+  | Author: Santiago Lizardo <santiagolizardo@php.net>            |
   +----------------------------------------------------------------------+
 */
 
@@ -68,10 +68,6 @@ void *php_array_to_c_array(zval *param,int type,int size,int *array_size);
 
 int gl_pixel_size(GLenum format);
 int gl_type_size(GLenum type);
-
-#define TWO_PARAM(p,p1) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zz", &p, &p1) == FAILURE) \
-		WRONG_PARAM_COUNT; 
 
 #define THREE_PARAM(p,p1,p2) \
 	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzz", &p, &p1, &p2) == FAILURE) \

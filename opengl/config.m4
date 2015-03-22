@@ -1,5 +1,7 @@
 dnl config.m4 for extension opengl
 
+CFLAGS="$CFLAGS -pedantic -Wall"
+
 PHP_ARG_WITH(opengl, for opengl support,
 [  --with-opengl=DIR       Include OpenGL support])
 

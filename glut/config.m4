@@ -1,5 +1,7 @@
 dnl config.m4 for extension glut
 
+CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors"
+
 PHP_ARG_WITH(glut, for glut support,
 [  --with-glut=DIR         Include GLUT support])
 

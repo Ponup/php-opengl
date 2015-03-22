@@ -30,7 +30,6 @@
 static HashTable *call_backs;
 
 static HashTable *menu_entry_callbacks;
-static unsigned long unique_menu_entry_id = 0;
 
 /* Callback functions (TODO: Make an static array with all possible callbacks) */
 
@@ -45,6 +44,10 @@ zend_fcall_info_cache reshape_fci_cache;
 /* */
 zend_fcall_info keyboard_fci;
 zend_fcall_info_cache keyboard_fci_cache;
+
+zend_fcall_info keyboardup_fci;
+zend_fcall_info_cache keyboardup_fci_cache;
+
 
 zend_fcall_info createmenu_fci;
 zend_fcall_info_cache createmenu_fci_cache;
@@ -93,6 +96,7 @@ const zend_function_entry glut_functions[] = {
 	PHP_FE(glutsetwindowtitle,NULL)
 	PHP_FE(glutseticontitle,NULL)
 	PHP_FE(glutsetcursor,NULL)
+	PHP_FE(glutwarppointer,NULL)
 	PHP_FE(glutestablishoverlay,NULL)
 	PHP_FE(glutuselayer,NULL)
 	PHP_FE(glutremoveoverlay,NULL)
@@ -111,8 +115,10 @@ const zend_function_entry glut_functions[] = {
 	PHP_FE(glutoverlaydisplayfunc,NULL)
 	PHP_FE(glutreshapefunc,NULL)
 	PHP_FE(glutkeyboardfunc,NULL)
+	PHP_FE(glutkeyboardupfunc,NULL)
 	PHP_FE(glutmousefunc,NULL)
 	PHP_FE(glutmotionfunc,NULL)
+	PHP_FE(glutignorekeyrepeat,NULL)
 	PHP_FE(glutpassivemotionfunc,NULL)
 	PHP_FE(glutvisibilityfunc,NULL)
 	PHP_FE(glutentryfunc,NULL)
@@ -302,6 +308,8 @@ PHP_MINIT_FUNCTION(glut)
 	REGISTER_LONG_CONSTANT("GLUT_NORMAL_DAMAGED", GLUT_NORMAL_DAMAGED , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_OVERLAY_DAMAGED", GLUT_OVERLAY_DAMAGED , CONST_CS | CONST_PERSISTENT);
 	/*Glut Device Constants */
+	REGISTER_LONG_CONSTANT("GLUT_DOWN", GLUT_DOWN, CONST_CS | CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("GLUT_UP", GLUT_UP, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_HAS_KEYBOARD", GLUT_HAS_KEYBOARD , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_HAS_MOUSE", GLUT_HAS_MOUSE , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_HAS_SPACEBALL", GLUT_HAS_SPACEBALL , CONST_CS | CONST_PERSISTENT);
@@ -329,7 +337,7 @@ PHP_MINIT_FUNCTION(glut)
 	REGISTER_LONG_CONSTANT("GLUT_STROKE_MONO_ROMAN", (long)GLUT_STROKE_MONO_ROMAN , CONST_CS | CONST_PERSISTENT);
 		
 	call_backs = (HashTable*)emalloc(sizeof(HashTable));
-//	zend_hash_init(call_backs, 0, NULL, ZVAL_PTR_DTOR, 0);
+/*	zend_hash_init(call_backs, 0, NULL, ZVAL_PTR_DTOR, 0); */
 	
 	ALLOC_HASHTABLE( menu_entry_callbacks  );
 	zend_hash_init(menu_entry_callbacks, 0, NULL, ZVAL_PTR_DTOR, 0);
@@ -354,7 +362,7 @@ PHP_FUNCTION(glutinit)
 		WRONG_PARAM_COUNT;
 	}
 	argv = php_array_to_string_array(argv_arg);
-	glutInit(&argc, argv);
+	glutInit((int *)&argc, argv);
 }
 /* }}} */
 
@@ -421,14 +429,12 @@ PHP_FUNCTION(glutcreatewindow)
 /* {{{ void glutcreatesubwindow(long win, long x, long y, long width, long height) */
 PHP_FUNCTION(glutcreatesubwindow)
 {
-	zval *win,*x,*y,*width,*height;
-	FIVE_PARAM(win,x,y,width,height);
-	convert_to_long(win);
-	convert_to_long(x);
-	convert_to_long(y);
-	convert_to_long(width);
-	convert_to_long(height);
-	glutCreateSubWindow(Z_LVAL_P(win),Z_LVAL_P(x),Z_LVAL_P(y),Z_LVAL_P(width),Z_LVAL_P(height));
+	long win, x, y, width, height;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lllll", &win , &x, &y, &width, &height ) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutCreateSubWindow((win),(x),(y),(width),(height));
 }
 /* }}} */
 
@@ -489,11 +495,11 @@ PHP_FUNCTION(glutswapbuffers)
 /* {{{ void glutpositionwindow(long x, long y) */
 PHP_FUNCTION(glutpositionwindow)
 {
-	zval *x,*y;
-	TWO_PARAM(x,y);
-	convert_to_long(x);
-	convert_to_long(y);
-	glutPositionWindow(Z_LVAL_P(x),Z_LVAL_P(y));
+	long x, y;
+	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &x, &y) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glutPositionWindow(x,y);
 }
 /* }}} */
 
@@ -501,11 +507,11 @@ PHP_FUNCTION(glutpositionwindow)
 /* {{{ void glutreshapewindow(long width, long height) */
 PHP_FUNCTION(glutreshapewindow)
 {
-	zval *width,*height;
-	TWO_PARAM(width,height);
-	convert_to_long(width);
-	convert_to_long(height);
-	glutPositionWindow(Z_LVAL_P(width),Z_LVAL_P(height));
+	long width, height;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &width, &height) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glutPositionWindow(width,height);
 }
 /* }}} */
 
@@ -682,7 +688,7 @@ PHP_FUNCTION(gluthideoverlay)
 
 void menu_callback(int selection)
 {
-	zval *z_menu_entry, **z_menu_id, **z_menu_parameter, *z_menu_function, *params[1];
+	zval *z_menu_entry, **z_menu_id, **z_menu_parameter, *z_menu_function = NULL, *params[1];
 	zval retval;
 	TSRMLS_FETCH();
 
@@ -717,7 +723,7 @@ void glutcreatemenu_callback(int value)
 	zval *retval = NULL;
 
 	params = (zval***)safe_emalloc(1, sizeof(zval**), 0);
-	params[0] = (zval *)emalloc(sizeof(zval*));
+	params[0] = (zval **)emalloc(sizeof(zval*));
 
 	MAKE_STD_ZVAL(*params[0]);
 	ZVAL_LONG(*params[0], value);
@@ -782,6 +788,19 @@ PHP_FUNCTION(glutdestroymenu)
 }
 /* }}} */
 
+/* {{{ void glutIgnoreKeyRepeat(long menu) */
+PHP_FUNCTION(glutignorekeyrepeat)
+{
+	long menu;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &menu) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutIgnoreKeyRepeat(menu);
+}
+/* }}} */
+
+
 
 /* {{{ bool glutaddmenuentry(string name, long value) */
 PHP_FUNCTION(glutaddmenuentry)
@@ -811,6 +830,19 @@ PHP_FUNCTION(glutaddsubmenu)
 	glutAddSubMenu(name,value);
 }
 /* }}} */
+
+/* {{{ void glutaddsubmenu(string name, long value) */
+PHP_FUNCTION(glutwarppointer)
+{
+	long x, y;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &x, &y) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glutWarpPointer(x,y);
+}
+/* }}} */
+
+
 
 
 /* {{{ void glutchangetomenuentry(long entry, string name, long value) */
@@ -898,7 +930,7 @@ PHP_FUNCTION(glutdisplayfunc)
 		WRONG_PARAM_COUNT;
 	}
 
-	glutDisplayFunc((void*)glutdisplayfunction_callback);
+	glutDisplayFunc(glutdisplayfunction_callback);
 	RETURN_TRUE;
 }
 /* }}} */
@@ -918,7 +950,7 @@ PHP_FUNCTION(glutoverlaydisplayfunc)
 	}
 
 	HASH_CALLBACK(callback, 1, GLUT_OVERLAY_DISPLAY_CALLBACK);
-	glutOverlayDisplayFunc((void*)glutoverlaydisplayfunc_callback);
+	glutOverlayDisplayFunc(glutoverlaydisplayfunc_callback);
 	RETURN_TRUE;
 }
 /* }}} */
@@ -931,11 +963,11 @@ void glutreshapefunc_callback(int width,int height)
 
 	params = (zval***)safe_emalloc(2, sizeof(zval**), 0);
 
-	params[0] = (zval *)emalloc(sizeof(zval*));
+	params[0] = (zval **)emalloc(sizeof(zval*));
 	MAKE_STD_ZVAL(*params[0]);
 	ZVAL_LONG(*params[0], width);
 	
-	params[1] = (zval *)emalloc(sizeof(zval*));
+	params[1] = (zval **)emalloc(sizeof(zval*));
 	MAKE_STD_ZVAL(*params[1]);
 	ZVAL_LONG(*params[1], height);
 
@@ -969,18 +1001,19 @@ void glutkeyboardfunc_callback(unsigned char key,int x,int y)
 	char *str;
 
 	params = (zval***)safe_emalloc(3, sizeof(zval**), 0);
-	params[0] = (zval *)emalloc(sizeof(zval*));
-	params[1] = (zval *)emalloc(sizeof(zval*));
-	params[2] = (zval *)emalloc(sizeof(zval*));
+	params[0] = (zval **)emalloc(sizeof(zval*));
+	params[1] = (zval **)emalloc(sizeof(zval*));
+	params[2] = (zval **)emalloc(sizeof(zval*));
 	str = (char *)emalloc(sizeof(char)*2);
 	sprintf(str,"%c",key);
 
 	MAKE_STD_ZVAL(*params[0]);
-	MAKE_STD_ZVAL(*params[1]);
-	MAKE_STD_ZVAL(*params[2]);
-
 	ZVAL_STRING(*params[0], str, 1);
+	
+	MAKE_STD_ZVAL(*params[1]);
 	ZVAL_LONG(*params[1], x);
+	
+	MAKE_STD_ZVAL(*params[2]);
 	ZVAL_LONG(*params[2], y);
 
 	keyboard_fci.param_count = 3;
@@ -1005,16 +1038,61 @@ PHP_FUNCTION(glutkeyboardfunc)
 }
 /* }}} */
 
+void glutkeyboardupfunc_callback(unsigned char key,int x,int y)
+{
+	zval ***params;
+	zval *retval = NULL;
+	char *str;
+
+	params = (zval***)safe_emalloc(3, sizeof(zval**), 0);
+	params[0] = (zval **)emalloc(sizeof(zval*));
+	params[1] = (zval **)emalloc(sizeof(zval*));
+	params[2] = (zval **)emalloc(sizeof(zval*));
+	str = (char *)emalloc(sizeof(char)*2);
+	sprintf(str,"%c",key);
+
+	MAKE_STD_ZVAL(*params[0]);
+	MAKE_STD_ZVAL(*params[1]);
+	MAKE_STD_ZVAL(*params[2]);
+
+	ZVAL_STRING(*params[0], str, 1);
+	ZVAL_LONG(*params[1], x);
+	ZVAL_LONG(*params[2], y);
+
+	keyboardup_fci.param_count = 3;
+	keyboardup_fci.params = params;
+	keyboardup_fci.retval_ptr_ptr = &retval;
+
+	if (zend_call_function(&keyboardup_fci, &keyboardup_fci_cache TSRMLS_CC) != SUCCESS) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
+	}
+}
+
+
+/* {{{ bool glutkeyboardfunc(mixed callback) */
+PHP_FUNCTION(glutkeyboardupfunc)
+{
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f", &keyboardup_fci, &keyboardup_fci_cache) == FAILURE)
+	{
+		WRONG_PARAM_COUNT;
+	}
+
+	glutKeyboardUpFunc(glutkeyboardupfunc_callback);
+	RETURN_TRUE;
+}
+/* }}} */
+
+
 void glutmousefunc_callback(int button, int state, int x, int y)
 {
 	zval ***params;
 	zval *retval = NULL;
 
 	params = (zval***)safe_emalloc(4, sizeof(zval**), 0);
-	params[0] = (zval *)emalloc(sizeof(zval*));
-	params[1] = (zval *)emalloc(sizeof(zval*));
-	params[2] = (zval *)emalloc(sizeof(zval*));
-	params[3] = (zval *)emalloc(sizeof(zval*));
+	params[0] = (zval **)emalloc(sizeof(zval*));
+	params[1] = (zval **)emalloc(sizeof(zval*));
+	params[2] = (zval **)emalloc(sizeof(zval*));
+	params[3] = (zval **)emalloc(sizeof(zval*));
 
 	MAKE_STD_ZVAL(*params[0]);
 	MAKE_STD_ZVAL(*params[1]);
@@ -1056,8 +1134,8 @@ void glutmotionfunc_callback(int x,int y)
 	zval *retval = NULL;
 
 	params = (zval***)safe_emalloc(3, sizeof(zval**), 0);
-	params[0] = (zval *)emalloc(sizeof(zval*));
-	params[1] = (zval *)emalloc(sizeof(zval*));
+	params[0] = (zval **)emalloc(sizeof(zval*));
+	params[1] = (zval **)emalloc(sizeof(zval*));
 
 	MAKE_STD_ZVAL(*params[0]);
 	ZVAL_LONG(*params[0], x);
@@ -1118,7 +1196,7 @@ void glutvisibilityfunc_callback(int state)
 	zval *retval = NULL;
 
 	params = (zval***)safe_emalloc(1, sizeof(zval**), 0);
-	params[0] = (zval *)emalloc(sizeof(zval*));
+	params[0] = (zval **)emalloc(sizeof(zval*));
 
 	MAKE_STD_ZVAL(*params[0]);
 	ZVAL_LONG(*params[0], state);
@@ -1176,18 +1254,19 @@ void glutspecialfunc_callback(int key,int x,int y)
 	char *str;
 
 	params = (zval***)safe_emalloc(3, sizeof(zval**), 0);
-	params[0] = (zval *)emalloc(sizeof(zval*));
-	params[1] = (zval *)emalloc(sizeof(zval*));
-	params[2] = (zval *)emalloc(sizeof(zval*));
+	params[0] = (zval **)emalloc(sizeof(zval*));
+	params[1] = (zval **)emalloc(sizeof(zval*));
+	params[2] = (zval **)emalloc(sizeof(zval*));
 	str = (char *)emalloc(sizeof(char)*2);
 	sprintf(str,"%c",key);
 
 	MAKE_STD_ZVAL(*params[0]);
-	MAKE_STD_ZVAL(*params[1]);
-	MAKE_STD_ZVAL(*params[2]);
-
 	ZVAL_LONG(*params[0],key);
+
+	MAKE_STD_ZVAL(*params[1]);
 	ZVAL_LONG(*params[1],x);
+	
+	MAKE_STD_ZVAL(*params[2]);
 	ZVAL_LONG(*params[2],y);
 
 	special_fci.param_count = 3;
@@ -1467,7 +1546,7 @@ PHP_FUNCTION(glutidlefunc)
 		WRONG_PARAM_COUNT;
 	}
 
-	glutIdleFunc((void*)glutidlefunc_callback);
+	glutIdleFunc(glutidlefunc_callback);
 	RETURN_TRUE;
 }
 /* }}} */
@@ -1511,12 +1590,12 @@ PHP_FUNCTION(glutsetcolor)
 /* {{{ double glutgetcolor(long cell, long component) */
 PHP_FUNCTION(glutgetcolor)
 {
-	zval *cell,*component;
+	long cell, component;
 	GLfloat color;
-	TWO_PARAM(cell,component);
-	convert_to_long(cell);
-	convert_to_long(component);
-	color = glutGetColor(Z_LVAL_P(cell),Z_LVAL_P(component));
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &cell, &component) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	color = glutGetColor(cell,component);
 	RETURN_DOUBLE(color);
 }
 /* }}} */
@@ -1605,11 +1684,13 @@ PHP_FUNCTION(glutextensionsupported)
 /* {{{ void glutbitmapcharacter(long font, string chr) */
 PHP_FUNCTION(glutbitmapcharacter)
 {
-	zval *font,*chr;
-	TWO_PARAM(font,chr);
-	convert_to_long(font);
-	convert_to_string(chr);
-	glutBitmapCharacter((void*)Z_LVAL_P(font),Z_STRVAL_P(chr)[0]);
+	long font;
+	char *chr = NULL;
+	int chr_len;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &font, &chr, &chr_len) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+	glutBitmapCharacter((void*)font,chr[0]);
 }
 /* }}} */
 
@@ -1618,11 +1699,13 @@ PHP_FUNCTION(glutbitmapcharacter)
 PHP_FUNCTION(glutbitmapwidth)
 {
 	int width;
-	zval *font,*chr;
-	TWO_PARAM(font,chr);
-	convert_to_long(font);
-	convert_to_string(chr);
-	width = glutBitmapWidth((void*)Z_LVAL_P(font),Z_STRVAL_P(chr)[0]);
+	long font;
+	char *chr = NULL;
+	int chr_len;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &font, &chr, &chr_len) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	width = glutBitmapWidth((void*)font,chr[0]);
 	RETURN_LONG(width);
 }
 /* }}} */
@@ -1631,11 +1714,13 @@ PHP_FUNCTION(glutbitmapwidth)
 /* {{{ void glutstrokecharacter(long font, string chr) */
 PHP_FUNCTION(glutstrokecharacter)
 {
-	zval *font,*chr;
-	TWO_PARAM(font,chr);
-	convert_to_long(font);
-	convert_to_string(chr);
-	glutStrokeCharacter((void*)Z_LVAL_P(font),Z_STRVAL_P(chr)[0]);
+	long font;
+	char *chr = NULL;
+	int chr_len;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &font, &chr, &chr_len) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glutStrokeCharacter((void*)font,chr[0]);
 }
 /* }}} */
 
@@ -1644,11 +1729,13 @@ PHP_FUNCTION(glutstrokecharacter)
 PHP_FUNCTION(glutstrokewidth)
 {
 	int ret;
-	zval *font,*chr;
-	TWO_PARAM(font,chr);
-	convert_to_long(font);
-	convert_to_string(chr);
-	ret = glutStrokeWidth((void*)Z_LVAL_P(font),Z_STRVAL_P(chr)[0]);
+	long font;
+	char *chr = NULL;
+	int chr_len;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &font, &chr, &chr_len) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	ret = glutStrokeWidth((void*)font,chr[0]);
 	RETURN_LONG(ret);
 }
 /* }}} */
