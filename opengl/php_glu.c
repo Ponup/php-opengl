@@ -21,8 +21,14 @@
 #ifdef PHP_WIN32
 #include <windows.h>
 #endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+#include <gl.h>
+#include <glu.h>
+#else
 #include <GL/gl.h>
 #include <GL/glu.h>
+#endif
 
 #include "php.h"
 #include "php_glu.h"
@@ -895,32 +901,23 @@ PHP_FUNCTION(glunurbscurve)
 /* {{{ void glunurbssurface(resource nurb, long sknot_count, array sknot, long tknot_count, array tknot, long s_stride, long t_stride, array ctlarray, long sorder, long torder, long type) */
 PHP_FUNCTION(glunurbssurface)
 {
-	zval *nurb,*sknot_count,*sknot,*tknot_count,*tknot,*s_stride,*t_stride,*ctlarray,*sorder,*torder,*type;
+	zval *nurb, *sknot, *tknot, *ctlarray;
+	long sknot_count, tknot_count, s_stride, t_stride, sorder, torder, type; 
 	GLUnurbs *glunurb;
 	int ctype;
 	float *v_sknot,*v_ctlarray,*v_tknot;
 
-	ELEVEN_PARAM(nurb,sknot_count,sknot,tknot_count,tknot,s_stride,t_stride,ctlarray,sorder,torder,type);
-	if(Z_TYPE_P(nurb) == IS_RESOURCE)
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zlalallalll", &nurb, &sknot_count, &sknot, &tknot_count, &tknot, &s_stride, &t_stride, &ctlarray, &sorder, &torder, &type) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	v_sknot = php_array_to_float_array(sknot);
+	v_tknot = php_array_to_float_array(tknot);
+	v_ctlarray = php_array_to_float_array(ctlarray);
+	glunurb = zend_list_find(Z_RESVAL_P(nurb),&ctype);
+	if(glunurb != NULL && ctype == le_nurb)
 	{
-		convert_to_long(sknot_count);
-		convert_to_long(tknot_count);
-		convert_to_long(s_stride);
-		convert_to_long(t_stride);
-		convert_to_long(sorder);
-		convert_to_long(torder);
-		convert_to_long(type);
-		convert_to_array(sknot);
-		convert_to_array(ctlarray);
-		convert_to_array(tknot);
-		v_sknot = php_array_to_float_array(sknot);
-		v_tknot = php_array_to_float_array(tknot);
-		v_ctlarray = php_array_to_float_array(ctlarray);
-		glunurb = zend_list_find(Z_RESVAL_P(nurb),&ctype);
-		if(glunurb != NULL && ctype == le_nurb)
-		{
-			gluNurbsSurface(glunurb,Z_LVAL_P(sknot_count),v_sknot,Z_LVAL_P(tknot_count),v_tknot,Z_LVAL_P(s_stride),Z_LVAL_P(t_stride),v_ctlarray,Z_LVAL_P(sorder),Z_LVAL_P(torder),Z_LVAL_P(type));
-		}
+		gluNurbsSurface(glunurb,(sknot_count),v_sknot,(tknot_count),v_tknot,(s_stride),(t_stride),v_ctlarray,(sorder),(torder),(type));
 	}
 }
 /* }}} */

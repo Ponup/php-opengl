@@ -66,15 +66,3 @@ void *php_array_to_c_array(zval *param,int type,int size,int *array_size);
 #define php_array_to_short_array(z) (short *)php_array_to_c_array(z,TO_C_SHORT,sizeof(short),NULL)
 #define php_array_to_uint_array(z) (unsigned int *)php_array_to_c_array(z,TO_C_UINT,sizeof(unsigned int),NULL)
 
-int gl_pixel_size(GLenum format);
-int gl_type_size(GLenum type);
-
-#define THREE_PARAM(p,p1,p2) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzz", &p, &p1, &p2) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
-#define FOUR_PARAM(p,p1,p2,p4) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzz", &p, &p1, &p2, &p4) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
-

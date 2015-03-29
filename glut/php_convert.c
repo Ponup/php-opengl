@@ -20,8 +20,14 @@
 #ifdef PHP_WIN32
 #include <windows.h>
 #endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+#include <gl.h>
+#include <glu.h>
+#else
 #include <GL/gl.h>
 #include <GL/glu.h>
+#endif
 
 #include "php.h"
 #include "php_convert.h"
@@ -157,71 +163,4 @@ void *php_array_to_c_array(zval *param,int type,int size,int *array_size)
 	return (void *)params;
 }
 
-int gl_pixel_size(GLenum format)
-{
-	switch(format)
-	{
-	case GL_COLOR_INDEX:
-	case GL_RED:
-	case GL_GREEN:
-	case GL_BLUE:
-	case GL_ALPHA:
-	case GL_STENCIL_INDEX:
-	case GL_DEPTH_COMPONENT:
-	case GL_LUMINANCE:
-		return 1;
-
-	case GL_LUMINANCE_ALPHA:
-		return 2;
-
-	case GL_RGB:
-#ifdef GL_BGR_EXT
-	case GL_BGR_EXT:
-#endif
-		return 3;
-
-	case GL_RGBA:
-#ifdef GL_BGRA_EXT
-	case GL_BGRA_EXT:
-#endif
-#ifdef GL_ABGR_EXT
-	case GL_ABGR_EXT:
-#endif
-		return 4;
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-                return format;
-	default:
-		return -1;
-	}
-}
-
-int gl_type_size(GLenum type)
-{
-	switch(type)
-	{
-	case GL_BYTE:
-	case GL_UNSIGNED_BYTE:
-		return sizeof(GLbyte);
-
-	case GL_SHORT:
-	case GL_UNSIGNED_SHORT:
-		return sizeof(GLshort);
-
-	case GL_INT:
-	case GL_UNSIGNED_INT:
-		return sizeof(GLint);
-	
-	case GL_FLOAT:
-		return sizeof(GLfloat);
-
-	case GL_BITMAP:
-		return sizeof(GLbitfield);
-	
-	default:
-		return 1;
-	}
-}
 */

@@ -48,7 +48,6 @@ zend_fcall_info_cache keyboard_fci_cache;
 zend_fcall_info keyboardup_fci;
 zend_fcall_info_cache keyboardup_fci_cache;
 
-
 zend_fcall_info createmenu_fci;
 zend_fcall_info_cache createmenu_fci_cache;
 
@@ -72,97 +71,96 @@ zend_fcall_info mouse_fci;
 zend_fcall_info_cache mouse_fci_cache;
 
 const zend_function_entry glut_functions[] = {
-	PHP_FE(glutinit,NULL)
-	PHP_FE(glutinitwindowsize,NULL)
-	PHP_FE(glutinitwindowposition,NULL)
-	PHP_FE(glutinitdisplaymode,NULL)
-	PHP_FE(glutmainloop,NULL)
-	PHP_FE(glutcreatewindow,NULL)
-	PHP_FE(glutcreatesubwindow,NULL)
-	PHP_FE(glutsetwindow,NULL)
-	PHP_FE(glutgetwindow,NULL)
-	PHP_FE(glutdisplayfunc,NULL)
-	PHP_FE(glutdestroywindow,NULL)
-	PHP_FE(glutpostredisplay,NULL)
-	PHP_FE(glutswapbuffers,NULL)
-	PHP_FE(glutpositionwindow,NULL)
-	PHP_FE(glutreshapewindow,NULL)
-	PHP_FE(glutfullscreen,NULL)
-	PHP_FE(glutpopwindow,NULL)
-	PHP_FE(glutpushwindow,NULL)
-	PHP_FE(glutshowwindow,NULL)
-	PHP_FE(gluthidewindow,NULL)
-	PHP_FE(gluticonifywindow,NULL)
-	PHP_FE(glutsetwindowtitle,NULL)
-	PHP_FE(glutseticontitle,NULL)
-	PHP_FE(glutsetcursor,NULL)
-	PHP_FE(glutwarppointer,NULL)
-	PHP_FE(glutestablishoverlay,NULL)
-	PHP_FE(glutuselayer,NULL)
-	PHP_FE(glutremoveoverlay,NULL)
-	PHP_FE(glutpostoverlayredisplay,NULL)
-	PHP_FE(glutcreatemenu,NULL)
-	PHP_FE(glutaddmenuentry,NULL)
-	PHP_FE(glutsetmenu,NULL)
-	PHP_FE(glutgetmenu,NULL)
-	PHP_FE(glutdestroymenu,NULL)
-	PHP_FE(glutaddsubmenu,NULL)
-	PHP_FE(glutchangetomenuentry,NULL)
-	PHP_FE(glutchangetosubmenu,NULL)
-	PHP_FE(glutremovemenuitem,NULL)
-	PHP_FE(glutattachmenu,NULL)
-	PHP_FE(glutdetachmenu,NULL)
-	PHP_FE(glutoverlaydisplayfunc,NULL)
-	PHP_FE(glutreshapefunc,NULL)
-	PHP_FE(glutkeyboardfunc,NULL)
-	PHP_FE(glutkeyboardupfunc,NULL)
-	PHP_FE(glutmousefunc,NULL)
-	PHP_FE(glutmotionfunc,NULL)
-	PHP_FE(glutignorekeyrepeat,NULL)
-	PHP_FE(glutpassivemotionfunc,NULL)
-	PHP_FE(glutvisibilityfunc,NULL)
-	PHP_FE(glutentryfunc,NULL)
-	PHP_FE(glutspecialfunc,NULL)
-	PHP_FE(glutspaceballmotionfunc,NULL)
-	PHP_FE(glutspaceballrotatefunc,NULL)
-	PHP_FE(glutspaceballbuttonfunc,NULL)
-	PHP_FE(glutbuttonboxfunc,NULL)
-	PHP_FE(glutdialsfunc,NULL)
-	PHP_FE(gluttabletmotionfunc,NULL)
-	PHP_FE(gluttabletbuttonfunc,NULL)
-	PHP_FE(glutidlefunc,NULL)
-	PHP_FE(glutsetcolor,NULL)
-	PHP_FE(glutgetcolor,NULL)
-	PHP_FE(glutcopycolormap,NULL)
-	PHP_FE(glutget,NULL)
-	PHP_FE(glutlayerget,NULL)
-	PHP_FE(glutdeviceget,NULL)
-	PHP_FE(glutgetmodifiers,NULL)
-	PHP_FE(glutextensionsupported,NULL)
-	PHP_FE(glutbitmapcharacter,NULL)
-	PHP_FE(glutbitmapwidth,NULL)
-	PHP_FE(glutstrokecharacter,NULL)
-	PHP_FE(glutstrokewidth,NULL)
-	PHP_FE(glutsolidsphere,NULL)
-	PHP_FE(glutwiresphere,NULL)
-	PHP_FE(glutsolidcube,NULL)
-	PHP_FE(glutwirecube,NULL)
-	PHP_FE(glutsolidcone,NULL)
-	PHP_FE(glutwirecone,NULL)
-	PHP_FE(glutsolidtorus,NULL)
-	PHP_FE(glutwiretorus,NULL)
-	PHP_FE(glutsoliddodecahedron,NULL)
-	PHP_FE(glutwiredodecahedron,NULL)
-	PHP_FE(glutsolidoctahedron,NULL)
-	PHP_FE(glutwireoctahedron,NULL)
-	PHP_FE(glutsolidtetrahedron,NULL)
-	PHP_FE(glutwiretetrahedron,NULL)
-	PHP_FE(glutsolidicosahedron,NULL)
-	PHP_FE(glutwireicosahedron,NULL)
-	PHP_FE(glutsolidteapot,NULL)
-	PHP_FE(glutwireteapot,NULL)
-
-	{NULL, NULL, NULL}
+	ZEND_FE(glutinit,NULL)
+	ZEND_FE(glutinitwindowsize,NULL)
+	ZEND_FE(glutinitwindowposition,NULL)
+	ZEND_FE(glutinitdisplaymode,NULL)
+	ZEND_FE(glutmainloop,NULL)
+	ZEND_FE(glutcreatewindow,NULL)
+	ZEND_FE(glutcreatesubwindow,NULL)
+	ZEND_FE(glutsetwindow,NULL)
+	ZEND_FE(glutgetwindow,NULL)
+	ZEND_FE(glutdisplayfunc,NULL)
+	ZEND_FE(glutdestroywindow,NULL)
+	ZEND_FE(glutpostredisplay,NULL)
+	ZEND_FE(glutswapbuffers,NULL)
+	ZEND_FE(glutpositionwindow,NULL)
+	ZEND_FE(glutreshapewindow,NULL)
+	ZEND_FE(glutfullscreen,NULL)
+	ZEND_FE(glutpopwindow,NULL)
+	ZEND_FE(glutpushwindow,NULL)
+	ZEND_FE(glutshowwindow,NULL)
+	ZEND_FE(gluthidewindow,NULL)
+	ZEND_FE(gluticonifywindow,NULL)
+	ZEND_FE(glutsetwindowtitle,NULL)
+	ZEND_FE(glutseticontitle,NULL)
+	ZEND_FE(glutsetcursor,NULL)
+	ZEND_FE(glutwarppointer,NULL)
+	ZEND_FE(glutestablishoverlay,NULL)
+	ZEND_FE(glutuselayer,NULL)
+	ZEND_FE(glutremoveoverlay,NULL)
+	ZEND_FE(glutpostoverlayredisplay,NULL)
+	ZEND_FE(glutcreatemenu,NULL)
+	ZEND_FE(glutaddmenuentry,NULL)
+	ZEND_FE(glutsetmenu,NULL)
+	ZEND_FE(glutgetmenu,NULL)
+	ZEND_FE(glutdestroymenu,NULL)
+	ZEND_FE(glutaddsubmenu,NULL)
+	ZEND_FE(glutchangetomenuentry,NULL)
+	ZEND_FE(glutchangetosubmenu,NULL)
+	ZEND_FE(glutremovemenuitem,NULL)
+	ZEND_FE(glutattachmenu,NULL)
+	ZEND_FE(glutdetachmenu,NULL)
+	ZEND_FE(glutoverlaydisplayfunc,NULL)
+	ZEND_FE(glutreshapefunc,NULL)
+	ZEND_FE(glutkeyboardfunc,NULL)
+	ZEND_FE(glutkeyboardupfunc,NULL)
+	ZEND_FE(glutmousefunc,NULL)
+	ZEND_FE(glutmotionfunc,NULL)
+	ZEND_FE(glutignorekeyrepeat,NULL)
+	ZEND_FE(glutpassivemotionfunc,NULL)
+	ZEND_FE(glutvisibilityfunc,NULL)
+	ZEND_FE(glutentryfunc,NULL)
+	ZEND_FE(glutspecialfunc,NULL)
+	ZEND_FE(glutspaceballmotionfunc,NULL)
+	ZEND_FE(glutspaceballrotatefunc,NULL)
+	ZEND_FE(glutspaceballbuttonfunc,NULL)
+	ZEND_FE(glutbuttonboxfunc,NULL)
+	ZEND_FE(glutdialsfunc,NULL)
+	ZEND_FE(gluttabletmotionfunc,NULL)
+	ZEND_FE(gluttabletbuttonfunc,NULL)
+	ZEND_FE(glutidlefunc,NULL)
+	ZEND_FE(glutsetcolor,NULL)
+	ZEND_FE(glutgetcolor,NULL)
+	ZEND_FE(glutcopycolormap,NULL)
+	ZEND_FE(glutget,NULL)
+	ZEND_FE(glutlayerget,NULL)
+	ZEND_FE(glutdeviceget,NULL)
+	ZEND_FE(glutgetmodifiers,NULL)
+	ZEND_FE(glutextensionsupported,NULL)
+	ZEND_FE(glutbitmapcharacter,NULL)
+	ZEND_FE(glutbitmapwidth,NULL)
+	ZEND_FE(glutstrokecharacter,NULL)
+	ZEND_FE(glutstrokewidth,NULL)
+	ZEND_FE(glutsolidsphere,NULL)
+	ZEND_FE(glutwiresphere,NULL)
+	ZEND_FE(glutsolidcube,NULL)
+	ZEND_FE(glutwirecube,NULL)
+	ZEND_FE(glutsolidcone,NULL)
+	ZEND_FE(glutwirecone,NULL)
+	ZEND_FE(glutsolidtorus,NULL)
+	ZEND_FE(glutwiretorus,NULL)
+	ZEND_FE(glutsoliddodecahedron,NULL)
+	ZEND_FE(glutwiredodecahedron,NULL)
+	ZEND_FE(glutsolidoctahedron,NULL)
+	ZEND_FE(glutwireoctahedron,NULL)
+	ZEND_FE(glutsolidtetrahedron,NULL)
+	ZEND_FE(glutwiretetrahedron,NULL)
+	ZEND_FE(glutsolidicosahedron,NULL)
+	ZEND_FE(glutwireicosahedron,NULL)
+	ZEND_FE(glutsolidteapot,NULL)
+	ZEND_FE(glutwireteapot,NULL)
+	ZEND_FE_END
 };
 
 
@@ -848,12 +846,14 @@ PHP_FUNCTION(glutwarppointer)
 /* {{{ void glutchangetomenuentry(long entry, string name, long value) */
 PHP_FUNCTION(glutchangetomenuentry)
 {
-	zval *entry,*name,*value;
-	THREE_PARAM(entry,name,value);
-	convert_to_long(entry);
-	convert_to_string(name);
-	convert_to_long(value);
-	glutChangeToMenuEntry(Z_LVAL_P(entry),Z_STRVAL_P(name),Z_LVAL_P(value));
+	long entry, value;
+	char *name;
+	int name_len;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lsl", &entry, &name, &name_len, &value) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutChangeToMenuEntry((entry),(name),(value));
 }
 /* }}} */
 
@@ -861,12 +861,14 @@ PHP_FUNCTION(glutchangetomenuentry)
 /* {{{ void glutchangetosubmenu(long entry, string name, long value) */
 PHP_FUNCTION(glutchangetosubmenu)
 {
-	zval *entry,*name,*value;
-	THREE_PARAM(entry,name,value);
-	convert_to_long(entry);
-	convert_to_string(name);
-	convert_to_long(value);
-	glutChangeToSubMenu(Z_LVAL_P(entry),Z_STRVAL_P(name),Z_LVAL_P(value));
+	long entry, value;
+	char *name;
+	int name_len;	
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lsl", &entry, &name, &name_len, &value) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutChangeToSubMenu((entry),(name),(value));
 }
 /* }}} */
 
@@ -1563,12 +1565,14 @@ void gluttimerfunc_callback(int value)
 /* {{{ void gluttimerfunc(long seconds, mixed callback, long value) */
 PHP_FUNCTION(gluttimerfunc)
 {
-	zval *callback,*seconds,*value;
-	THREE_PARAM(seconds,callback,value);
+	zval *callback;
+	long seconds, value;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lzl", &seconds, &callback, &value) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
 	HASH_CALLBACK(callback, 2, GLUT_VISIBILITY_CALLBACK);
-	convert_to_long(seconds);
-	convert_to_long(value);
-	glutTimerFunc(Z_LVAL_P(seconds),gluttimerfunc_callback,Z_LVAL_P(value));
+	glutTimerFunc((seconds),gluttimerfunc_callback,(value));
 }
 /* }}} */
 
@@ -1576,13 +1580,11 @@ PHP_FUNCTION(gluttimerfunc)
 /* {{{ void glutsetcolor(long cell, double red, double green, double blue) */
 PHP_FUNCTION(glutsetcolor)
 {
-	zval *cell,*red,*green,*blue;
-	FOUR_PARAM(cell,red,green,blue);
-	convert_to_long(cell);
-	convert_to_double(red);
-	convert_to_double(green);
-	convert_to_double(blue);
-	glutSetColor(Z_LVAL_P(cell),Z_DVAL_P(red),Z_DVAL_P(green),Z_DVAL_P(blue));
+	long cell, red, green, blue;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llll", &cell, &red, &green, &blue) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+	glutSetColor(cell,(red),(green),(blue));
 }
 /* }}} */
 
@@ -1744,12 +1746,13 @@ PHP_FUNCTION(glutstrokewidth)
 /* {{{ void glutsolidsphere(double radius, long slices, long stacks) */
 PHP_FUNCTION(glutsolidsphere)
 {
-	zval *radius,*slices,*stacks;
-	THREE_PARAM(radius,slices,stacks);
-	convert_to_double(radius);
-	convert_to_long(slices);
-	convert_to_long(stacks);
-	glutSolidSphere(Z_DVAL_P(radius),Z_LVAL_P(slices),Z_LVAL_P(stacks));
+	double radius;
+	long slices, stacks;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "dll", &radius, &slices, &stacks) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutSolidSphere((radius),(slices),(stacks));
 }
 /* }}} */
 
@@ -1757,12 +1760,13 @@ PHP_FUNCTION(glutsolidsphere)
 /* {{{ void glutwiresphere(double radius, long slices, long stacks) */
 PHP_FUNCTION(glutwiresphere)
 {
-	zval *radius,*slices,*stacks;
-	THREE_PARAM(radius,slices,stacks);
-	convert_to_double(radius);
-	convert_to_long(slices);
-	convert_to_long(stacks);
-	glutWireSphere(Z_DVAL_P(radius),Z_LVAL_P(slices),Z_LVAL_P(stacks));
+	double radius;
+	long slices, stacks;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "dll", &radius, &slices, &stacks) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutWireSphere((radius),(slices),(stacks));
 }
 /* }}} */
 
@@ -1796,13 +1800,13 @@ PHP_FUNCTION(glutwirecube)
 /* {{{ void glutsolidcone(double base, doable height, long slices, long stacks) */
 PHP_FUNCTION(glutsolidcone)
 {
-	zval *base,*height,*slices,*stacks;
-	FOUR_PARAM(base,height,slices,stacks);
-	convert_to_double(base);
-	convert_to_double(height);
-	convert_to_long(slices);
-	convert_to_long(stacks);
-	glutSolidCone(Z_DVAL_P(base),Z_DVAL_P(height),Z_LVAL_P(slices),Z_LVAL_P(stacks));
+	double base, height;
+	long slices, stacks;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddll", &base , &height, &slices, &stacks) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutSolidCone((base),(height),(slices),(stacks));
 }
 /* }}} */
 
@@ -1810,13 +1814,13 @@ PHP_FUNCTION(glutsolidcone)
 /* {{{ void glutwirecone(double base, double height, long slices, long stacks) */
 PHP_FUNCTION(glutwirecone)
 {
-	zval *base,*height,*slices,*stacks;
-	FOUR_PARAM(base,height,slices,stacks);
-	convert_to_double(base);
-	convert_to_double(height);
-	convert_to_long(slices);
-	convert_to_long(stacks);
-	glutWireCone(Z_DVAL_P(base),Z_DVAL_P(height),Z_LVAL_P(slices),Z_LVAL_P(stacks));
+	double base, height;
+	long slices, stacks;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddll", &base, &height, &slices, &stacks) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutWireCone((base),(height),(slices),(stacks));
 }
 /* }}} */
 
@@ -1824,13 +1828,13 @@ PHP_FUNCTION(glutwirecone)
 /* {{{ void glutsolidtorus(double innerRadius, double outerRadius, long nsides, long rings) */
 PHP_FUNCTION(glutsolidtorus)
 {
-	zval *innerRadius,*outerRadius,*nsides,*rings;
-	FOUR_PARAM(innerRadius,outerRadius,nsides,rings);
-	convert_to_double(innerRadius);
-	convert_to_double(outerRadius);
-	convert_to_long(nsides);
-	convert_to_long(rings);
-	glutSolidTorus(Z_DVAL_P(innerRadius),Z_DVAL_P(outerRadius),Z_LVAL_P(nsides),Z_LVAL_P(rings));
+	double innerRadius, outerRadius;
+	long nsides, rings;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddll", &innerRadius, &outerRadius, &nsides, &rings) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutSolidTorus((innerRadius),(outerRadius),(nsides),(rings));
 }
 /* }}} */
 
@@ -1838,13 +1842,13 @@ PHP_FUNCTION(glutsolidtorus)
 /* {{{ void glutwiretorus(double innerRadius, double outerRadius, long nsides, long rings) */
 PHP_FUNCTION(glutwiretorus)
 {
-	zval *innerRadius,*outerRadius,*nsides,*rings;
-	FOUR_PARAM(innerRadius,outerRadius,nsides,rings);
-	convert_to_double(innerRadius);
-	convert_to_double(outerRadius);
-	convert_to_long(nsides);
-	convert_to_long(rings);
-	glutWireTorus(Z_DVAL_P(innerRadius),Z_DVAL_P(outerRadius),Z_LVAL_P(nsides),Z_LVAL_P(rings));
+	double innerRadius, outerRadius;
+	long nsides, rings;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddll", &innerRadius, &outerRadius, &nsides, &rings) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	glutWireTorus((innerRadius),(outerRadius),(nsides),(rings));
 }
 /* }}} */
 
@@ -1961,4 +1965,3 @@ PHP_FUNCTION(glutwireteapot)
 	glutWireTeapot(size);
 }
 /* }}} */
-

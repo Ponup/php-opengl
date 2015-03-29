@@ -11,11 +11,16 @@ if test "$PHP_OPENGL" != "no"; then
     OPENGL_DIR=$PHP_OPENGL
   else
     AC_MSG_CHECKING(for OpenGL development files in default path)
-    for i in /usr/X11R6 /usr/local /usr; do
-      if test -r $i/include/GL/gl.h; then
+    for i in /usr/X11R6 /usr/local /usr /System/Library/Frameworks/OpenGL.framework/Headers; do
+      if test -r $i/include/GL/gl.h ; then
         OPENGL_DIR=$i
         AC_MSG_RESULT(found in $i)
       fi
+      if test -r $i/gl.h ; then
+        OPENGL_DIR=$i
+        AC_MSG_RESULT(found in $i)
+      fi
+
     done
   fi
 
@@ -32,13 +37,13 @@ if test "$PHP_OPENGL" != "no"; then
       AC_MSG_RESULT(checking with additional library $additional_libs)
     fi
     AC_MSG_CHECKING(if  OpenGL links properly)
-    LIBS="$saved_LIBS -L$OPENGL_DIR/lib -lGL $additional_libs"
+    LIBS="$saved_LIBS -lGL $additional_libs"
     AC_TRY_LINK( ,[char glBegin(); glBegin(); ], have_GL=yes, have_GL=no)
     AC_MSG_RESULT($have_GL)
 
     if test "$have_GL" = "no"; then
       AC_MSG_CHECKING(if  MesaGL links properly)
-      LIBS="$saved_LIBS -L$OPENGL_DIR/lib -lMesaGL $additional_libs"
+      LIBS="$saved_LIBS -lMesaGL $additional_libs"
       AC_TRY_LINK( ,[char glBegin(); glBegin(); ], have_MesaGL=yes, have_MesaGL=no)
       AC_MSG_RESULT($have_MesaGL)
   
@@ -74,12 +79,13 @@ if test "$PHP_OPENGL" != "no"; then
       break
     fi
   done
-  if test "$failed" = "yes"; then
+  if test "$failed" = "yeso"; then
     AC_MSG_ERROR(Can't find OpenGL nor MesaGL)
   fi
   unset additional_libs
 
   PHP_ADD_INCLUDE($OPENGL_DIR/include)
+  PHP_ADD_INCLUDE(/System/Library/Frameworks/OpenGL.framework/Headers)
 
   PHP_SUBST(OPENGL_SHARED_LIBADD)
   PHP_NEW_EXTENSION(opengl, php_convert.c php_glu.c php_opengl.c, $ext_shared)
