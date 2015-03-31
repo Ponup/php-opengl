@@ -28,7 +28,7 @@
 #define PHP_OSX defined(__APPLE__) && defined(__MACH__)
 
 #if PHP_OSX 
-#include <gl.h>
+#include <gl3.h>
 #include <glu.h>
 #include <glext.h>
 #else
@@ -438,7 +438,7 @@ zend_module_entry opengl_module_entry = {
 #if ZEND_MODULE_API_NO > 20010901
   STANDARD_MODULE_HEADER,
 #endif
-  "OpenGl functions", 
+  "OpenGL", 
   opengl_functions, 
   PHP_MINIT(opengl), 
   NULL,
@@ -457,7 +457,9 @@ ZEND_GET_MODULE(opengl)
 
 PHP_MINFO_FUNCTION(opengl)
 {
-	php_printf("OpenGL support enabled");
+        php_info_print_table_start();
+        php_info_print_table_header(2, "OpenGL support", "enabled");
+        php_info_print_table_end();
 }
 
 /* {{{ void glaccum(long op, double value) */

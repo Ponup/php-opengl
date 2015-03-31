@@ -1,7 +1,8 @@
 
-LTLIBRARY_NAME        = libglut.la
-LTLIBRARY_SOURCES     = php_glut.c php_convert.c
+LTLIBRARY_NAME = libglut.la
+LTLIBRARY_SOURCES = php_glut.c
 LTLIBRARY_SHARED_NAME = glut.la
-LTLIBRARY_SHARED_LIBADD  = $(GLUT_SHARED_LIBADD)
+LTLIBRARY_SHARED_LIBADD = $(GLUT_SHARED_LIBADD)
 
 include $(top_srcdir)/build/dynlib.mk
+

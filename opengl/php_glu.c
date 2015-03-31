@@ -234,16 +234,15 @@ PHP_FUNCTION(glulookat)
 /* {{{ long glubuild1dmipmaps(long target, long components, long width, long format, long type, string data) */
 PHP_FUNCTION(glubuild1dmipmaps)
 {
-	zval *target,*components,*width,*format,*type,*data;
+	long target, components, width, format, type;
+	char *data;
+	int data_len;
 	int ret;
-	SIX_PARAM(target,components,width,format,type,data);
-	convert_to_long(target);
-	convert_to_long(components);
-	convert_to_long(width);
-	convert_to_long(format);
-	convert_to_long(type);
-	convert_to_string(data);
-	ret = gluBuild1DMipmaps(Z_LVAL_P(target),Z_LVAL_P(components),Z_LVAL_P(width),Z_LVAL_P(format),Z_LVAL_P(type),Z_STRVAL_P(data));
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llllls", &target, &components, &width, &format, &type, &data, &data_len) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	ret = gluBuild1DMipmaps((target),(components),(width),(format),(type),(data));
 	RETURN_LONG(ret);
 }
 /* }}} */
@@ -381,23 +380,20 @@ PHP_FUNCTION(gluquadricdrawstyle)
 /* {{{ void glucylinder(resource quad, double baseRadius, double topRadius, double height, long slices, long stacks) */
 PHP_FUNCTION(glucylinder)
 {
-	zval *quad,*baseRadius,*topRadius,*height,*slices,*stacks;
+	zval *quad;
+	double baseRadius, topRadius, height;
+	long slices, stacks;
 	GLUquadric *gluquad;
 	int type;
 
-	SIX_PARAM(quad,baseRadius,topRadius,height,slices,stacks);
-	if(Z_TYPE_P(quad) == IS_RESOURCE)
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zdddll", &quad, &baseRadius, &topRadius, &height, &slices, &stacks) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	gluquad = zend_list_find(Z_RESVAL_P(quad),&type);
+	if(gluquad != NULL && type == le_quad)
 	{
-		convert_to_double(baseRadius);
-		convert_to_double(topRadius);
-		convert_to_double(height);
-		convert_to_long(slices);
-		convert_to_long(stacks);
-		gluquad = zend_list_find(Z_RESVAL_P(quad),&type);
-		if(gluquad != NULL && type == le_quad)
-		{
-			gluCylinder(gluquad,Z_DVAL_P(baseRadius),Z_DVAL_P(topRadius),Z_DVAL_P(height),Z_LVAL_P(slices),Z_LVAL_P(stacks));
-		}
+		gluCylinder(gluquad,(baseRadius),(topRadius),(height),(slices),(stacks));
 	}
 }
 /* }}} */

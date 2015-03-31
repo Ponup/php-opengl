@@ -21,11 +21,81 @@
 #include "config.h"
 #endif
 
-#include <GL/glut.h>
+#define QUOTE(s) #s
+#define STRINGIFY(s) QUOTE(s)
 
 #include "php.h"
 #include "php_glut.h"
-#include "php_convert.h"
+
+#ifdef PHP_WIN32
+#include <windows.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+#include <gl.h>
+#include <glu.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
+#include <ext/standard/info.h>
+
+#include <GL/glut.h>
+
+void call_user_callback(HashTable *call_backs,int call_type,int num_params,zval **params)
+{
+	zval retval;
+	zval *function_name;
+	if(zend_hash_index_find(call_backs,call_type,(void **)&function_name) == SUCCESS)
+	{
+		TSRMLS_FETCH();
+		if(call_user_function(CG(function_table), NULL, function_name, &retval, num_params, params TSRMLS_CC) != SUCCESS)
+		{
+			zend_error(E_ERROR, "Function call failed");
+		}
+	}
+}
+
+void *php_array_to_c_array(zval *param,int type,int size,int *array_size)
+{
+	HashTable *param_ht = param->value.ht;
+	zval **cur;
+	void *params;
+	int i,tmp_size = zend_hash_num_elements(param_ht);
+
+	zend_hash_internal_pointer_reset(param_ht);
+	params = (void *)emalloc(size * tmp_size);
+
+	i = 0;
+	while(zend_hash_get_current_data(param_ht,(void **)&cur) == SUCCESS)
+	{
+		if((*cur)->type == IS_ARRAY)
+		{
+			int new_array_size;
+			void *array = php_array_to_c_array(*cur,type,size,&new_array_size);
+			params = erealloc(params, (tmp_size + new_array_size) * size);
+			memcpy(&((char*)params)[i*size],array,new_array_size * size);
+			i += (new_array_size - 1);
+			efree(array);
+		}
+		else
+		{
+			switch(type)
+			{
+			case TO_C_STRING:
+				convert_to_string(*cur);
+				((char **)params)[i] = estrdup(Z_STRVAL_P(*cur));
+			}
+		}
+		zend_hash_move_forward(param_ht);
+		i++;
+	}
+	if(array_size != NULL)
+		*array_size = i;
+	return (void *)params;
+}
+
 
 static HashTable *call_backs;
 
@@ -163,12 +233,11 @@ const zend_function_entry glut_functions[] = {
 	ZEND_FE_END
 };
 
-
 zend_module_entry glut_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
   STANDARD_MODULE_HEADER,
 #endif
-  "Glut functions", 
+  "GLUT", 
   glut_functions, 
   PHP_MINIT(glut), 
   NULL,
@@ -345,7 +414,10 @@ PHP_MINIT_FUNCTION(glut)
 
 PHP_MINFO_FUNCTION(glut)
 {
-	php_printf("Glut support enabled");
+        php_info_print_table_start();
+        php_info_print_table_header(2, "GLUT support", "enabled");
+        php_info_print_table_row(2, "GLUT API version", STRINGIFY(GLUT_API_VERSION));
+        php_info_print_table_end();
 }
 
 /* Glut Init Functions */
@@ -1965,3 +2037,4 @@ PHP_FUNCTION(glutwireteapot)
 	glutWireTeapot(size);
 }
 /* }}} */
+

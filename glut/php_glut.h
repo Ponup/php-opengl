@@ -22,6 +22,13 @@
 
 #define PHP_GLUT_VERSION "0.9.0"
 
+#define TO_C_STRING 10
+
+void call_user_callback(HashTable *callbacks,int call_type,int num_params,zval *params[]);
+
+void *php_array_to_c_array(zval *param,int type,int size,int *array_size);
+#define php_array_to_string_array(z) (char **)php_array_to_c_array(z,TO_C_STRING,sizeof(char *),NULL)
+
 extern zend_module_entry glut_module_entry;
 #define glut_module_ptr &glut_module_entry
 #define phpext_glut_ptr glut_module_ptr
