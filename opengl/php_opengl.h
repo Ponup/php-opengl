@@ -22,6 +22,8 @@
 
 #define PHP_OPENGL_VERSION "0.9.0"
 
+#include <ext/standard/info.h>
+
 extern zend_module_entry opengl_module_entry;
 #define opengl_module_ptr &opengl_module_entry
 #define phpext_opengl_ptr opengl_module_ptr

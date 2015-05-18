@@ -101,10 +101,6 @@ int gl_type_size(GLenum type);
 	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzzzzzzz", &p, &p1, &p2, &p4, &p5, &p6, &p7, &p8, &p9, &p10) == FAILURE) \
 		WRONG_PARAM_COUNT; 
 
-#define ELEVEN_PARAM(p,p1,p2,p4,p5,p6,p7,p8,p9,p10,p11) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzzzzzzzz", &p, &p1, &p2, &p4, &p5, &p6, &p7, &p8, &p9, &p10, &p11) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
 #define IS_CALLBACK(callback, param_num) \
 	{ \
 		char *callback_name; \

@@ -11,12 +11,17 @@ if test "$PHP_GLUT" != "no"; then
     GLUT_DIR=$PHP_GLUT
   else
     AC_MSG_CHECKING(for GLUT development files in default path)
-    for i in /usr/local /usr; do
+    for i in /usr/local /usr /System/Library/Frameworks/OpenGL.framework/Headers; do
       if test -r $i/include/GL/glut.h; then
         GLUT_DIR=$i
         AC_MSG_RESULT(found in $i)
       fi
+      if test -r $i/glut.h ; then
+        GLUT_DIR=$i
+        AC_MSG_RESULT(found in $i)
+      fi
     done
+
   fi
 
   if test -z "$GLUT_DIR"; then
@@ -31,7 +36,7 @@ if test "$PHP_GLUT" != "no"; then
     if test ! -z "$additional_libs"; then
       AC_MSG_CHECKING(checking with additional library $additional_libs)
     fi
-    LIBS="$saved_LIBS -L$GLUT_DIR/lib -lglut $additional_libs"
+    LIBS="$saved_LIBS -lglut $additional_libs"
     AC_TRY_LINK( ,[glutMainLoop();], have_glut=yes, have_glut=no)
     AC_MSG_RESULT($have_glut)
     LIBS="$saved_LIBS"
@@ -50,6 +55,7 @@ if test "$PHP_GLUT" != "no"; then
   fi
   unset additional_libs
 
+  PHP_ADD_INCLUDE(/System/Library/Frameworks/OpenGL.framework/Headers)
   PHP_ADD_INCLUDE($GLUT_DIR/include)
 
   PHP_SUBST(GLUT_SHARED_LIBADD)
