@@ -16,5 +16,6 @@ before_script:
   - echo "extension=opengl.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
 script:
+  - cd opengl
   - php run-tests.php -n -d extension_dir=$MODULES -d extension=opengl.so -q -x --show-diff
 
