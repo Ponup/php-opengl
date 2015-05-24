@@ -3,7 +3,6 @@ language: php
 php:
   - 5.6
   - 5.5
-  - 5.4
 
 env:
   - REPORT_EXIT_STATUS=1
@@ -16,6 +15,5 @@ before_script:
   - echo "extension=opengl.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
 script:
-  - cd opengl
-  - php run-tests.php -n -d extension_dir=$MODULES -d extension=opengl.so -q -x --show-diff
+  - TEST_PHP_EXECUTABLE=$(which php) make test
 
