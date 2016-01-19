@@ -37,7 +37,8 @@ void call_user_callback(HashTable *call_backs,int call_type,int num_params,zval 
 {
 	zval retval;
 	zval *function_name;
-	if(zend_hash_index_find(call_backs,call_type,(void **)&function_name) == SUCCESS)
+	function_name = zend_hash_index_find(call_backs,call_type);
+	if(function_name)
 	{
 		TSRMLS_FETCH();
 		if(call_user_function(CG(function_table), NULL, function_name, &retval, num_params, params TSRMLS_CC) != SUCCESS)
@@ -85,14 +86,14 @@ void c_array_to_php_array(void *c_array,int num,zval *php_array,int type)
 			ZVAL_LONG(val,(unsigned short)((unsigned short*)c_array)[i]);
 			break;
 		}
-		zend_hash_next_index_insert(ht,&val,sizeof(zval*),NULL);
+		zend_hash_next_index_insert(ht,&val);
 	}
 }
 
 void *php_array_to_c_array(zval *param,int type,int size,int *array_size)
 {
-	HashTable *param_ht = param->value.ht;
-	zval **cur;
+	zend_array *param_ht = param->value.arr;
+	zval **cur = NULL;
 	void *params;
 	int i,tmp_size = zend_hash_num_elements(param_ht);
 
@@ -100,9 +101,9 @@ void *php_array_to_c_array(zval *param,int type,int size,int *array_size)
 	params = (void *)emalloc(size * tmp_size);
 
 	i = 0;
-	while(zend_hash_get_current_data(param_ht,(void **)&cur) == SUCCESS)
+	while((cur = zend_hash_get_current_data(param_ht))!=NULL)
 	{
-		if((*cur)->type == IS_ARRAY)
+		if(Z_TYPE_P(cur) == IS_ARRAY)
 		{
 			int new_array_size;
 			void *array = php_array_to_c_array(*cur,type,size,&new_array_size);

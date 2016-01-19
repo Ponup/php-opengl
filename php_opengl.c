@@ -39,6 +39,7 @@
 #include "php.h"
 #include "php_opengl.h"
 #include "php_glu.h"
+#include "php_glut.h"
 #include "php_convert.h"
 
 extern int le_nurb;
@@ -393,7 +394,7 @@ const zend_function_entry opengl_functions[] = {
 	ZEND_FE(glupickatrix,NULL)
 	ZEND_FE(gluproject,NULL)
 	ZEND_FE(glunuproject,NULL)
-	ZEND_FE(gluscaleimage,NULL)
+	//ZEND_FE(gluscaleimage,NULL)
 	ZEND_FE(glulookat,NULL)
 	ZEND_FE(glubuild1dmipmaps,NULL)
 	ZEND_FE(glubuild2dmipmaps,NULL)
@@ -2088,7 +2089,7 @@ PHP_FUNCTION(glgetpolygonstipple)
 		WRONG_PARAM_COUNT;
 	}
 	glGetPolygonStipple(v_mask);
-	ZVAL_STRING(mask,v_mask,0);
+	ZVAL_STRING(mask,v_mask);
 }
 /* }}} */
 
@@ -2101,7 +2102,7 @@ PHP_FUNCTION(glgetstring)
 		WRONG_PARAM_COUNT;
 	}
 	ret = (GLubyte*)glGetString(name);
-	RETURN_STRING((char*)ret,1);
+	RETURN_STRING((char*)ret);
 }
 /* }}} */
 
@@ -5009,9 +5010,9 @@ PHP_FUNCTION(glviewport)
 
 PHP_MINIT_FUNCTION(opengl)
 {
-	le_quad = zend_register_list_destructors_ex(gluquadric_destructor, NULL, "GLUquadric", module_number);
-	le_nurb = zend_register_list_destructors_ex(glunurbs_destructor, NULL, "GLUnurbs", module_number);
-	le_tess = zend_register_list_destructors_ex(glutesselator_destructor, NULL, "GLUtesselator", module_number);
+	//le_quad = zend_register_list_destructors_ex(gluquadric_destructor, NULL, "GLUquadric", module_number);
+	//le_nurb = zend_register_list_destructors_ex(glunurbs_destructor, NULL, "GLUnurbs", module_number);
+	//le_tess = zend_register_list_destructors_ex(glutesselator_destructor, NULL, "GLUtesselator", module_number);
 
 	REGISTER_LONG_CONSTANT("GL_ACCUM", GL_ACCUM , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_LOAD", GL_LOAD , CONST_CS | CONST_PERSISTENT);
@@ -5619,6 +5620,8 @@ PHP_MINIT_FUNCTION(opengl)
 #endif
 	REGISTER_LONG_CONSTANT("GL_LOGIC_OP", GL_LOGIC_OP , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_TEXTURE_COMPONENTS", GL_TEXTURE_COMPONENTS , CONST_CS | CONST_PERSISTENT);
+
+	PHP_MINIT(glut)(INIT_FUNC_ARGS_PASSTHRU);
 
 	return SUCCESS;
 }

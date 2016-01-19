@@ -43,59 +43,7 @@
 
 #include <GL/glut.h>
 
-void call_user_callback(HashTable *call_backs,int call_type,int num_params,zval **params)
-{
-	zval retval;
-	zval *function_name;
-	if(zend_hash_index_find(call_backs,call_type,(void **)&function_name) == SUCCESS)
-	{
-		TSRMLS_FETCH();
-		if(call_user_function(CG(function_table), NULL, function_name, &retval, num_params, params TSRMLS_CC) != SUCCESS)
-		{
-			zend_error(E_ERROR, "Function call failed");
-		}
-	}
-}
-
-void *php_array_to_c_array(zval *param,int type,int size,int *array_size)
-{
-	HashTable *param_ht = param->value.ht;
-	zval **cur;
-	void *params;
-	int i,tmp_size = zend_hash_num_elements(param_ht);
-
-	zend_hash_internal_pointer_reset(param_ht);
-	params = (void *)emalloc(size * tmp_size);
-
-	i = 0;
-	while(zend_hash_get_current_data(param_ht,(void **)&cur) == SUCCESS)
-	{
-		if((*cur)->type == IS_ARRAY)
-		{
-			int new_array_size;
-			void *array = php_array_to_c_array(*cur,type,size,&new_array_size);
-			params = erealloc(params, (tmp_size + new_array_size) * size);
-			memcpy(&((char*)params)[i*size],array,new_array_size * size);
-			i += (new_array_size - 1);
-			efree(array);
-		}
-		else
-		{
-			switch(type)
-			{
-			case TO_C_STRING:
-				convert_to_string(*cur);
-				((char **)params)[i] = estrdup(Z_STRVAL_P(*cur));
-			}
-		}
-		zend_hash_move_forward(param_ht);
-		i++;
-	}
-	if(array_size != NULL)
-		*array_size = i;
-	return (void *)params;
-}
-
+#include "php_convert.h"
 
 static HashTable *call_backs;
 
@@ -231,23 +179,6 @@ const zend_function_entry glut_functions[] = {
 	ZEND_FE(glutsolidteapot,NULL)
 	ZEND_FE(glutwireteapot,NULL)
 	ZEND_FE_END
-};
-
-zend_module_entry glut_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
-  STANDARD_MODULE_HEADER,
-#endif
-  "GLUT", 
-  glut_functions, 
-  PHP_MINIT(glut), 
-  NULL,
-  NULL,
-  NULL,
-  PHP_MINFO(glut),
-#if ZEND_MODULE_API_NO >= 20010901
-  PHP_GLUT_VERSION,
-#endif
-  STANDARD_MODULE_PROPERTIES,
 };
 
 #ifdef COMPILE_DL_GLUT
@@ -409,7 +340,7 @@ PHP_MINIT_FUNCTION(glut)
 	ALLOC_HASHTABLE( menu_entry_callbacks  );
 	zend_hash_init(menu_entry_callbacks, 0, NULL, ZVAL_PTR_DTOR, 0);
 
-	return SUCCESS;
+	return (zend_register_functions(NULL, glut_functions, NULL, MODULE_PERSISTENT TSRMLS_CC));
 }
 
 PHP_MINFO_FUNCTION(glut)
@@ -485,12 +416,12 @@ PHP_FUNCTION(glutmainloop)
 /* {{{ long glutcreatewindow(string name) */
 PHP_FUNCTION(glutcreatewindow)
 {
-	char *name = NULL;
-	int name_len, win;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+	zend_string* name;
+	int win;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &name) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
-	win = glutCreateWindow(name);
+	win = glutCreateWindow(name->val);
 	RETURN_LONG(win);
 }
 /* }}} */
@@ -762,15 +693,15 @@ void menu_callback(int selection)
 	zval retval;
 	TSRMLS_FETCH();
 
-	if (zend_hash_index_find(menu_entry_callbacks, selection, (void **)&z_menu_entry) != SUCCESS) {
+	if (!(z_menu_entry = zend_hash_index_find(menu_entry_callbacks, selection))) {
 		php_error(E_WARNING, "unknown menu entry callback %d", selection);
 		return;
 	}
-	if (zend_hash_index_find(Z_ARRVAL_P(z_menu_entry), 0, (void **)&z_menu_id) != SUCCESS) {
+	if (!(z_menu_id = zend_hash_index_find(Z_ARRVAL_P(z_menu_entry), 0))) {
 		php_error(E_WARNING, "can't find menu_id");
 		return;
 	}
-	if (zend_hash_index_find(Z_ARRVAL_P(z_menu_entry), 1, (void **)&z_menu_parameter) != SUCCESS) {
+	if (!(z_menu_parameter = zend_hash_index_find(Z_ARRVAL_P(z_menu_entry), 1))) {
 		php_error(E_WARNING, "can't find menu_parameter");
 		return;
 	}
@@ -784,7 +715,7 @@ void menu_callback(int selection)
 #define HASH_CALLBACK(callback,param_num,hash_key) \
 	{ \
 		zval_add_ref(&callback); \
-		zend_hash_index_update(call_backs, hash_key, callback, sizeof(zval), NULL); \
+		zend_hash_index_update(call_backs, hash_key, callback); \
 	}
 
 void glutcreatemenu_callback(int value)
@@ -799,7 +730,7 @@ void glutcreatemenu_callback(int value)
 
 	createmenu_fci.param_count = 1;
 	createmenu_fci.params = params;
-	createmenu_fci.retval_ptr_ptr = &retval;
+	createmenu_fci.retval = &retval;
 
 	if (zend_call_function(&createmenu_fci, &createmenu_fci_cache TSRMLS_CC) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
@@ -988,7 +919,7 @@ void glutdisplayfunction_callback()
 
 	display_fci.param_count = 0;
 	display_fci.params = NULL;
-	display_fci.retval_ptr_ptr = &retval;
+	display_fci.retval = &retval;
 
 	if (zend_call_function(&display_fci, &display_fci_cache TSRMLS_CC) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
@@ -1046,7 +977,7 @@ void glutreshapefunc_callback(int width,int height)
 
 	reshape_fci.param_count = 2;
 	reshape_fci.params = params;
-	reshape_fci.retval_ptr_ptr = &retval;
+	reshape_fci.retval = &retval;
 
 	if (zend_call_function(&reshape_fci, &reshape_fci_cache TSRMLS_CC) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
@@ -1077,7 +1008,7 @@ void glutkeyboardfunc_callback(unsigned char key,int x,int y)
 	sprintf(str, "%c", key);
 
 	MAKE_STD_ZVAL(z_key);
-	ZVAL_STRING(z_key, str, 1);
+	ZVAL_STRING(z_key, str);
 	params[0] = &z_key;
 	
 	MAKE_STD_ZVAL(z_x);
@@ -1090,7 +1021,7 @@ void glutkeyboardfunc_callback(unsigned char key,int x,int y)
 
 	keyboard_fci.param_count = 3;
 	keyboard_fci.params = params;
-	keyboard_fci.retval_ptr_ptr = &retval;
+	keyboard_fci.retval = &retval;
 
 	if (zend_call_function(&keyboard_fci, &keyboard_fci_cache TSRMLS_CC) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
@@ -1133,13 +1064,13 @@ void glutkeyboardupfunc_callback(unsigned char key,int x,int y)
 	MAKE_STD_ZVAL(*params[1]);
 	MAKE_STD_ZVAL(*params[2]);
 
-	ZVAL_STRING(*params[0], str, 1);
+	ZVAL_STRING(*params[0], str);
 	ZVAL_LONG(*params[1], x);
 	ZVAL_LONG(*params[2], y);
 
 	keyboardup_fci.param_count = 3;
 	keyboardup_fci.params = params;
-	keyboardup_fci.retval_ptr_ptr = &retval;
+	keyboardup_fci.retval = &retval;
 
 	if (zend_call_function(&keyboardup_fci, &keyboardup_fci_cache TSRMLS_CC) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
@@ -1183,7 +1114,7 @@ void glutmousefunc_callback(int button, int state, int x, int y)
 
 	mouse_fci.param_count = 4;
 	mouse_fci.params = params;
-	mouse_fci.retval_ptr_ptr = &retval;
+	mouse_fci.retval = &retval;
 
 	if (zend_call_function(&mouse_fci, &mouse_fci_cache TSRMLS_CC) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
@@ -1221,7 +1152,7 @@ void glutmotionfunc_callback(int x,int y)
 
 	motion_fci.param_count = 2;
 	motion_fci.params = params;
-	motion_fci.retval_ptr_ptr = &retval;
+	motion_fci.retval = &retval;
 
 	if (zend_call_function(&motion_fci, &motion_fci_cache TSRMLS_CC) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
@@ -1278,7 +1209,7 @@ void glutvisibilityfunc_callback(int state)
 
 	visibility_fci.param_count = 1;
 	visibility_fci.params = params;
-	visibility_fci.retval_ptr_ptr = &retval;
+	visibility_fci.retval = &retval;
 
 	if (zend_call_function(&visibility_fci, &visibility_fci_cache TSRMLS_CC) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
@@ -1345,7 +1276,7 @@ void glutspecialfunc_callback(int key,int x,int y)
 
 	special_fci.param_count = 3;
 	special_fci.params = params;
-	special_fci.retval_ptr_ptr = &retval;
+	special_fci.retval = &retval;
 
 	if (zend_call_function(&special_fci, &special_fci_cache TSRMLS_CC) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
@@ -1605,7 +1536,7 @@ void glutidlefunc_callback()
 
 	idle_fci.param_count = 0;
 	idle_fci.params = NULL;
-	idle_fci.retval_ptr_ptr = &retval;
+	idle_fci.retval = &retval;
 
 	if (zend_call_function(&idle_fci, &idle_fci_cache TSRMLS_CC) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");

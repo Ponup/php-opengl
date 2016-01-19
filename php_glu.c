@@ -51,7 +51,7 @@ PHP_FUNCTION(gluerrorstring)
 		WRONG_PARAM_COUNT;
 	}
 	str = (GLubyte *)gluErrorString(errCode);
-	RETURN_STRING(str,1);
+	RETURN_STRING(str);
 }
 /* }}} */
 
@@ -81,7 +81,7 @@ PHP_FUNCTION(glugetstring)
 	}
 
 	str = (GLubyte *)gluGetString(errCode);
-	RETURN_STRING(str,1);
+	RETURN_STRING(str);
 }
 /* }}} */
 
@@ -179,35 +179,6 @@ PHP_FUNCTION(glunuproject)
 	v_viewport = php_array_to_int_array(viewport);
 	gluUnProject(Z_DVAL_P(objx),Z_DVAL_P(objy),Z_DVAL_P(objz),v_model,v_proj,v_viewport,&v_winx,&v_winy,&v_winz);
 	ZVAL_DOUBLE(winx,v_winx);ZVAL_DOUBLE(winy,v_winy);ZVAL_DOUBLE(winz,v_winz);
-}
-/* }}} */
-
-
-/* {{{ void gluscaleimage(long format, long widthin, long heightin, long typein, string datain, long widthout, long heightout, long typeout, string dataout) */
-PHP_FUNCTION(gluscaleimage)
-{
-	zval *format,*widthin,*heightin,*typein,*datain,*widthout,*heightout,*typeout,*dataout;
-	void *v_dataout;
-	int size;
-
-	NINE_PARAM(format,widthin,heightin,typein,datain,widthout,heightout,typeout,dataout);
-	convert_to_long(format);
-	convert_to_long(widthin);
-	convert_to_long(heightin);
-	convert_to_long(typein);
-	convert_to_long(widthout);
-	convert_to_long(heightout);
-	convert_to_long(typeout);
-	convert_to_string(dataout);
-	convert_to_string(datain);
-
-	size = Z_LVAL_P(widthout) * Z_LVAL_P(heightout) * gl_pixel_size(Z_LVAL_P(format)) * gl_type_size(Z_LVAL_P(typeout));
-	v_dataout = emalloc(size);
-
-	gluScaleImage(Z_LVAL_P(format),Z_LVAL_P(widthin),Z_LVAL_P(heightin),Z_LVAL_P(typein),Z_STRVAL_P(datain),Z_LVAL_P(widthout),Z_LVAL_P(heightout),Z_LVAL_P(typeout),v_dataout);
-
-	Z_STRVAL_P(dataout) = v_dataout;
-	Z_STRLEN_P(dataout) = size;
 }
 /* }}} */
 
@@ -993,6 +964,7 @@ PHP_FUNCTION(glugetnurbsproperty)
 /* }}} */
 
 
+/*
 void gluquadric_destructor(zend_rsrc_list_entry *quad TSRMLS_DC)
 {
 	gluDeleteQuadric(quad->ptr);
@@ -1007,3 +979,5 @@ void glutesselator_destructor(zend_rsrc_list_entry *tesselator TSRMLS_DC)
 {
 	gluDeleteTess(tesselator->ptr);
 }
+*/
+

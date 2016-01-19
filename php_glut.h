@@ -20,20 +20,28 @@
 #ifndef PHP_GLUT_H
 #define PHP_GLUT_H
 
-#define PHP_GLUT_VERSION "0.9.0"
-
-#define TO_C_STRING 10
-
-void call_user_callback(HashTable *callbacks,int call_type,int num_params,zval *params[]);
-
-void *php_array_to_c_array(zval *param,int type,int size,int *array_size);
-#define php_array_to_string_array(z) (char **)php_array_to_c_array(z,TO_C_STRING,sizeof(char *),NULL)
-
-extern zend_module_entry glut_module_entry;
-#define glut_module_ptr &glut_module_entry
-#define phpext_glut_ptr glut_module_ptr
-
-/* Functions */
+#define GLUT_MENU_CALLBACK 0
+#define GLUT_DISPLAY_CALLBACK 1
+#define GLUT_OVERLAY_DISPLAY_CALLBACK 2
+#define GLUT_KEYBOARD_CALLBACK 3
+#define GLUT_MOUSE_CALLBACK 4
+#define GLUT_MOTION_CALLBACK 5
+#define GLUT_PASSIVE_MOTION_CALLBACK 6
+#define GLUT_VISIBILITY_CALLBACK 7
+#define GLUT_ENTRY_CALLBACK 8
+#define GLUT_SPECIAL_CALLBACK 9
+#define GLUT_SPACEBALLMOTION_CALLBACK 10
+#define GLUT_SPACEBALLROTATE_CALLBACK 11
+#define GLUT_SPACEBALLBUTTON_CALLBACK 12
+#define GLUT_BUTTONBOX_CALLBACK 13
+#define GLUT_DIALS_CALLBACK 14
+#define GLUT_TABLETMOTION_CALLBACK 15
+#define GLUT_TABLETBUTTON_CALLBACK 16
+#define GLUT_MENUSTATUS_CALLBACK 17
+#define GLUT_MENUSTATE_CALLBACK 18
+#define GLUT_IDLE_CALLBACK 19
+#define GLUT_TIMER_CALLBACK 20
+#define GLUT_RESHAPE_CALLBACK 21
 
 PHP_MINIT_FUNCTION(glut);
 PHP_RINIT_FUNCTION(glut);
@@ -155,28 +163,5 @@ void glutmenustatusfunc_callback(int state,int x,int y);
 void glutmenustatefunc_callback(int state);
 void glutidlefunc_callback();
 void gluttimerfunc_callback(int value);
-
-#define GLUT_MENU_CALLBACK 0
-#define GLUT_DISPLAY_CALLBACK 1
-#define GLUT_OVERLAY_DISPLAY_CALLBACK 2
-#define GLUT_KEYBOARD_CALLBACK 3
-#define GLUT_MOUSE_CALLBACK 4
-#define GLUT_MOTION_CALLBACK 5
-#define GLUT_PASSIVE_MOTION_CALLBACK 6
-#define GLUT_VISIBILITY_CALLBACK 7
-#define GLUT_ENTRY_CALLBACK 8
-#define GLUT_SPECIAL_CALLBACK 9
-#define GLUT_SPACEBALLMOTION_CALLBACK 10
-#define GLUT_SPACEBALLROTATE_CALLBACK 11
-#define GLUT_SPACEBALLBUTTON_CALLBACK 12
-#define GLUT_BUTTONBOX_CALLBACK 13
-#define GLUT_DIALS_CALLBACK 14
-#define GLUT_TABLETMOTION_CALLBACK 15
-#define GLUT_TABLETBUTTON_CALLBACK 16
-#define GLUT_MENUSTATUS_CALLBACK 17
-#define GLUT_MENUSTATE_CALLBACK 18
-#define GLUT_IDLE_CALLBACK 19
-#define GLUT_TIMER_CALLBACK 20
-#define GLUT_RESHAPE_CALLBACK 21
 
 #endif

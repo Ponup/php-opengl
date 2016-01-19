@@ -26,7 +26,7 @@ PHP_FUNCTION(gluperspective);
 PHP_FUNCTION(glupickatrix);
 PHP_FUNCTION(gluproject);
 PHP_FUNCTION(glunuproject);
-PHP_FUNCTION(gluscaleimage);
+//PHP_FUNCTION(gluscaleimage);
 PHP_FUNCTION(glulookat);
 PHP_FUNCTION(glubuild1dmipmaps);
 PHP_FUNCTION(glubuild2dmipmaps);
@@ -65,8 +65,8 @@ PHP_FUNCTION(gluloadsamplingmatrices);
 PHP_FUNCTION(gluNurbsProperty);
 PHP_FUNCTION(glugetnurbsproperty);
 
-void gluquadric_destructor(zend_rsrc_list_entry *quad TSRMLS_DC);
-void glunurbs_destructor(zend_rsrc_list_entry *nurbs TSRMLS_DC);
-void glutesselator_destructor(zend_rsrc_list_entry *tesselator TSRMLS_DC);
+//void gluquadric_destructor(zend_rsrc_list_entry *quad TSRMLS_DC);
+//void glunurbs_destructor(zend_rsrc_list_entry *nurbs TSRMLS_DC);
+//void glutesselator_destructor(zend_rsrc_list_entry *tesselator TSRMLS_DC);
 
 
