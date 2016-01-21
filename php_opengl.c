@@ -4997,13 +4997,14 @@ PHP_FUNCTION(glvertexpointer)
 /* {{{ void glviewport(long x, long y, long width, long height) */
 PHP_FUNCTION(glviewport)
 {
-	long x, y, width, height;
+	zend_long x, y, width, height;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llll", &x, &y, &width, &height) == FAILURE)
 	{
 		WRONG_PARAM_COUNT;
 	}
-	glViewport((int)(x),(int)(y),(int)(width),(int)(height));
+
+	glViewport((int)x, (int)y, (int)width, (int)height);
 }
 /* }}} */
 

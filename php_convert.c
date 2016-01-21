@@ -50,7 +50,7 @@ void call_user_callback(HashTable *call_backs,int call_type,int num_params,zval 
 
 void c_array_to_php_array(void *c_array,int num,zval *php_array,int type)
 {
-	zval *val;
+	zval val;
 	HashTable *ht;
 	int i;
 
@@ -58,32 +58,31 @@ void c_array_to_php_array(void *c_array,int num,zval *php_array,int type)
 	ht = Z_ARRVAL_P(php_array);
 	for(i = 0;i < num;i++)
 	{
-		MAKE_STD_ZVAL(val);
 		switch(type)
 		{
 		case C_INT_TO_PHP_LONG:
-			ZVAL_LONG(val,(int)((int*)c_array)[i]);
+			ZVAL_LONG(&val,(int)((int*)c_array)[i]);
 			break;
 		case C_UINT_TO_PHP_LONG:
-			ZVAL_LONG(val,(unsigned int)((unsigned int*)c_array)[i]);
+			ZVAL_LONG(&val,(unsigned int)((unsigned int*)c_array)[i]);
 			break;
 		case C_LONG_TO_PHP_LONG:
-			ZVAL_LONG(val,((long*)c_array)[i]);
+			ZVAL_LONG(&val,((long*)c_array)[i]);
 			break;
 		case C_FLOAT_TO_PHP_DOUBLE:
-			ZVAL_DOUBLE(val,(float)((float*)c_array)[i]);
+			ZVAL_DOUBLE(&val,(float)((float*)c_array)[i]);
 			break;
 		case C_DOUBLE_TO_PHP_DOUBLE:
-			ZVAL_DOUBLE(val,(double)((double*)c_array)[i]);
+			ZVAL_DOUBLE(&val,(double)((double*)c_array)[i]);
 			break;
 		case C_BOOLEAN_TO_PHP_BOOLEAN:
-			ZVAL_BOOL(val,(unsigned char)((unsigned char*)c_array)[i]);
+			ZVAL_BOOL(&val,(unsigned char)((unsigned char*)c_array)[i]);
 			break;
 		case C_CHAR_TO_PHP_LONG:
-			ZVAL_LONG(val,(char)((char*)c_array)[i]);
+			ZVAL_LONG(&val,(char)((char*)c_array)[i]);
 			break;
 		case C_USHORT_TO_PHP_LONG:
-			ZVAL_LONG(val,(unsigned short)((unsigned short*)c_array)[i]);
+			ZVAL_LONG(&val,(unsigned short)((unsigned short*)c_array)[i]);
 			break;
 		}
 		zend_hash_next_index_insert(ht,&val);
@@ -93,7 +92,7 @@ void c_array_to_php_array(void *c_array,int num,zval *php_array,int type)
 void *php_array_to_c_array(zval *param,int type,int size,int *array_size)
 {
 	zend_array *param_ht = param->value.arr;
-	zval **cur = NULL;
+	zval *cur;
 	void *params;
 	int i,tmp_size = zend_hash_num_elements(param_ht);
 
@@ -106,7 +105,7 @@ void *php_array_to_c_array(zval *param,int type,int size,int *array_size)
 		if(Z_TYPE_P(cur) == IS_ARRAY)
 		{
 			int new_array_size;
-			void *array = php_array_to_c_array(*cur,type,size,&new_array_size);
+			void *array = php_array_to_c_array(cur,type,size,&new_array_size);
 			params = erealloc(params, (tmp_size + new_array_size) * size);
 			memcpy(&((char*)params)[i*size],array,new_array_size * size);
 			i += (new_array_size - 1);
@@ -117,44 +116,44 @@ void *php_array_to_c_array(zval *param,int type,int size,int *array_size)
 			switch(type)
 			{
 			case TO_C_FLOAT:
-				convert_to_double(*cur);
-				((float*)params)[i] = (float)Z_DVAL_P(*cur);
+				convert_to_double(cur);
+				((float*)params)[i] = (float)Z_DVAL_P(cur);
 				break;
 			case TO_C_DOUBLE:
-				convert_to_double(*cur);
-				((double*)params)[i] = Z_DVAL_P(*cur);
+				convert_to_double(cur);
+				((double*)params)[i] = Z_DVAL_P(cur);
 				break;
 			case TO_C_INT:
-				convert_to_long(*cur);
-				((int*)params)[i] = (int)Z_LVAL_P(*cur);
+				convert_to_long(cur);
+				((int*)params)[i] = (int)Z_LVAL_P(cur);
 				break;
 			case TO_C_LONG:
-				convert_to_long(*cur);
-				((long*)params)[i] = Z_LVAL_P(*cur);
+				convert_to_long(cur);
+				((long*)params)[i] = Z_LVAL_P(cur);
 				break;
 			case TO_C_UCHAR:
-				convert_to_long(*cur);
-				((unsigned char*)params)[i] = (unsigned char)Z_LVAL_P(*cur);
+				convert_to_long(cur);
+				((unsigned char*)params)[i] = (unsigned char)Z_LVAL_P(cur);
 				break;
 			case TO_C_SCHAR:
-				convert_to_long(*cur);
-				((signed char*)params)[i] = (signed char)Z_LVAL_P(*cur);
+				convert_to_long(cur);
+				((signed char*)params)[i] = (signed char)Z_LVAL_P(cur);
 				break;
 			case TO_C_USHORT:
-				convert_to_long(*cur);
-				((unsigned short*)params)[i] = (unsigned short)Z_LVAL_P(*cur);
+				convert_to_long(cur);
+				((unsigned short*)params)[i] = (unsigned short)Z_LVAL_P(cur);
 				break;
 			case TO_C_SHORT:
-				convert_to_long(*cur);
-				((short*)params)[i] = (short)Z_LVAL_P(*cur);
+				convert_to_long(cur);
+				((short*)params)[i] = (short)Z_LVAL_P(cur);
 				break;
 			case TO_C_UINT:
-				convert_to_long(*cur);
-				((unsigned int*)params)[i] = (unsigned int)Z_LVAL_P(*cur);
+				convert_to_long(cur);
+				((unsigned int*)params)[i] = (unsigned int)Z_LVAL_P(cur);
 				break;
 			case TO_C_STRING:
-				convert_to_string(*cur);
-				((char **)params)[i] = estrdup(Z_STRVAL_P(*cur));
+				convert_to_string(cur);
+				((char **)params)[i] = estrdup(Z_STRVAL_P(cur));
 			}
 		}
 		zend_hash_move_forward(param_ht);

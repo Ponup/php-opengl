@@ -689,7 +689,7 @@ PHP_FUNCTION(gluthideoverlay)
 
 void menu_callback(int selection)
 {
-	zval *z_menu_entry, **z_menu_id, **z_menu_parameter, *z_menu_function = NULL, *params[1];
+	zval *z_menu_entry, **z_menu_id, **z_menu_parameter, *z_menu_function = NULL, params[1];
 	zval retval;
 	TSRMLS_FETCH();
 
@@ -705,11 +705,9 @@ void menu_callback(int selection)
 		php_error(E_WARNING, "can't find menu_parameter");
 		return;
 	}
-	MAKE_STD_ZVAL(params[0]);
-	ZVAL_LONG(params[0], Z_LVAL_PP(z_menu_parameter));
+	ZVAL_LONG(&params[0], Z_LVAL_PP(z_menu_parameter));
 	if (call_user_function(CG(function_table), NULL, z_menu_function, &retval, 1, params TSRMLS_CC) != SUCCESS)
 		zend_error(E_ERROR, "Function call failed");
-	efree(params[0]);
 }
 
 #define HASH_CALLBACK(callback,param_num,hash_key) \
@@ -720,13 +718,10 @@ void menu_callback(int selection)
 
 void glutcreatemenu_callback(int value)
 {
-	zval **params[1];
-	zval *retval = NULL;
+	zval params[1];
+	zval retval;
 
-	params[0] = (zval **)emalloc(sizeof(zval*));
-
-	MAKE_STD_ZVAL(*params[0]);
-	ZVAL_LONG(*params[0], value);
+	ZVAL_LONG(&params[0], value);
 
 	createmenu_fci.param_count = 1;
 	createmenu_fci.params = params;
@@ -915,7 +910,7 @@ PHP_FUNCTION(glutdetachmenu)
 
 void glutdisplayfunction_callback()
 {
-	zval *retval = NULL;
+	zval retval;
 
 	display_fci.param_count = 0;
 	display_fci.params = NULL;
@@ -925,8 +920,6 @@ void glutdisplayfunction_callback()
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
 		return;
 	}
-
-	zval_ptr_dtor(&retval);
 }
 
 /* {{{ bool glutdisplayfunc(mixed callback) */
@@ -962,24 +955,19 @@ PHP_FUNCTION(glutoverlaydisplayfunc)
 /* }}} */
 
 
-void glutreshapefunc_callback(int width,int height)
+void glutreshapefunc_callback(int width, int height)
 {
-	zval **params[2];
-	zval *retval = NULL;
+	zval params[2];
+	zval retval;
 
-	params[0] = (zval **)emalloc(sizeof(zval*));
-	MAKE_STD_ZVAL(*params[0]);
-	ZVAL_LONG(*params[0], width);
-	
-	params[1] = (zval **)emalloc(sizeof(zval*));
-	MAKE_STD_ZVAL(*params[1]);
-	ZVAL_LONG(*params[1], height);
+	ZVAL_LONG(&params[0], width);
+	ZVAL_LONG(&params[1], height);
 
 	reshape_fci.param_count = 2;
 	reshape_fci.params = params;
 	reshape_fci.retval = &retval;
 
-	if (zend_call_function(&reshape_fci, &reshape_fci_cache TSRMLS_CC) != SUCCESS) {
+	if (zend_call_function(&reshape_fci, &reshape_fci_cache) != SUCCESS) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
 	}
 }
@@ -987,6 +975,7 @@ void glutreshapefunc_callback(int width,int height)
 /* {{{ bool glutreshapefunc(mixed callback) */
 PHP_FUNCTION(glutreshapefunc)
 {
+	reshape_fci.param_count = 2;
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f", &reshape_fci, &reshape_fci_cache) == FAILURE)
 	{
 		WRONG_PARAM_COUNT;
@@ -998,26 +987,17 @@ PHP_FUNCTION(glutreshapefunc)
 /* }}} */
 
 
-void glutkeyboardfunc_callback(unsigned char key,int x,int y)
+void glutkeyboardfunc_callback(unsigned char key, int x, int y)
 {
-	zval **params[3];
-	zval *retval = NULL;
-	zval *z_key, *z_x, *z_y;
+	zval params[3];
+	zval retval;
 	char str[2];
 
 	sprintf(str, "%c", key);
 
-	MAKE_STD_ZVAL(z_key);
-	ZVAL_STRING(z_key, str);
-	params[0] = &z_key;
-	
-	MAKE_STD_ZVAL(z_x);
-	ZVAL_LONG(z_x, x);
-	params[1] = &z_x;
-	
-	MAKE_STD_ZVAL(z_y);
-	ZVAL_LONG(z_y, y);
-	params[2] = &z_y;
+	ZVAL_STRING(&params[0], str);
+	ZVAL_LONG(&params[1], x);
+	ZVAL_LONG(&params[2], y);
 
 	keyboard_fci.param_count = 3;
 	keyboard_fci.params = params;
@@ -1028,12 +1008,7 @@ void glutkeyboardfunc_callback(unsigned char key,int x,int y)
 		return;
 	}
 
-	if(retval)
-		zval_ptr_dtor(&retval);
-
-	zval_ptr_dtor(&z_y);
-	zval_ptr_dtor(&z_x);
-	zval_ptr_dtor(&z_key);
+	//zval_ptr_dtor(&retval);
 }
 
 /* {{{ bool glutkeyboardfunc(mixed callback) */
@@ -1050,23 +1025,15 @@ PHP_FUNCTION(glutkeyboardfunc)
 
 void glutkeyboardupfunc_callback(unsigned char key,int x,int y)
 {
-	zval **params[3];
-	zval *retval = NULL;
-	char *str;
+	zval params[3];
+	zval retval;
+	char str[2];
 
-	params[0] = (zval **)emalloc(sizeof(zval*));
-	params[1] = (zval **)emalloc(sizeof(zval*));
-	params[2] = (zval **)emalloc(sizeof(zval*));
-	str = (char *)emalloc(sizeof(char)*2);
 	sprintf(str,"%c",key);
 
-	MAKE_STD_ZVAL(*params[0]);
-	MAKE_STD_ZVAL(*params[1]);
-	MAKE_STD_ZVAL(*params[2]);
-
-	ZVAL_STRING(*params[0], str);
-	ZVAL_LONG(*params[1], x);
-	ZVAL_LONG(*params[2], y);
+	ZVAL_STRING(&params[0], str);
+	ZVAL_LONG(&params[1], x);
+	ZVAL_LONG(&params[2], y);
 
 	keyboardup_fci.param_count = 3;
 	keyboardup_fci.params = params;
@@ -1094,23 +1061,13 @@ PHP_FUNCTION(glutkeyboardupfunc)
 
 void glutmousefunc_callback(int button, int state, int x, int y)
 {
-	zval **params[4];
-	zval *retval = NULL;
+	zval params[4];
+	zval retval;
 
-	params[0] = (zval **)emalloc(sizeof(zval*));
-	params[1] = (zval **)emalloc(sizeof(zval*));
-	params[2] = (zval **)emalloc(sizeof(zval*));
-	params[3] = (zval **)emalloc(sizeof(zval*));
-
-	MAKE_STD_ZVAL(*params[0]);
-	MAKE_STD_ZVAL(*params[1]);
-	MAKE_STD_ZVAL(*params[2]);
-	MAKE_STD_ZVAL(*params[3]);
-
-	ZVAL_LONG(*params[0], button);
-	ZVAL_LONG(*params[1], state);
-	ZVAL_LONG(*params[2], x);
-	ZVAL_LONG(*params[2], y);
+	ZVAL_LONG(&params[0], button);
+	ZVAL_LONG(&params[1], state);
+	ZVAL_LONG(&params[2], x);
+	ZVAL_LONG(&params[3], y);
 
 	mouse_fci.param_count = 4;
 	mouse_fci.params = params;
@@ -1138,17 +1095,11 @@ PHP_FUNCTION(glutmousefunc)
 
 void glutmotionfunc_callback(int x,int y)
 {
-	zval **params[2];
-	zval *retval = NULL;
+	zval params[2];
+	zval retval;
 
-	params[0] = (zval **)emalloc(sizeof(zval*));
-	params[1] = (zval **)emalloc(sizeof(zval*));
-
-	MAKE_STD_ZVAL(*params[0]);
-	ZVAL_LONG(*params[0], x);
-	
-	MAKE_STD_ZVAL(*params[1]);
-	ZVAL_LONG(*params[1], y);
+	ZVAL_LONG(&params[0], x);
+	ZVAL_LONG(&params[1], y);
 
 	motion_fci.param_count = 2;
 	motion_fci.params = params;
@@ -1199,13 +1150,10 @@ PHP_FUNCTION(glutpassivemotionfunc)
 
 void glutvisibilityfunc_callback(int state)
 {
-	zval **params[1];
-	zval *retval = NULL;
+	zval params[1];
+	zval retval;
 
-	params[0] = (zval **)emalloc(sizeof(zval*));
-
-	MAKE_STD_ZVAL(*params[0]);
-	ZVAL_LONG(*params[0], state);
+	ZVAL_LONG(&params[0], state);
 
 	visibility_fci.param_count = 1;
 	visibility_fci.params = params;
@@ -1255,24 +1203,15 @@ PHP_FUNCTION(glutentryfunc)
 
 void glutspecialfunc_callback(int key,int x,int y)
 {
-	zval **params[3];
-	zval *retval = NULL;
-	char *str;
+	zval params[3];
+	zval retval;
+	char str[2];
 
-	params[0] = (zval **)emalloc(sizeof(zval*));
-	params[1] = (zval **)emalloc(sizeof(zval*));
-	params[2] = (zval **)emalloc(sizeof(zval*));
-	str = (char *)emalloc(sizeof(char)*2);
 	sprintf(str,"%c",key);
 
-	MAKE_STD_ZVAL(*params[0]);
-	ZVAL_LONG(*params[0],key);
-
-	MAKE_STD_ZVAL(*params[1]);
-	ZVAL_LONG(*params[1],x);
-	
-	MAKE_STD_ZVAL(*params[2]);
-	ZVAL_LONG(*params[2],y);
+	ZVAL_LONG(&params[0], key);
+	ZVAL_LONG(&params[1], x);
+	ZVAL_LONG(&params[2], y);
 
 	special_fci.param_count = 3;
 	special_fci.params = params;
@@ -1720,12 +1659,11 @@ PHP_FUNCTION(glutbitmapwidth)
 PHP_FUNCTION(glutstrokecharacter)
 {
 	long font;
-	char *chr = NULL;
-	int chr_len;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &font, &chr, &chr_len) == FAILURE) {
+	zend_string* chr;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lS", &font, &chr) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
-	glutStrokeCharacter((void*)font,chr[0]);
+	glutStrokeCharacter((void*)font,chr->val[0]);
 }
 /* }}} */
 
