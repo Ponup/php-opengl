@@ -3,7 +3,8 @@ idnl config.m4 for extension opengl
 PHP_ARG_WITH(opengl, for opengl support,
 [  --with-opengl=DIR       Include OpenGL support])
 
-CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors -framework GLUT -framework OpenGL"
+dnl CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors -framework GLUT -framework OpenGL"
+CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors"
 
 if false
 then
@@ -141,6 +142,8 @@ if test "$PHP_OPENGL" != "no"; then
     AC_MSG_ERROR(Can't find OpenGL nor MesaGL)
   fi
   unset additional_libs
+
+  PHP_ADD_LIBRARY_WITH_PATH(glut, /usr/lib, OPENGL_SHARED_LIBADD)
 
   PHP_ADD_INCLUDE($OPENGL_DIR/include)
   PHP_ADD_INCLUDE(/System/Library/Frameworks/OpenGL.framework/Headers)

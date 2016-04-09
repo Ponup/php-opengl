@@ -13,11 +13,11 @@ http://pear.php.net/dtd/package-2.0.xsd">
 		<email>santiagolizardo@php.net</email>
 		<active>yes</active>
 	</lead>
-	<date>2014-04-20</date>
+	<date>2016-04-09</date>
 	<time>22:00:00</time>
 	<version>     
-		<release>0.8.0</release>
-		<api>0.8.0</api>
+		<release>0.8.2</release>
+		<api>0.8.2</api>
 	</version>
 	<stability>
 		<release>beta</release>
@@ -25,7 +25,9 @@ http://pear.php.net/dtd/package-2.0.xsd">
 	</stability>
 	<license uri="http://www.php.net/license">PHP License</license>
 	<notes>
-	- Initial PECL package release.
+    - PHP7 support.
+    - GLUT and OpenGL are now part of the same module. (GLUT to be replaced with a modern alternative in future releases)
+    - Example scripts included in the main extension package.
 	</notes>
 	<contents>
 		<dir name="/">
@@ -54,7 +56,25 @@ http://pear.php.net/dtd/package-2.0.xsd">
 		</required>
 	</dependencies>
 	<providesextension>opengl</providesextension>
+     <extsrcrelease>
+      <configureoption default="autodetect" name="with-opengl" prompt="The location of the OpenGL library" />
+     </extsrcrelease>
 	<extsrcrelease />
 	<changelog>
+   <release>
+     <version>
+       <release>0.8.0</release>
+       <api>0.8.0</api>
+     </version>
+     <stability>
+       <release>beta</release>
+       <api>beta</api>
+     </stability>
+	 <date>2014-04-20</date>
+	<license uri="http://www.php.net/license">PHP License</license>
+	<notes>
+	- Initial PECL package release.
+	</notes>
+   </release>
 	</changelog>
 </package>
