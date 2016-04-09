@@ -28,9 +28,9 @@
 #define PHP_OSX defined(__APPLE__) && defined(__MACH__)
 
 #if PHP_OSX 
-#include <gl3.h>
-#include <glu.h>
-#include <glext.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
