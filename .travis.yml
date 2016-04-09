@@ -1,14 +1,12 @@
 language: php
 
 php:
-  - 5.6
-  - 5.5
+  - 7.0
 
 env:
   - REPORT_EXIT_STATUS=1
 
 before_script:
-  - cd opengl
   - phpize
   - ./configure --quiet
   - make all install
