@@ -6,6 +6,9 @@ php:
 env:
   - REPORT_EXIT_STATUS=1
 
+before_install:
+  - sudo apt-get install freeglut3-dev;
+
 before_script:
   - phpize
   - ./configure --quiet
