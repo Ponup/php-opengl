@@ -2,7 +2,7 @@
   +----------------------------------------------------------------------+
   | PHP Version 5                                                        |
   +----------------------------------------------------------------------+
-  | Copyright (c) 1997-2012 The PHP Group                                |
+  | Copyright (c) 1997-2016 The PHP Group                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -587,7 +587,7 @@ PHP_FUNCTION(gluticonifywindow)
 PHP_FUNCTION(glutsetwindowtitle)
 {
 	char *name = NULL;
-	int name_len;
+	size_t name_len;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}
@@ -599,7 +599,7 @@ PHP_FUNCTION(glutsetwindowtitle)
 PHP_FUNCTION(glutseticontitle)
 {
 	char *name = NULL;
-	int name_len;
+	size_t name_len;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}
@@ -801,7 +801,7 @@ PHP_FUNCTION(glutignorekeyrepeat)
 PHP_FUNCTION(glutaddmenuentry)
 {
 	char *name = NULL;
-	int name_len;
+	size_t name_len;
 	long value;
 
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &name, &name_len, &value ) == FAILURE) {
@@ -817,7 +817,7 @@ PHP_FUNCTION(glutaddmenuentry)
 PHP_FUNCTION(glutaddsubmenu)
 {
 	char *name = NULL;
-	int name_len;
+	size_t name_len;
 	long value;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &name, &name_len, &value) == FAILURE) {
 		WRONG_PARAM_COUNT;
@@ -845,7 +845,7 @@ PHP_FUNCTION(glutchangetomenuentry)
 {
 	long entry, value;
 	char *name;
-	int name_len;
+	size_t name_len;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lsl", &entry, &name, &name_len, &value) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
@@ -860,7 +860,7 @@ PHP_FUNCTION(glutchangetosubmenu)
 {
 	long entry, value;
 	char *name;
-	int name_len;	
+	size_t name_len;	
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lsl", &entry, &name, &name_len, &value) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
@@ -1471,7 +1471,7 @@ PHP_FUNCTION(glutmenustatefunc)
 
 void glutidlefunc_callback()
 {
-	zval *retval = NULL;
+	zval retval;
 
 	idle_fci.param_count = 0;
 	idle_fci.params = NULL;
@@ -1614,7 +1614,8 @@ PHP_FUNCTION(glutgetmodifiers)
 PHP_FUNCTION(glutextensionsupported)
 {
 	char *ext = NULL;
-	int ext_len, ret;
+	size_t ext_len;
+	int ret;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &ext, &ext_len) == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}
@@ -1630,7 +1631,7 @@ PHP_FUNCTION(glutbitmapcharacter)
 {
 	long font;
 	char *chr = NULL;
-	int chr_len;
+	size_t chr_len;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &font, &chr, &chr_len) == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}
@@ -1645,7 +1646,7 @@ PHP_FUNCTION(glutbitmapwidth)
 	int width;
 	long font;
 	char *chr = NULL;
-	int chr_len;
+	size_t chr_len;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &font, &chr, &chr_len) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
@@ -1674,7 +1675,7 @@ PHP_FUNCTION(glutstrokewidth)
 	int ret;
 	long font;
 	char *chr = NULL;
-	int chr_len;
+	size_t chr_len;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &font, &chr, &chr_len) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}

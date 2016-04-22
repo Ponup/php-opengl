@@ -2,7 +2,7 @@
   +----------------------------------------------------------------------+
   | PHP Version 5                                                        |
   +----------------------------------------------------------------------+
-  | Copyright (c) 1997-2015 The PHP Group                                |
+  | Copyright (c) 1997-2016 The PHP Group                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -375,5 +375,7 @@ PHP_FUNCTION(glvertex4s);
 PHP_FUNCTION(glvertex4sv);
 PHP_FUNCTION(glvertexpointer);
 PHP_FUNCTION(glviewport);
+PHP_FUNCTION(glCreateShader);
+PHP_FUNCTION(glGenVertexArrays);
 
 #endif

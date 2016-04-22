@@ -20,3 +20,4 @@ install-sh
 autom4te.cache
 libtool
 modules
+nbproject

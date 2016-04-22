@@ -4,7 +4,7 @@ PHP_ARG_WITH(opengl, for opengl support,
 [  --with-opengl=DIR       Include OpenGL support])
 
 dnl CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors -framework GLUT -framework OpenGL"
-CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors"
+CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors -g"
 
 if false
 then

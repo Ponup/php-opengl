@@ -2,7 +2,7 @@
   +----------------------------------------------------------------------+
   | PHP Version 5                                                        |
   +----------------------------------------------------------------------+
-  | Copyright (c) 1997-2012 The PHP Group                                |
+  | Copyright (c) 1997-2016 The PHP Group                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -384,6 +384,8 @@ const zend_function_entry opengl_functions[] = {
 	ZEND_FE(glvertex4sv,NULL)
 	ZEND_FE(glvertexpointer,NULL)
 	ZEND_FE(glviewport,NULL)
+	ZEND_FE(glCreateShader, NULL)
+        ZEND_FE(glGenVertexArrays, NULL)
 
 	/* GLU Functions */
 	ZEND_FE(gluerrorstring,NULL)
@@ -432,6 +434,7 @@ const zend_function_entry opengl_functions[] = {
 	ZEND_FE(gluloadsamplingmatrices,NULL)
 	ZEND_FE(gluNurbsProperty,NULL)
 	ZEND_FE(glugetnurbsproperty,NULL)
+
 	ZEND_FE_END
 };
 
@@ -5008,6 +5011,37 @@ PHP_FUNCTION(glviewport)
 }
 /* }}} */
 
+/* {{{ void glviewport(long x, long y, long width, long height) */
+PHP_FUNCTION(glCreateShader)
+{
+    GLuint return_code;
+	zend_long shader_type;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &shader_type) == FAILURE)
+	{
+		WRONG_PARAM_COUNT;
+	}
+
+    return_code = glCreateShader((GLenum)shader_type);
+    RETURN_LONG(return_code);
+}
+/* }}} */
+
+PHP_FUNCTION(glGenVertexArrays)
+{
+    zval *z_arrays;
+    zend_long n;
+    GLuint arrays;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz/", &n, &z_arrays) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glGenVertexArrays((GLsizei)n, &arrays);
+    
+    zval_dtor(z_arrays);
+    ZVAL_LONG(z_arrays, (zend_long)arrays);
+}
 
 PHP_MINIT_FUNCTION(opengl)
 {

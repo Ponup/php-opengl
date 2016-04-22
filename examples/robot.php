@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 1993-1997, Silicon Graphics, Inc.
  * ALL RIGHTS RESERVED 
@@ -49,79 +50,75 @@ require 'bootstrap.php';
 $shoulder = 0;
 $elbow = 0;
 
-function init() 
-{
-   glClearColor (0.0, 0.0, 0.0, 0.0);
-   glShadeModel (GL_FLAT);
+function init() {
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glShadeModel(GL_FLAT);
 }
 
-$display = function() use( $shoulder, $elbow )
-{
-	global $shoulder, $elbow;
-   glClear (GL_COLOR_BUFFER_BIT);
-   glPushMatrix();
-   glTranslatef (-1.0, 0.0, 0.0);
-   glRotatef ($shoulder, 0.0, 0.0, 1.0);
-   glTranslatef (1.0, 0.0, 0.0);
-   glPushMatrix();
-   glScalef (2.0, 0.4, 1.0);
-   glutWireCube (1.0);
-   glPopMatrix();
+$display = function() use( $shoulder, $elbow ) {
+    global $shoulder, $elbow;
+    glClear(GL_COLOR_BUFFER_BIT);
+    glPushMatrix();
+    glTranslatef(-1.0, 0.0, 0.0);
+    glRotatef($shoulder, 0.0, 0.0, 1.0);
+    glTranslatef(1.0, 0.0, 0.0);
+    glPushMatrix();
+    glScalef(2.0, 0.4, 1.0);
+    glutWireCube(1.0);
+    glPopMatrix();
 
-   glTranslatef (1.0, 0.0, 0.0);
-   glRotatef ($elbow, 0.0, 0.0, 1.0);
-   glTranslatef (1.0, 0.0, 0.0);
-   glPushMatrix();
-   glScalef (2.0, 0.4, 1.0);
-   glutWireCube (1.0);
-   glPopMatrix();
+    glTranslatef(1.0, 0.0, 0.0);
+    glRotatef($elbow, 0.0, 0.0, 1.0);
+    glTranslatef(1.0, 0.0, 0.0);
+    glPushMatrix();
+    glScalef(2.0, 0.4, 1.0);
+    glutWireCube(1.0);
+    glPopMatrix();
 
-   glPopMatrix();
-   glutSwapBuffers();
+    glPopMatrix();
+    glutSwapBuffers();
 };
 
-$reshape = function($w, $h)
-{
-   glViewport (0, 0, $w, $h); 
-   glMatrixMode (GL_PROJECTION);
-   glLoadIdentity ();
-   gluPerspective(65.0, $w/$h, 1.0, 20.0);
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   glTranslatef (0.0, 0.0, -5.0);
+$reshape = function($w, $h) {
+    glViewport(0, 0, $w, $h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(65.0, $w / $h, 1.0, 20.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(0.0, 0.0, -5.0);
 };
 
-$keyboard = function($key, $x, $y) use( &$shoulder, &$elbow )
-{
-   switch ($key) {
-      case "s":
-         $shoulder = ($shoulder + 5) % 360;
-         glutPostRedisplay();
-         break;
-      case "S":
-         $shoulder = ($shoulder - 5) % 360;
-         glutPostRedisplay();
-         break;
-      case "e":
-         $elbow = ($elbow + 5) % 360;
-         glutPostRedisplay();
-         break;
-      case "E":
-         $elbow = ($elbow - 5) % 360;
-         glutPostRedisplay();
-         break;
-      case chr(27):
-         exit(0);
-   }
+$keyboard = function($key, $x, $y) use( &$shoulder, &$elbow ) {
+    switch ($key) {
+        case "s":
+            $shoulder = ($shoulder + 5) % 360;
+            glutPostRedisplay();
+            break;
+        case "S":
+            $shoulder = ($shoulder - 5) % 360;
+            glutPostRedisplay();
+            break;
+        case "e":
+            $elbow = ($elbow + 5) % 360;
+            glutPostRedisplay();
+            break;
+        case "E":
+            $elbow = ($elbow - 5) % 360;
+            glutPostRedisplay();
+            break;
+        case chr(27):
+            exit(0);
+    }
 };
 
 glutInit($argc, $argv);
-glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB);
-glutInitWindowSize (500, 500); 
-glutInitWindowPosition (100, 100);
-glutCreateWindow ($argv[0]);
-init ();
-glutDisplayFunc($display); 
+glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+glutInitWindowSize(500, 500);
+glutInitWindowPosition(100, 100);
+glutCreateWindow($argv[0]);
+init();
+glutDisplayFunc($display);
 glutReshapeFunc($reshape);
 glutKeyboardFunc($keyboard);
 glutMainLoop();

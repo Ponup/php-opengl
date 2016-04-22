@@ -2,7 +2,7 @@
   +----------------------------------------------------------------------+
   | PHP Version 5                                                        |
   +----------------------------------------------------------------------+
-  | Copyright (c) 1997-2012 The PHP Group                                |
+  | Copyright (c) 1997-2016 The PHP Group                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -243,12 +243,8 @@ PHP_FUNCTION(glunewquadric)
 {
 	int ret;
 	GLUquadric *quad = gluNewQuadric();
-#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 3) || (PHP_MAJOR_VERSION > 5)
 	ret = zend_list_insert(quad, le_quad TSRMLS_CC);
-#else
-	ret = zend_list_insert(quad, le_quad);
-#endif
-	RETURN_RESOURCE(ret);
+	RETURN_RES(ret);
 }
 /* }}} */
 
@@ -448,12 +444,8 @@ PHP_FUNCTION(glunewtess)
 {
 	int ret;
 	GLUtesselator *tess = gluNewTess();
-#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 3) || (PHP_MAJOR_VERSION > 5)
 	ret = zend_list_insert(tess, le_tess TSRMLS_CC);
-#else
-	ret = zend_list_insert(tess, le_tess);
-#endif
-	RETURN_RESOURCE(ret);
+	RETVAL_RES(zend_register_resource(ret, le_tess));
 }
 /* }}} */
 
@@ -653,12 +645,8 @@ PHP_FUNCTION(glunewnurbsrenderer)
 {
 	int ret;
 	GLUnurbs *nurb = gluNewNurbsRenderer();
-#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 3) || (PHP_MAJOR_VERSION > 5)
 	ret = zend_list_insert(nurb, le_nurb TSRMLS_CC);
-#else
-	ret = zend_list_insert(nurb, le_nurb);
-#endif
-	RETURN_RESOURCE(ret);
+	RETURN_RES(ret);
 }
 /* }}} */
 

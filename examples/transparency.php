@@ -8,16 +8,18 @@ require 'bootstrap.php';
  */
 $width = 0;
 $height = 0;
+
 function Draw() {
-     global $width, $height;
-     glBegin(GL_TRIANGLES);
-     glVertex2f(-0.9, -0.9);
-     glVertex2f( 0.9, -0.9);
-     glVertex2f( 0.0,  0.9);
-     glEnd();
-     glViewport(0, 0, $width, $height);
+    global $width, $height;
+    glBegin(GL_TRIANGLES);
+    glVertex2f(-0.9, -0.9);
+    glVertex2f(0.9, -0.9);
+    glVertex2f(0.0, 0.9);
+    glEnd();
+    glViewport(0, 0, $width, $height);
 }
-$disp= function() {
+
+$disp = function() {
     glClear(GL_COLOR_BUFFER_BIT);
     glPushMatrix();
     glColor4f(1, 0, 0, 0.7);
@@ -37,12 +39,12 @@ $reshape = function($w, $h) use($disp) {
     $height = $h;
     $disp();
 };
-    glutInit($argc, $argv);
-    glutInitWindowSize(400, 300);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
-    glutCreateWindow("Kitty on your lap");
-    glutDisplayFunc($disp);
-    glutReshapeFunc($reshape);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    glutMainLoop();
+glutInit($argc, $argv);
+glutInitWindowSize(400, 300);
+glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
+glutCreateWindow("Kitty on your lap");
+glutDisplayFunc($disp);
+glutReshapeFunc($reshape);
+glEnable(GL_BLEND);
+glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+glutMainLoop();
