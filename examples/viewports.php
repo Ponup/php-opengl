@@ -45,7 +45,7 @@ function Teapot() {
 /*
  * * Function called to update rendering
  */
-$DisplayFunc = function() {
+$displayCallback = function() {
     global $width, $height, $wh, $hw, $rotate_x, $rotate_y;
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -183,7 +183,7 @@ glEnable(GL_BLEND);
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 /* Declaration of the callbacks */
-glutDisplayFunc($DisplayFunc);
+glutDisplayFunc($displayCallback);
 glutReshapeFunc($ReshapeFunc);
 glutKeyboardFunc($KeyboardFunc);
 glutMouseFunc($MouseFunc);

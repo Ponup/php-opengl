@@ -69,7 +69,7 @@ function myglInit() {
     glFlush();
 }
 
-$myreshape = function($w, $h) {
+$reshapeCallback = function($w, $h) {
     glViewport(0, 0, $w, $h);
     glFlush();
 };
@@ -244,7 +244,7 @@ myglInit();
 MakeDisplayLists();
 MenuInit();
 
-glutReshapeFunc($myreshape);
+glutReshapeFunc($reshapeCallback);
 glutDisplayFunc($mydisplay);
 glutVisibilityFunc($vis);
 

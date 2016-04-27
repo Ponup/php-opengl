@@ -1,6 +1,6 @@
 /*
   +----------------------------------------------------------------------+
-  | PHP Version 5                                                        |
+  | PHP Version 7                                                        |
   +----------------------------------------------------------------------+
   | Copyright (c) 1997-2016 The PHP Group                                |
   +----------------------------------------------------------------------+
@@ -12,7 +12,6 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Brad Lafountain                                              |
   | Author: Santiago Lizardo <http://www.santiagolizardo.com>            |
   +----------------------------------------------------------------------+
 */
@@ -333,7 +332,15 @@ PHP_MINIT_FUNCTION(glut)
 	/*Glut Stroke Constants */
 	REGISTER_LONG_CONSTANT("GLUT_STROKE_ROMAN", (long)GLUT_STROKE_ROMAN , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_STROKE_MONO_ROMAN", (long)GLUT_STROKE_MONO_ROMAN , CONST_CS | CONST_PERSISTENT);
-		
+
+        
+#ifdef GLUT_FORWARD_COMPATIBLE
+        REGISTER_LONG_CONSTANT("GLUT_FORWARD_COMPATIBLE", (long)GLUT_FORWARD_COMPATIBLE , CONST_CS | CONST_PERSISTENT);
+#endif
+#ifdef GLUT_CORE_PROFILE
+        REGISTER_LONG_CONSTANT("GLUT_CORE_PROFILE", (long)GLUT_CORE_PROFILE , CONST_CS | CONST_PERSISTENT);
+#endif
+
 	call_backs = (HashTable*)emalloc(sizeof(HashTable));
 /*	zend_hash_init(call_backs, 0, NULL, ZVAL_PTR_DTOR, 0); */
 	

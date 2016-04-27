@@ -1,6 +1,6 @@
 /*
   +----------------------------------------------------------------------+
-  | PHP Version 5                                                        |
+  | PHP Version 7                                                        |
   +----------------------------------------------------------------------+
   | Copyright (c) 1997-2016 The PHP Group                                |
   +----------------------------------------------------------------------+
@@ -12,7 +12,6 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Brad Lafountain                                              |
   | Author: Santiago Lizardo <santiagolizardo@php.net>                   |
   +----------------------------------------------------------------------+
 */
@@ -42,422 +41,373 @@
 #include "php_glut.h"
 #include "php_convert.h"
 
+void convert_gluint_array_to_zval(GLuint* array, GLsizei n, zval* val) {
+    GLsizei i;
+
+    zval_dtor(val);
+    array_init(val);
+    for(i = 0; i < n; i++) {
+        add_index_long(val, i, array[i]);
+    }
+}
+
+int* convert_php_array_to_void_pointer(zend_array* array, int size) {
+    int* data;
+    
+    data = (int*)emalloc(sizeof(int) * size);
+    
+    return data;
+}
+
 extern int le_nurb;
 extern int le_tess;
 extern int le_quad;
 
-const zend_function_entry opengl_functions[] = {
-	/* GL Functions */
-	ZEND_FE(glaccum,NULL)
-	ZEND_FE(glalphafunc,NULL)
-	ZEND_FE(glaretexturesresident,NULL)
-	ZEND_FE(glarrayelement,NULL)
-	ZEND_FE(glbegin,NULL)
-	ZEND_FE(glbindtexture,NULL)
-	ZEND_FE(glbitmap,NULL)
-	ZEND_FE(glblendfunc,NULL)
-	ZEND_FE(glcalllist,NULL)
-	ZEND_FE(glcalllists,NULL)
-	ZEND_FE(glclear,NULL)
-	ZEND_FE(glclearaccum,NULL)
-	ZEND_FE(glclearcolor,NULL)
-	ZEND_FE(glcleardepth,NULL)
-	ZEND_FE(glclearindex,NULL)
-	ZEND_FE(glclearstencil,NULL)
-	ZEND_FE(glclipplane,NULL)
-	ZEND_FE(glcolor3b,NULL)
-	ZEND_FE(glcolor3bv,NULL)
-	ZEND_FE(glcolor3d,NULL)
-	ZEND_FE(glcolor3dv,NULL)
-	ZEND_FE(glcolor3f,NULL)
-	ZEND_FE(glcolor3fv,NULL)
-	ZEND_FE(glcolor3i,NULL)
-	ZEND_FE(glcolor3iv,NULL)
-	ZEND_FE(glcolor3s,NULL)
-	ZEND_FE(glcolor3sv,NULL)
-	ZEND_FE(glcolor3ub,NULL)
-	ZEND_FE(glcolor3ubv,NULL)
-	ZEND_FE(glcolor3ui,NULL)
-	ZEND_FE(glcolor3uiv,NULL)
-	ZEND_FE(glcolor3us,NULL)
-	ZEND_FE(glcolor3usv,NULL)
-	ZEND_FE(glcolor4b,NULL)
-	ZEND_FE(glcolor4bv,NULL)
-	ZEND_FE(glcolor4d,NULL)
-	ZEND_FE(glcolor4dv,NULL)
-	ZEND_FE(glcolor4f,NULL)
-	ZEND_FE(glcolor4fv,NULL)
-	ZEND_FE(glcolor4i,NULL)
-	ZEND_FE(glcolor4iv,NULL)
-	ZEND_FE(glcolor4s,NULL)
-	ZEND_FE(glcolor4sv,NULL)
-	ZEND_FE(glcolor4ub,NULL)
-	ZEND_FE(glcolor4ubv,NULL)
-	ZEND_FE(glcolor4ui,NULL)
-	ZEND_FE(glcolor4uiv,NULL)
-	ZEND_FE(glcolor4us,NULL)
-	ZEND_FE(glcolor4usv,NULL)
-	ZEND_FE(glcolormask,NULL)
-	ZEND_FE(glcolormaterial,NULL)
-	ZEND_FE(glcolorpointer,NULL)
-	ZEND_FE(glcopypixels,NULL)
-	ZEND_FE(glcopyteximage1d,NULL)
-	ZEND_FE(glcopyteximage2d,NULL)
-	ZEND_FE(glcopytexsubimage1d,NULL)
-	ZEND_FE(glcopytexsubimage2d,NULL)
-	ZEND_FE(glcullface,NULL)
-	ZEND_FE(gldeletelists,NULL)
-	ZEND_FE(gldeletetextures,NULL)
-	ZEND_FE(gldepthfunc,NULL)
-	ZEND_FE(gldepthmask,NULL)
-	ZEND_FE(gldepthrange,NULL)
-	ZEND_FE(gldisable,NULL)
-	ZEND_FE(gldisableclientstate,NULL)
-	ZEND_FE(gldrawarrays,NULL)
-	ZEND_FE(gldrawbuffer,NULL)
-	ZEND_FE(gldrawelements,NULL)
-	ZEND_FE(gldrawpixels,NULL)
-	ZEND_FE(gledgeflag,NULL)
-	ZEND_FE(gledgeflagpointer,NULL)
-	ZEND_FE(gledgeflagv,NULL)
-	ZEND_FE(glenable,NULL)
-	ZEND_FE(glenableclientstate,NULL)
-	ZEND_FE(glend,NULL)
-	ZEND_FE(glendlist,NULL)
-	ZEND_FE(glevalcoord1d,NULL)
-	ZEND_FE(glevalcoord1dv,NULL)
-	ZEND_FE(glevalcoord1f,NULL)
-	ZEND_FE(glevalcoord1fv,NULL)
-	ZEND_FE(glevalcoord2d,NULL)
-	ZEND_FE(glevalcoord2dv,NULL)
-	ZEND_FE(glevalcoord2f,NULL)
-	ZEND_FE(glevalcoord2fv,NULL)
-	ZEND_FE(glevalmesh1,NULL)
-	ZEND_FE(glevalmesh2,NULL)
-	ZEND_FE(glevalpoint1,NULL)
-	ZEND_FE(glevalpoint2,NULL)
-	ZEND_FE(glfeedbackbuffer,NULL)
-	ZEND_FE(glfinish,NULL)
-	ZEND_FE(glflush,NULL)
-	ZEND_FE(glfogf,NULL)
-	ZEND_FE(glfogfv,NULL)
-	ZEND_FE(glfogi,NULL)
-	ZEND_FE(glfogiv,NULL)
-	ZEND_FE(glfrontface,NULL)
-	ZEND_FE(glfrustum,NULL)
-	ZEND_FE(glgenlists,NULL)
-	ZEND_FE(glgentextures,NULL)
-	ZEND_FE(glgetbooleanv,NULL)
-	ZEND_FE(glgetclipplane,NULL)
-	ZEND_FE(glgetdoublev,NULL)
-	ZEND_FE(glgeterror,NULL)
-	ZEND_FE(glgetfloatv,NULL)
-	ZEND_FE(glgetintegerv,NULL)
-	ZEND_FE(glgetlightfv,NULL)
-	ZEND_FE(glgetlightiv,NULL)
-	ZEND_FE(glgetmapdv,NULL)
-	ZEND_FE(glgetmapfv,NULL)
-	ZEND_FE(glgetmapiv,NULL)
-	ZEND_FE(glgetmaterialfv,NULL)
-	ZEND_FE(glgetmaterialiv,NULL)
-	ZEND_FE(glgetpixelmapfv,NULL)
-	ZEND_FE(glgetpixelmapuiv,NULL)
-	ZEND_FE(glgetpixelmapusv,NULL)
-	ZEND_FE(glgetpointerv,NULL)
-	ZEND_FE(glgetpolygonstipple,NULL)
-	ZEND_FE(glgetstring,NULL)
-	ZEND_FE(glgettexenvfv,NULL)
-	ZEND_FE(glgettexenviv,NULL)
-	ZEND_FE(glgettexgendv,NULL)
-	ZEND_FE(glgettexgenfv,NULL)
-	ZEND_FE(glgettexgeniv,NULL)
-	ZEND_FE(glgetteximage,NULL)
-	ZEND_FE(glgettexlevelparameterfv,NULL)
-	ZEND_FE(glgettexlevelparameteriv,NULL)
-	ZEND_FE(glgettexparameterfv,NULL)
-	ZEND_FE(glgettexparameteriv,NULL)
-	ZEND_FE(glhint,NULL)
-	ZEND_FE(glindexmask,NULL)
-	ZEND_FE(glindexpointer,NULL)
-	ZEND_FE(glindexd,NULL)
-	ZEND_FE(glindexdv,NULL)
-	ZEND_FE(glindexf,NULL)
-	ZEND_FE(glindexfv,NULL)
-	ZEND_FE(glindexi,NULL)
-	ZEND_FE(glindexiv,NULL)
-	ZEND_FE(glindexs,NULL)
-	ZEND_FE(glindexsv,NULL)
-	ZEND_FE(glindexub,NULL)
-	ZEND_FE(glindexubv,NULL)
-	ZEND_FE(glinitnames,NULL)
-	ZEND_FE(glinterleavedarrays,NULL)
-	ZEND_FE(glisenabled,NULL)
-	ZEND_FE(glislist,NULL)
-	ZEND_FE(glistexture,NULL)
-	ZEND_FE(gllightmodelf,NULL)
-	ZEND_FE(gllightmodelfv,NULL)
-	ZEND_FE(gllightmodeli,NULL)
-	ZEND_FE(gllightmodeliv,NULL)
-	ZEND_FE(gllightf,NULL)
-	ZEND_FE(gllightfv,NULL)
-	ZEND_FE(gllighti,NULL)
-	ZEND_FE(gllightiv,NULL)
-	ZEND_FE(gllinestipple,NULL)
-	ZEND_FE(gllinewidth,NULL)
-	ZEND_FE(gllistbase,NULL)
-	ZEND_FE(glloadidentity,NULL)
-	ZEND_FE(glloadmatrixd,NULL)
-	ZEND_FE(glloadmatrixf,NULL)
-	ZEND_FE(glloadname,NULL)
-	ZEND_FE(gllogicop,NULL)
-	ZEND_FE(glmap1d,NULL)
-	ZEND_FE(glmap1f,NULL)
-	ZEND_FE(glmap2d,NULL)
-	ZEND_FE(glmap2f,NULL)
-	ZEND_FE(glmapgrid1d,NULL)
-	ZEND_FE(glmapgrid1f,NULL)
-	ZEND_FE(glmapgrid2d,NULL)
-	ZEND_FE(glmapgrid2f,NULL)
-	ZEND_FE(glmaterialf,NULL)
-	ZEND_FE(glmaterialfv,NULL)
-	ZEND_FE(glmateriali,NULL)
-	ZEND_FE(glmaterialiv,NULL)
-	ZEND_FE(glmatrixmode,NULL)
-	ZEND_FE(glmultmatrixd,NULL)
-	ZEND_FE(glmultmatrixf,NULL)
-	ZEND_FE(glnewlist,NULL)
-	ZEND_FE(glnormal3b,NULL)
-	ZEND_FE(glnormal3bv,NULL)
-	ZEND_FE(glnormal3d,NULL)
-	ZEND_FE(glnormal3dv,NULL)
-	ZEND_FE(glnormal3f,NULL)
-	ZEND_FE(glnormal3fv,NULL)
-	ZEND_FE(glnormal3i,NULL)
-	ZEND_FE(glnormal3iv,NULL)
-	ZEND_FE(glnormal3s,NULL)
-	ZEND_FE(glnormal3sv,NULL)
-	ZEND_FE(glnormalpointer,NULL)
-	ZEND_FE(glortho,NULL)
-	ZEND_FE(glpassthrough,NULL)
-	ZEND_FE(glpixelmapfv,NULL)
-	ZEND_FE(glpixelmapuiv,NULL)
-	ZEND_FE(glpixelmapusv,NULL)
-	ZEND_FE(glpixelstoref,NULL)
-	ZEND_FE(glpixelstorei,NULL)
-	ZEND_FE(glpixeltransferf,NULL)
-	ZEND_FE(glpixeltransferi,NULL)
-	ZEND_FE(glpixelzoom,NULL)
-	ZEND_FE(glpointsize,NULL)
-	ZEND_FE(glpolygonmode,NULL)
-	ZEND_FE(glpolygonoffset,NULL)
-	ZEND_FE(glpolygonstipple,NULL)
-	ZEND_FE(glpopattrib,NULL)
-	ZEND_FE(glpopclientattrib,NULL)
-	ZEND_FE(glpopmatrix,NULL)
-	ZEND_FE(glpopname,NULL)
-	ZEND_FE(glprioritizetextures,NULL)
-	ZEND_FE(glpushattrib,NULL)
-	ZEND_FE(glpushclientattrib,NULL)
-	ZEND_FE(glpushmatrix,NULL)
-	ZEND_FE(glpushname,NULL)
-	ZEND_FE(glrasterpos2d,NULL)
-	ZEND_FE(glrasterpos2dv,NULL)
-	ZEND_FE(glrasterpos2f,NULL)
-	ZEND_FE(glrasterpos2fv,NULL)
-	ZEND_FE(glrasterpos2i,NULL)
-	ZEND_FE(glrasterpos2iv,NULL)
-	ZEND_FE(glrasterpos2s,NULL)
-	ZEND_FE(glrasterpos2sv,NULL)
-	ZEND_FE(glrasterpos3d,NULL)
-	ZEND_FE(glrasterpos3dv,NULL)
-	ZEND_FE(glrasterpos3f,NULL)
-	ZEND_FE(glrasterpos3fv,NULL)
-	ZEND_FE(glrasterpos3i,NULL)
-	ZEND_FE(glrasterpos3iv,NULL)
-	ZEND_FE(glrasterpos3s,NULL)
-	ZEND_FE(glrasterpos3sv,NULL)
-	ZEND_FE(glrasterpos4d,NULL)
-	ZEND_FE(glrasterpos4dv,NULL)
-	ZEND_FE(glrasterpos4f,NULL)
-	ZEND_FE(glrasterpos4fv,NULL)
-	ZEND_FE(glrasterpos4i,NULL)
-	ZEND_FE(glrasterpos4iv,NULL)
-	ZEND_FE(glrasterpos4s,NULL)
-	ZEND_FE(glrasterpos4sv,NULL)
-	ZEND_FE(glreadbuffer,NULL)
-	ZEND_FE(glreadpixels,NULL)
-	ZEND_FE(glrectd,NULL)
-	ZEND_FE(glrectdv,NULL)
-	ZEND_FE(glrectf,NULL)
-	ZEND_FE(glrectfv,NULL)
-	ZEND_FE(glrecti,NULL)
-	ZEND_FE(glrectiv,NULL)
-	ZEND_FE(glrects,NULL)
-	ZEND_FE(glrectsv,NULL)
-	ZEND_FE(glrendermode,NULL)
-	ZEND_FE(glrotated,NULL)
-	ZEND_FE(glrotatef,NULL)
-	ZEND_FE(glscaled,NULL)
-	ZEND_FE(glscalef,NULL)
-	ZEND_FE(glscissor,NULL)
-	ZEND_FE(glselectbuffer,NULL)
-	ZEND_FE(glshademodel,NULL)
-	ZEND_FE(glstencilfunc,NULL)
-	ZEND_FE(glstencilmask,NULL)
-	ZEND_FE(glstencilop,NULL)
-	ZEND_FE(gltexcoord1d,NULL)
-	ZEND_FE(gltexcoord1dv,NULL)
-	ZEND_FE(gltexcoord1f,NULL)
-	ZEND_FE(gltexcoord1fv,NULL)
-	ZEND_FE(gltexcoord1i,NULL)
-	ZEND_FE(gltexcoord1iv,NULL)
-	ZEND_FE(gltexcoord1s,NULL)
-	ZEND_FE(gltexcoord1sv,NULL)
-	ZEND_FE(gltexcoord2d,NULL)
-	ZEND_FE(gltexcoord2dv,NULL)
-	ZEND_FE(gltexcoord2f,NULL)
-	ZEND_FE(gltexcoord2fv,NULL)
-	ZEND_FE(gltexcoord2i,NULL)
-	ZEND_FE(gltexcoord2iv,NULL)
-	ZEND_FE(gltexcoord2s,NULL)
-	ZEND_FE(gltexcoord2sv,NULL)
-	ZEND_FE(gltexcoord3d,NULL)
-	ZEND_FE(gltexcoord3dv,NULL)
-	ZEND_FE(gltexcoord3f,NULL)
-	ZEND_FE(gltexcoord3fv,NULL)
-	ZEND_FE(gltexcoord3i,NULL)
-	ZEND_FE(gltexcoord3iv,NULL)
-	ZEND_FE(gltexcoord3s,NULL)
-	ZEND_FE(gltexcoord3sv,NULL)
-	ZEND_FE(gltexcoord4d,NULL)
-	ZEND_FE(gltexcoord4dv,NULL)
-	ZEND_FE(gltexcoord4f,NULL)
-	ZEND_FE(gltexcoord4fv,NULL)
-	ZEND_FE(gltexcoord4i,NULL)
-	ZEND_FE(gltexcoord4iv,NULL)
-	ZEND_FE(gltexcoord4s,NULL)
-	ZEND_FE(gltexcoord4sv,NULL)
-	ZEND_FE(gltexcoordpointer,NULL)
-	ZEND_FE(gltexenvf,NULL)
-	ZEND_FE(gltexenvfv,NULL)
-	ZEND_FE(gltexenvi,NULL)
-	ZEND_FE(gltexenviv,NULL)
-	ZEND_FE(gltexgend,NULL)
-	ZEND_FE(gltexgendv,NULL)
-	ZEND_FE(gltexgenf,NULL)
-	ZEND_FE(gltexgenfv,NULL)
-	ZEND_FE(gltexgeni,NULL)
-	ZEND_FE(gltexgeniv,NULL)
-	ZEND_FE(glteximage1d,NULL)
-	ZEND_FE(glteximage2d,NULL)
-	ZEND_FE(gltexparameterf,NULL)
-	ZEND_FE(gltexparameterfv,NULL)
-	ZEND_FE(gltexparameteri,NULL)
-	ZEND_FE(gltexparameteriv,NULL)
-	ZEND_FE(gltexsubimage1d,NULL)
-	ZEND_FE(gltexsubimage2d,NULL)
-	ZEND_FE(gltranslated,NULL)
-	ZEND_FE(gltranslatef,NULL)
-	ZEND_FE(glvertex2d,NULL)
-	ZEND_FE(glvertex2dv,NULL)
-	ZEND_FE(glvertex2f,NULL)
-	ZEND_FE(glvertex2fv,NULL)
-	ZEND_FE(glvertex2i,NULL)
-	ZEND_FE(glvertex2iv,NULL)
-	ZEND_FE(glvertex2s,NULL)
-	ZEND_FE(glvertex2sv,NULL)
-	ZEND_FE(glvertex3d,NULL)
-	ZEND_FE(glvertex3dv,NULL)
-	ZEND_FE(glvertex3f,NULL)
-	ZEND_FE(glvertex3fv,NULL)
-	ZEND_FE(glvertex3i,NULL)
-	ZEND_FE(glvertex3iv,NULL)
-	ZEND_FE(glvertex3s,NULL)
-	ZEND_FE(glvertex3sv,NULL)
-	ZEND_FE(glvertex4d,NULL)
-	ZEND_FE(glvertex4dv,NULL)
-	ZEND_FE(glvertex4f,NULL)
-	ZEND_FE(glvertex4fv,NULL)
-	ZEND_FE(glvertex4i,NULL)
-	ZEND_FE(glvertex4iv,NULL)
-	ZEND_FE(glvertex4s,NULL)
-	ZEND_FE(glvertex4sv,NULL)
-	ZEND_FE(glvertexpointer,NULL)
-	ZEND_FE(glviewport,NULL)
-	ZEND_FE(glCreateShader, NULL)
-        ZEND_FE(glGenVertexArrays, NULL)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glGenVertexArrays, 0, 0, 2)
+    ZEND_ARG_INFO(0, n)
+    ZEND_ARG_INFO(1, arrays)
+ZEND_END_ARG_INFO()
 
-	/* GLU Functions */
-	ZEND_FE(gluerrorstring,NULL)
-	ZEND_FE(gluerrorunicodestringext,NULL)
-	ZEND_FE(glugetstring,NULL)
-	ZEND_FE(gluortho2d,NULL)
-	ZEND_FE(gluperspective,NULL)
-	ZEND_FE(glupickatrix,NULL)
-	ZEND_FE(gluproject,NULL)
-	ZEND_FE(glunuproject,NULL)
-	//ZEND_FE(gluscaleimage,NULL)
-	ZEND_FE(glulookat,NULL)
-	ZEND_FE(glubuild1dmipmaps,NULL)
-	ZEND_FE(glubuild2dmipmaps,NULL)
-	ZEND_FE(glunewquadric,NULL)
-	ZEND_FE(gludeletequadric,NULL)
-	ZEND_FE(gluquadricnormals,NULL)
-	ZEND_FE(gluquadrictexture,NULL)
-	ZEND_FE(gluquadricorientation,NULL)
-	ZEND_FE(gluquadricdrawstyle,NULL)
-	ZEND_FE(glucylinder,NULL)
-	ZEND_FE(gludisk,NULL)
-	ZEND_FE(glupartialdisk,NULL)
-	ZEND_FE(glusphere,NULL)
-	ZEND_FE(glunewtess,NULL)
-	ZEND_FE(gludeletetess,NULL)
-	ZEND_FE(glutessbeginpolygon,NULL)
-	ZEND_FE(glutessbegincontour,NULL)
-	ZEND_FE(glutessvertex,NULL)
-	ZEND_FE(glutessendcontour,NULL)
-	ZEND_FE(glutessendpolygon,NULL)
-	ZEND_FE(glutessproperty,NULL)
-	ZEND_FE(glutessnormal,NULL)
-	ZEND_FE(glugettessproperty,NULL)
-	ZEND_FE(glunewnurbsrenderer,NULL)
-	ZEND_FE(gludeletenurbsrenderer,NULL)
-	ZEND_FE(glubeginsurface,NULL)
-	ZEND_FE(glubegincurve,NULL)
-	ZEND_FE(gluendcurve,NULL)
-	ZEND_FE(gluendsurface,NULL)
-	ZEND_FE(glubegintrim,NULL)
-	ZEND_FE(gluendtrim,NULL)
-	ZEND_FE(glupwlcurve,NULL)
-	ZEND_FE(glunurbscurve,NULL)
-	ZEND_FE(glunurbssurface,NULL)
-	ZEND_FE(gluloadsamplingmatrices,NULL)
-	ZEND_FE(gluNurbsProperty,NULL)
-	ZEND_FE(glugetnurbsproperty,NULL)
+PHP_FUNCTION(glGenVertexArrays)
+{
+    zval *z_arrays;
+    zend_long n;
+    GLuint *arrays = NULL;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz/", &n, &z_arrays) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    arrays = (GLuint*)emalloc(sizeof(GLuint) * n);
+    if(arrays == NULL) {
+        RETURN_FALSE;
+    }
+    
+    glGenVertexArrays((GLsizei)n, arrays);
+    
+    convert_gluint_array_to_zval(arrays, n, z_arrays);
+    
+    efree(arrays);
+    
+    RETURN_TRUE;
+}
 
-	ZEND_FE_END
-};
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glBindVertexArray, 0, 0, 1)
+    ZEND_ARG_INFO(0, array)
+ZEND_END_ARG_INFO()
 
-zend_module_entry opengl_module_entry = {
-#if ZEND_MODULE_API_NO > 20010901
-  STANDARD_MODULE_HEADER,
-#endif
-  "OpenGL", 
-  opengl_functions, 
-  PHP_MINIT(opengl), 
-  NULL,
-  NULL,
-  NULL,
-  PHP_MINFO(opengl),
-#if ZEND_MODULE_API_NO > 20010901
-  PHP_OPENGL_VERSION,
-#endif
-  STANDARD_MODULE_PROPERTIES,
-};
+PHP_FUNCTION(glBindVertexArray)
+{
+    zend_long array;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &array) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glBindVertexArray(array);
+}
 
-#ifdef COMPILE_DL_OPENGL
-ZEND_GET_MODULE(opengl)
-#endif
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glGenBuffers, 0, 0, 2)
+    ZEND_ARG_INFO(0, n)
+    ZEND_ARG_INFO(1, buffers)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glGenBuffers)
+{
+    zval *z_buffers;
+    zend_long n;
+    GLuint *buffers = NULL;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz/", &n, &z_buffers) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    buffers = (GLuint*)emalloc(sizeof(GLuint) * n);
+    if(buffers == NULL) {
+        RETURN_FALSE;
+    }
+    
+    glGenBuffers((GLsizei)n, buffers);
+    
+    convert_gluint_array_to_zval(buffers, n, z_buffers);
+    
+    efree(buffers);
+    
+    RETURN_TRUE;
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glBindBuffer, 0, 0, 2)
+    ZEND_ARG_INFO(0, target)
+    ZEND_ARG_INFO(0, buffer)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glBindBuffer)
+{
+    zend_long target, buffer;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &target, &buffer) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glBindBuffer(target, buffer);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glBufferData, 0, 0, 4)
+    ZEND_ARG_INFO(0, target)
+    ZEND_ARG_INFO(0, size)
+    ZEND_ARG_INFO(0, data)
+    ZEND_ARG_INFO(0, usage)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glBufferData)
+{
+    zend_long target, size, usage;
+    zval *z_data;
+    void* data;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llal", &target, &size, &z_data, &usage) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    data = php_array_to_c_array(z_data, TO_C_FLOAT, size, NULL);
+    
+    glBufferData(target, size, sizeof(GLfloat) * size, usage);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDeleteVertexArrays, 0, 0, 0)
+    ZEND_ARG_INFO(0, arg)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glDeleteVertexArrays)
+{
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDeleteBuffers, 0, 0, 0)
+    ZEND_ARG_INFO(0, arg)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glDeleteBuffers)
+{
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDeleteShader, 0, 0, 0)
+    ZEND_ARG_INFO(0, arg)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glDeleteShader)
+{
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDeleteProgram, 0, 0, 0)
+    ZEND_ARG_INFO(0, arg)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glDeleteProgram)
+{
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glShaderSource, 0, 0, 4)
+    ZEND_ARG_INFO(0, shader)
+    ZEND_ARG_INFO(0, count)
+    ZEND_ARG_INFO(0, string)
+    ZEND_ARG_INFO(0, length)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glShaderSource)
+{
+    zend_long shader, count, length;
+    char* string;
+    size_t string_len;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llsl", &shader, &count, &string, &string_len, &length) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glShaderSource(shader, count, &string, length == 0 ? NULL : &length);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glCompileShader, 0, 0, 1)
+    ZEND_ARG_INFO(0, shader)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glCompileShader)
+{
+    zend_long shader;
+    GLint isCompiled = 0;
+    GLint maxLength = 0;
+    GLchar* error_msg = NULL;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &shader) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glCompileShader((GLuint)shader);
+    
+    glGetShaderiv((GLuint)shader, GL_COMPILE_STATUS, &isCompiled);
+    if(isCompiled == GL_FALSE)
+    {
+            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+            // The maxLength includes the NULL character
+            error_msg = (char*)emalloc(sizeof(GLchar)*maxLength);
+            memset(error_msg, 0, sizeof(GLchar)*maxLength);
+            glGetShaderInfoLog((GLuint)shader, maxLength, &maxLength, error_msg);
+
+            zend_error(E_ERROR, error_msg);
+            
+            efree(error_msg);
+
+            glDeleteShader(shader); // Don't leak the shader.
+    }
+
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glAttachShader, 0, 0, 2)
+    ZEND_ARG_INFO(0, program)
+    ZEND_ARG_INFO(0, shader)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glAttachShader)
+{
+    zend_long program, shader;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &program, &shader) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glAttachShader((GLuint)program, (GLuint)shader);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glBindFragDataLocation, 0, 0, 3)
+    ZEND_ARG_INFO(0, program)
+    ZEND_ARG_INFO(0, colorNumber)
+    ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glBindFragDataLocation)
+{
+    zend_long program, program_number;
+    char *name;
+    size_t name_len;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lls", &program, &program_number, &name, &name_len) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glBindFragDataLocation(program, program_number, name);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glLinkProgram, 0, 0, 1)
+    ZEND_ARG_INFO(0, program)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glLinkProgram)
+{
+    zend_long program;
+        GLint IsLinked;
+
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &program) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glLinkProgram((GLuint)program);
+    
+    glGetProgramiv(program, GL_LINK_STATUS, (GLint *)&IsLinked);
+    if(IsLinked==GL_FALSE)
+    {
+            GLint maxLength;
+            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+            if(maxLength>0)
+            {
+                    char *pLinkInfoLog = (char*)emalloc(sizeof(char)*maxLength);
+                    glGetProgramInfoLog(program, maxLength, &maxLength, pLinkInfoLog);
+                    zend_error(E_ERROR, pLinkInfoLog);
+            }
+    }
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glUseProgram, 0, 0, 1)
+    ZEND_ARG_INFO(0, program)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glUseProgram)
+{
+    zend_long program;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &program) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glUseProgram((GLuint)program);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glCreateProgram, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glCreateProgram)
+{
+    GLuint program = glCreateProgram();
+    RETURN_LONG((long)program);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glGetAttribLocation, 0, 0, 2)
+    ZEND_ARG_INFO(0, program)
+    ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glGetAttribLocation)
+{
+    zend_long program;
+    char *name;
+    size_t name_len;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &program, &name, &name_len) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    RETURN_LONG(glGetAttribLocation(program, name));
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glEnableVertexAttribArray, 0, 0, 1)
+    ZEND_ARG_INFO(0, index)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glEnableVertexAttribArray)
+{
+    zend_long index;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glEnableVertexAttribArray(index);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glVertexAttribPointer, 0, 0, 6)
+    ZEND_ARG_INFO(0, index)
+    ZEND_ARG_INFO(0, size)
+    ZEND_ARG_INFO(0, type)
+    ZEND_ARG_INFO(0, normalized)
+    ZEND_ARG_INFO(0, stride)
+    ZEND_ARG_INFO(0, pointer)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glVertexAttribPointer)
+{
+    zend_long index, size, type, normalized, stride, pointer;
+    
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llllll", &index, &size, &type, &normalized, &stride, &pointer) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    
+    glVertexAttribPointer(index, size, type, normalized, sizeof(GLfloat) * stride, (void*)pointer);
+}
+
+/*
+ZEND_BEGIN_ARG_INFO_EX(arginfo_, 0, 0, 2)
+    ZEND_ARG_INFO(0, arg)
+ZEND_END_ARG_INFO()
+*/        
 
 PHP_MINFO_FUNCTION(opengl)
 {
@@ -1385,26 +1335,28 @@ PHP_FUNCTION(gldrawbuffer)
 /* {{{ void gldrawelements(long mode, long count, long type, array indices) */
 PHP_FUNCTION(gldrawelements)
 {
-	zval *mode, *count, *type, *indices;
-	GLvoid *v_indices;
-	FOUR_PARAM(mode, count, type, indices);
-	convert_to_long(mode);
-	convert_to_long(count);
-	convert_to_long(type);
-	convert_to_array(indices);
-	switch(Z_LVAL_P(type))
-	{
-	case GL_UNSIGNED_BYTE:
-		v_indices = php_array_to_ubyte_array(indices);
-		break;
-	case GL_UNSIGNED_SHORT:
-		v_indices = php_array_to_ushort_array(indices);
-		break;
-	case GL_UNSIGNED_INT:
-		v_indices = php_array_to_uint_array(indices);
-		break;
-	}
-	glDrawElements((int)Z_LVAL_P(mode),(int)Z_LVAL_P(count),(int)Z_LVAL_P(type),v_indices);
+    zend_long mode, count, type;
+    zval *indices;
+    GLvoid *v_indices = NULL;
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llla!", &mode, &count, &type, &indices) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+    if(indices) {
+    convert_to_array(indices);
+    switch(type)
+    {
+    case GL_UNSIGNED_BYTE:
+            v_indices = php_array_to_ubyte_array(indices);
+            break;
+    case GL_UNSIGNED_SHORT:
+            v_indices = php_array_to_ushort_array(indices);
+            break;
+    case GL_UNSIGNED_INT:
+            v_indices = php_array_to_uint_array(indices);
+            break;
+    }}
+    glDrawElements((int)mode,(int)count,(int)type,v_indices);
 }
 /* }}} */
 
@@ -1845,12 +1797,12 @@ PHP_FUNCTION(glgetdoublev)
 /* {{{ long glgeterror() */
 PHP_FUNCTION(glgeterror)
 {
-	int return_int;
+	GLenum error_code;
 	if( zend_parse_parameters_none() == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}
-	return_int = glGetError();
-	RETURN_LONG(return_int);
+	error_code = glGetError();
+	RETURN_LONG(error_code);
 }
 /* }}} */
 
@@ -5015,39 +4967,454 @@ PHP_FUNCTION(glviewport)
 PHP_FUNCTION(glCreateShader)
 {
     GLuint return_code;
-	zend_long shader_type;
+    zend_long shader_type;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &shader_type) == FAILURE)
-	{
-		WRONG_PARAM_COUNT;
-	}
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &shader_type) == FAILURE)
+    {
+            WRONG_PARAM_COUNT;
+    }
 
     return_code = glCreateShader((GLenum)shader_type);
     RETURN_LONG(return_code);
 }
 /* }}} */
 
-PHP_FUNCTION(glGenVertexArrays)
-{
-    zval *z_arrays;
-    zend_long n;
-    GLuint arrays;
-    
-    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz/", &n, &z_arrays) == FAILURE) {
-        WRONG_PARAM_COUNT;
-    }
-    
-    glGenVertexArrays((GLsizei)n, &arrays);
-    
-    zval_dtor(z_arrays);
-    ZVAL_LONG(z_arrays, (zend_long)arrays);
-}
+const zend_function_entry opengl_functions[] = {
+	/* GL Functions */
+	ZEND_FE(glaccum,NULL)
+	ZEND_FE(glalphafunc,NULL)
+	ZEND_FE(glaretexturesresident,NULL)
+	ZEND_FE(glarrayelement,NULL)
+	ZEND_FE(glbegin,NULL)
+	ZEND_FE(glbindtexture,NULL)
+	ZEND_FE(glbitmap,NULL)
+	ZEND_FE(glblendfunc,NULL)
+	ZEND_FE(glcalllist,NULL)
+	ZEND_FE(glcalllists,NULL)
+	ZEND_FE(glclear,NULL)
+	ZEND_FE(glclearaccum,NULL)
+	ZEND_FE(glclearcolor,NULL)
+	ZEND_FE(glcleardepth,NULL)
+	ZEND_FE(glclearindex,NULL)
+	ZEND_FE(glclearstencil,NULL)
+	ZEND_FE(glclipplane,NULL)
+	ZEND_FE(glcolor3b,NULL)
+	ZEND_FE(glcolor3bv,NULL)
+	ZEND_FE(glcolor3d,NULL)
+	ZEND_FE(glcolor3dv,NULL)
+	ZEND_FE(glcolor3f,NULL)
+	ZEND_FE(glcolor3fv,NULL)
+	ZEND_FE(glcolor3i,NULL)
+	ZEND_FE(glcolor3iv,NULL)
+	ZEND_FE(glcolor3s,NULL)
+	ZEND_FE(glcolor3sv,NULL)
+	ZEND_FE(glcolor3ub,NULL)
+	ZEND_FE(glcolor3ubv,NULL)
+	ZEND_FE(glcolor3ui,NULL)
+	ZEND_FE(glcolor3uiv,NULL)
+	ZEND_FE(glcolor3us,NULL)
+	ZEND_FE(glcolor3usv,NULL)
+	ZEND_FE(glcolor4b,NULL)
+	ZEND_FE(glcolor4bv,NULL)
+	ZEND_FE(glcolor4d,NULL)
+	ZEND_FE(glcolor4dv,NULL)
+	ZEND_FE(glcolor4f,NULL)
+	ZEND_FE(glcolor4fv,NULL)
+	ZEND_FE(glcolor4i,NULL)
+	ZEND_FE(glcolor4iv,NULL)
+	ZEND_FE(glcolor4s,NULL)
+	ZEND_FE(glcolor4sv,NULL)
+	ZEND_FE(glcolor4ub,NULL)
+	ZEND_FE(glcolor4ubv,NULL)
+	ZEND_FE(glcolor4ui,NULL)
+	ZEND_FE(glcolor4uiv,NULL)
+	ZEND_FE(glcolor4us,NULL)
+	ZEND_FE(glcolor4usv,NULL)
+	ZEND_FE(glcolormask,NULL)
+	ZEND_FE(glcolormaterial,NULL)
+	ZEND_FE(glcolorpointer,NULL)
+	ZEND_FE(glcopypixels,NULL)
+	ZEND_FE(glcopyteximage1d,NULL)
+	ZEND_FE(glcopyteximage2d,NULL)
+	ZEND_FE(glcopytexsubimage1d,NULL)
+	ZEND_FE(glcopytexsubimage2d,NULL)
+	ZEND_FE(glcullface,NULL)
+	ZEND_FE(gldeletelists,NULL)
+	ZEND_FE(gldeletetextures,NULL)
+	ZEND_FE(gldepthfunc,NULL)
+	ZEND_FE(gldepthmask,NULL)
+	ZEND_FE(gldepthrange,NULL)
+	ZEND_FE(gldisable,NULL)
+	ZEND_FE(gldisableclientstate,NULL)
+	ZEND_FE(gldrawarrays,NULL)
+	ZEND_FE(gldrawbuffer,NULL)
+	ZEND_FE(gldrawelements,NULL)
+	ZEND_FE(gldrawpixels,NULL)
+	ZEND_FE(gledgeflag,NULL)
+	ZEND_FE(gledgeflagpointer,NULL)
+	ZEND_FE(gledgeflagv,NULL)
+	ZEND_FE(glenable,NULL)
+	ZEND_FE(glenableclientstate,NULL)
+	ZEND_FE(glend,NULL)
+	ZEND_FE(glendlist,NULL)
+	ZEND_FE(glevalcoord1d,NULL)
+	ZEND_FE(glevalcoord1dv,NULL)
+	ZEND_FE(glevalcoord1f,NULL)
+	ZEND_FE(glevalcoord1fv,NULL)
+	ZEND_FE(glevalcoord2d,NULL)
+	ZEND_FE(glevalcoord2dv,NULL)
+	ZEND_FE(glevalcoord2f,NULL)
+	ZEND_FE(glevalcoord2fv,NULL)
+	ZEND_FE(glevalmesh1,NULL)
+	ZEND_FE(glevalmesh2,NULL)
+	ZEND_FE(glevalpoint1,NULL)
+	ZEND_FE(glevalpoint2,NULL)
+	ZEND_FE(glfeedbackbuffer,NULL)
+	ZEND_FE(glfinish,NULL)
+	ZEND_FE(glflush,NULL)
+	ZEND_FE(glfogf,NULL)
+	ZEND_FE(glfogfv,NULL)
+	ZEND_FE(glfogi,NULL)
+	ZEND_FE(glfogiv,NULL)
+	ZEND_FE(glfrontface,NULL)
+	ZEND_FE(glfrustum,NULL)
+	ZEND_FE(glgenlists,NULL)
+	ZEND_FE(glgentextures,NULL)
+	ZEND_FE(glgetbooleanv,NULL)
+	ZEND_FE(glgetclipplane,NULL)
+	ZEND_FE(glgetdoublev,NULL)
+	ZEND_FE(glgeterror,NULL)
+	ZEND_FE(glgetfloatv,NULL)
+	ZEND_FE(glgetintegerv,NULL)
+	ZEND_FE(glgetlightfv,NULL)
+	ZEND_FE(glgetlightiv,NULL)
+	ZEND_FE(glgetmapdv,NULL)
+	ZEND_FE(glgetmapfv,NULL)
+	ZEND_FE(glgetmapiv,NULL)
+	ZEND_FE(glgetmaterialfv,NULL)
+	ZEND_FE(glgetmaterialiv,NULL)
+	ZEND_FE(glgetpixelmapfv,NULL)
+	ZEND_FE(glgetpixelmapuiv,NULL)
+	ZEND_FE(glgetpixelmapusv,NULL)
+	ZEND_FE(glgetpointerv,NULL)
+	ZEND_FE(glgetpolygonstipple,NULL)
+	ZEND_FE(glgetstring,NULL)
+	ZEND_FE(glgettexenvfv,NULL)
+	ZEND_FE(glgettexenviv,NULL)
+	ZEND_FE(glgettexgendv,NULL)
+	ZEND_FE(glgettexgenfv,NULL)
+	ZEND_FE(glgettexgeniv,NULL)
+	ZEND_FE(glgetteximage,NULL)
+	ZEND_FE(glgettexlevelparameterfv,NULL)
+	ZEND_FE(glgettexlevelparameteriv,NULL)
+	ZEND_FE(glgettexparameterfv,NULL)
+	ZEND_FE(glgettexparameteriv,NULL)
+	ZEND_FE(glhint,NULL)
+	ZEND_FE(glindexmask,NULL)
+	ZEND_FE(glindexpointer,NULL)
+	ZEND_FE(glindexd,NULL)
+	ZEND_FE(glindexdv,NULL)
+	ZEND_FE(glindexf,NULL)
+	ZEND_FE(glindexfv,NULL)
+	ZEND_FE(glindexi,NULL)
+	ZEND_FE(glindexiv,NULL)
+	ZEND_FE(glindexs,NULL)
+	ZEND_FE(glindexsv,NULL)
+	ZEND_FE(glindexub,NULL)
+	ZEND_FE(glindexubv,NULL)
+	ZEND_FE(glinitnames,NULL)
+	ZEND_FE(glinterleavedarrays,NULL)
+	ZEND_FE(glisenabled,NULL)
+	ZEND_FE(glislist,NULL)
+	ZEND_FE(glistexture,NULL)
+	ZEND_FE(gllightmodelf,NULL)
+	ZEND_FE(gllightmodelfv,NULL)
+	ZEND_FE(gllightmodeli,NULL)
+	ZEND_FE(gllightmodeliv,NULL)
+	ZEND_FE(gllightf,NULL)
+	ZEND_FE(gllightfv,NULL)
+	ZEND_FE(gllighti,NULL)
+	ZEND_FE(gllightiv,NULL)
+	ZEND_FE(gllinestipple,NULL)
+	ZEND_FE(gllinewidth,NULL)
+	ZEND_FE(gllistbase,NULL)
+	ZEND_FE(glloadidentity,NULL)
+	ZEND_FE(glloadmatrixd,NULL)
+	ZEND_FE(glloadmatrixf,NULL)
+	ZEND_FE(glloadname,NULL)
+	ZEND_FE(gllogicop,NULL)
+	ZEND_FE(glmap1d,NULL)
+	ZEND_FE(glmap1f,NULL)
+	ZEND_FE(glmap2d,NULL)
+	ZEND_FE(glmap2f,NULL)
+	ZEND_FE(glmapgrid1d,NULL)
+	ZEND_FE(glmapgrid1f,NULL)
+	ZEND_FE(glmapgrid2d,NULL)
+	ZEND_FE(glmapgrid2f,NULL)
+	ZEND_FE(glmaterialf,NULL)
+	ZEND_FE(glmaterialfv,NULL)
+	ZEND_FE(glmateriali,NULL)
+	ZEND_FE(glmaterialiv,NULL)
+	ZEND_FE(glmatrixmode,NULL)
+	ZEND_FE(glmultmatrixd,NULL)
+	ZEND_FE(glmultmatrixf,NULL)
+	ZEND_FE(glnewlist,NULL)
+	ZEND_FE(glnormal3b,NULL)
+	ZEND_FE(glnormal3bv,NULL)
+	ZEND_FE(glnormal3d,NULL)
+	ZEND_FE(glnormal3dv,NULL)
+	ZEND_FE(glnormal3f,NULL)
+	ZEND_FE(glnormal3fv,NULL)
+	ZEND_FE(glnormal3i,NULL)
+	ZEND_FE(glnormal3iv,NULL)
+	ZEND_FE(glnormal3s,NULL)
+	ZEND_FE(glnormal3sv,NULL)
+	ZEND_FE(glnormalpointer,NULL)
+	ZEND_FE(glortho,NULL)
+	ZEND_FE(glpassthrough,NULL)
+	ZEND_FE(glpixelmapfv,NULL)
+	ZEND_FE(glpixelmapuiv,NULL)
+	ZEND_FE(glpixelmapusv,NULL)
+	ZEND_FE(glpixelstoref,NULL)
+	ZEND_FE(glpixelstorei,NULL)
+	ZEND_FE(glpixeltransferf,NULL)
+	ZEND_FE(glpixeltransferi,NULL)
+	ZEND_FE(glpixelzoom,NULL)
+	ZEND_FE(glpointsize,NULL)
+	ZEND_FE(glpolygonmode,NULL)
+	ZEND_FE(glpolygonoffset,NULL)
+	ZEND_FE(glpolygonstipple,NULL)
+	ZEND_FE(glpopattrib,NULL)
+	ZEND_FE(glpopclientattrib,NULL)
+	ZEND_FE(glpopmatrix,NULL)
+	ZEND_FE(glpopname,NULL)
+	ZEND_FE(glprioritizetextures,NULL)
+	ZEND_FE(glpushattrib,NULL)
+	ZEND_FE(glpushclientattrib,NULL)
+	ZEND_FE(glpushmatrix,NULL)
+	ZEND_FE(glpushname,NULL)
+	ZEND_FE(glrasterpos2d,NULL)
+	ZEND_FE(glrasterpos2dv,NULL)
+	ZEND_FE(glrasterpos2f,NULL)
+	ZEND_FE(glrasterpos2fv,NULL)
+	ZEND_FE(glrasterpos2i,NULL)
+	ZEND_FE(glrasterpos2iv,NULL)
+	ZEND_FE(glrasterpos2s,NULL)
+	ZEND_FE(glrasterpos2sv,NULL)
+	ZEND_FE(glrasterpos3d,NULL)
+	ZEND_FE(glrasterpos3dv,NULL)
+	ZEND_FE(glrasterpos3f,NULL)
+	ZEND_FE(glrasterpos3fv,NULL)
+	ZEND_FE(glrasterpos3i,NULL)
+	ZEND_FE(glrasterpos3iv,NULL)
+	ZEND_FE(glrasterpos3s,NULL)
+	ZEND_FE(glrasterpos3sv,NULL)
+	ZEND_FE(glrasterpos4d,NULL)
+	ZEND_FE(glrasterpos4dv,NULL)
+	ZEND_FE(glrasterpos4f,NULL)
+	ZEND_FE(glrasterpos4fv,NULL)
+	ZEND_FE(glrasterpos4i,NULL)
+	ZEND_FE(glrasterpos4iv,NULL)
+	ZEND_FE(glrasterpos4s,NULL)
+	ZEND_FE(glrasterpos4sv,NULL)
+	ZEND_FE(glreadbuffer,NULL)
+	ZEND_FE(glreadpixels,NULL)
+	ZEND_FE(glrectd,NULL)
+	ZEND_FE(glrectdv,NULL)
+	ZEND_FE(glrectf,NULL)
+	ZEND_FE(glrectfv,NULL)
+	ZEND_FE(glrecti,NULL)
+	ZEND_FE(glrectiv,NULL)
+	ZEND_FE(glrects,NULL)
+	ZEND_FE(glrectsv,NULL)
+	ZEND_FE(glrendermode,NULL)
+	ZEND_FE(glrotated,NULL)
+	ZEND_FE(glrotatef,NULL)
+	ZEND_FE(glscaled,NULL)
+	ZEND_FE(glscalef,NULL)
+	ZEND_FE(glscissor,NULL)
+	ZEND_FE(glselectbuffer,NULL)
+	ZEND_FE(glshademodel,NULL)
+	ZEND_FE(glstencilfunc,NULL)
+	ZEND_FE(glstencilmask,NULL)
+	ZEND_FE(glstencilop,NULL)
+	ZEND_FE(gltexcoord1d,NULL)
+	ZEND_FE(gltexcoord1dv,NULL)
+	ZEND_FE(gltexcoord1f,NULL)
+	ZEND_FE(gltexcoord1fv,NULL)
+	ZEND_FE(gltexcoord1i,NULL)
+	ZEND_FE(gltexcoord1iv,NULL)
+	ZEND_FE(gltexcoord1s,NULL)
+	ZEND_FE(gltexcoord1sv,NULL)
+	ZEND_FE(gltexcoord2d,NULL)
+	ZEND_FE(gltexcoord2dv,NULL)
+	ZEND_FE(gltexcoord2f,NULL)
+	ZEND_FE(gltexcoord2fv,NULL)
+	ZEND_FE(gltexcoord2i,NULL)
+	ZEND_FE(gltexcoord2iv,NULL)
+	ZEND_FE(gltexcoord2s,NULL)
+	ZEND_FE(gltexcoord2sv,NULL)
+	ZEND_FE(gltexcoord3d,NULL)
+	ZEND_FE(gltexcoord3dv,NULL)
+	ZEND_FE(gltexcoord3f,NULL)
+	ZEND_FE(gltexcoord3fv,NULL)
+	ZEND_FE(gltexcoord3i,NULL)
+	ZEND_FE(gltexcoord3iv,NULL)
+	ZEND_FE(gltexcoord3s,NULL)
+	ZEND_FE(gltexcoord3sv,NULL)
+	ZEND_FE(gltexcoord4d,NULL)
+	ZEND_FE(gltexcoord4dv,NULL)
+	ZEND_FE(gltexcoord4f,NULL)
+	ZEND_FE(gltexcoord4fv,NULL)
+	ZEND_FE(gltexcoord4i,NULL)
+	ZEND_FE(gltexcoord4iv,NULL)
+	ZEND_FE(gltexcoord4s,NULL)
+	ZEND_FE(gltexcoord4sv,NULL)
+	ZEND_FE(gltexcoordpointer,NULL)
+	ZEND_FE(gltexenvf,NULL)
+	ZEND_FE(gltexenvfv,NULL)
+	ZEND_FE(gltexenvi,NULL)
+	ZEND_FE(gltexenviv,NULL)
+	ZEND_FE(gltexgend,NULL)
+	ZEND_FE(gltexgendv,NULL)
+	ZEND_FE(gltexgenf,NULL)
+	ZEND_FE(gltexgenfv,NULL)
+	ZEND_FE(gltexgeni,NULL)
+	ZEND_FE(gltexgeniv,NULL)
+	ZEND_FE(glteximage1d,NULL)
+	ZEND_FE(glteximage2d,NULL)
+	ZEND_FE(gltexparameterf,NULL)
+	ZEND_FE(gltexparameterfv,NULL)
+	ZEND_FE(gltexparameteri,NULL)
+	ZEND_FE(gltexparameteriv,NULL)
+	ZEND_FE(gltexsubimage1d,NULL)
+	ZEND_FE(gltexsubimage2d,NULL)
+	ZEND_FE(gltranslated,NULL)
+	ZEND_FE(gltranslatef,NULL)
+	ZEND_FE(glvertex2d,NULL)
+	ZEND_FE(glvertex2dv,NULL)
+	ZEND_FE(glvertex2f,NULL)
+	ZEND_FE(glvertex2fv,NULL)
+	ZEND_FE(glvertex2i,NULL)
+	ZEND_FE(glvertex2iv,NULL)
+	ZEND_FE(glvertex2s,NULL)
+	ZEND_FE(glvertex2sv,NULL)
+	ZEND_FE(glvertex3d,NULL)
+	ZEND_FE(glvertex3dv,NULL)
+	ZEND_FE(glvertex3f,NULL)
+	ZEND_FE(glvertex3fv,NULL)
+	ZEND_FE(glvertex3i,NULL)
+	ZEND_FE(glvertex3iv,NULL)
+	ZEND_FE(glvertex3s,NULL)
+	ZEND_FE(glvertex3sv,NULL)
+	ZEND_FE(glvertex4d,NULL)
+	ZEND_FE(glvertex4dv,NULL)
+	ZEND_FE(glvertex4f,NULL)
+	ZEND_FE(glvertex4fv,NULL)
+	ZEND_FE(glvertex4i,NULL)
+	ZEND_FE(glvertex4iv,NULL)
+	ZEND_FE(glvertex4s,NULL)
+	ZEND_FE(glvertex4sv,NULL)
+	ZEND_FE(glvertexpointer,NULL)
+	ZEND_FE(glviewport,NULL)
+	ZEND_FE(glCreateShader, NULL)
+    ZEND_FE(glGenVertexArrays, arginfo_glGenVertexArrays)
+    ZEND_FE(glBindVertexArray, arginfo_glBindVertexArray)
+    ZEND_FE(glGenBuffers, arginfo_glGenBuffers)
+    ZEND_FE(glBindBuffer, arginfo_glBindBuffer)
+    ZEND_FE(glBufferData, arginfo_glBufferData)
+    ZEND_FE(glDeleteVertexArrays, arginfo_glDeleteVertexArrays)
+    ZEND_FE(glDeleteBuffers, arginfo_glDeleteBuffers)
+    ZEND_FE(glDeleteShader, arginfo_glDeleteShader)
+    ZEND_FE(glDeleteProgram, arginfo_glDeleteProgram)
+    ZEND_FE(glShaderSource, arginfo_glShaderSource)
+    ZEND_FE(glCompileShader, arginfo_glCompileShader)
+    ZEND_FE(glAttachShader, arginfo_glAttachShader)
+    ZEND_FE(glBindFragDataLocation, arginfo_glBindFragDataLocation)
+    ZEND_FE(glLinkProgram, arginfo_glLinkProgram)
+    ZEND_FE(glUseProgram, arginfo_glUseProgram)
+    ZEND_FE(glCreateProgram, arginfo_glCreateProgram)
+    ZEND_FE(glGetAttribLocation, arginfo_glGetAttribLocation)
+    ZEND_FE(glEnableVertexAttribArray, arginfo_glEnableVertexAttribArray)
+    ZEND_FE(glVertexAttribPointer, arginfo_glVertexAttribPointer)
+
+	/* GLU Functions */
+	ZEND_FE(gluerrorstring,NULL)
+	ZEND_FE(gluerrorunicodestringext,NULL)
+	ZEND_FE(glugetstring,NULL)
+	ZEND_FE(gluortho2d,NULL)
+	ZEND_FE(gluperspective,NULL)
+	ZEND_FE(glupickatrix,NULL)
+	ZEND_FE(gluproject,NULL)
+	ZEND_FE(glunuproject,NULL)
+	//ZEND_FE(gluscaleimage,NULL)
+	ZEND_FE(glulookat,NULL)
+	ZEND_FE(glubuild1dmipmaps,NULL)
+	ZEND_FE(glubuild2dmipmaps,NULL)
+	ZEND_FE(glunewquadric,NULL)
+	ZEND_FE(gludeletequadric,NULL)
+	ZEND_FE(gluquadricnormals,NULL)
+	ZEND_FE(gluquadrictexture,NULL)
+	ZEND_FE(gluquadricorientation,NULL)
+	ZEND_FE(gluquadricdrawstyle,NULL)
+	ZEND_FE(glucylinder,NULL)
+	ZEND_FE(gludisk,NULL)
+	ZEND_FE(glupartialdisk,NULL)
+	ZEND_FE(glusphere,NULL)
+	ZEND_FE(glunewtess,NULL)
+	ZEND_FE(gludeletetess,NULL)
+	ZEND_FE(glutessbeginpolygon,NULL)
+	ZEND_FE(glutessbegincontour,NULL)
+	ZEND_FE(glutessvertex,NULL)
+	ZEND_FE(glutessendcontour,NULL)
+	ZEND_FE(glutessendpolygon,NULL)
+	ZEND_FE(glutessproperty,NULL)
+	ZEND_FE(glutessnormal,NULL)
+	ZEND_FE(glugettessproperty,NULL)
+	ZEND_FE(glunewnurbsrenderer,NULL)
+	ZEND_FE(gludeletenurbsrenderer,NULL)
+	ZEND_FE(glubeginsurface,NULL)
+	ZEND_FE(glubegincurve,NULL)
+	ZEND_FE(gluendcurve,NULL)
+	ZEND_FE(gluendsurface,NULL)
+	ZEND_FE(glubegintrim,NULL)
+	ZEND_FE(gluendtrim,NULL)
+	ZEND_FE(glupwlcurve,NULL)
+	ZEND_FE(glunurbscurve,NULL)
+	ZEND_FE(glunurbssurface,NULL)
+	ZEND_FE(gluloadsamplingmatrices,NULL)
+	ZEND_FE(gluNurbsProperty,NULL)
+	ZEND_FE(glugetnurbsproperty,NULL)
+
+	ZEND_FE_END
+};
+
+zend_module_entry opengl_module_entry = {
+#if ZEND_MODULE_API_NO > 20010901
+  STANDARD_MODULE_HEADER,
+#endif
+  "OpenGL", 
+  opengl_functions, 
+  PHP_MINIT(opengl), 
+  NULL,
+  NULL,
+  NULL,
+  PHP_MINFO(opengl),
+#if ZEND_MODULE_API_NO > 20010901
+  PHP_OPENGL_VERSION,
+#endif
+  STANDARD_MODULE_PROPERTIES,
+};
+
+#ifdef COMPILE_DL_OPENGL
+ZEND_GET_MODULE(opengl)
+#endif
 
 PHP_MINIT_FUNCTION(opengl)
 {
-	//le_quad = zend_register_list_destructors_ex(gluquadric_destructor, NULL, "GLUquadric", module_number);
-	//le_nurb = zend_register_list_destructors_ex(glunurbs_destructor, NULL, "GLUnurbs", module_number);
-	//le_tess = zend_register_list_destructors_ex(glutesselator_destructor, NULL, "GLUtesselator", module_number);
+	// le_quad = zend_register_list_destructors_ex(gluquadric_destructor, NULL, "GLUquadric", module_number);
+	// le_nurb = zend_register_list_destructors_ex(glunurbs_destructor, NULL, "GLUnurbs", module_number);
+	// le_tess = zend_register_list_destructors_ex(glutesselator_destructor, NULL, "GLUtesselator", module_number);
 
 	REGISTER_LONG_CONSTANT("GL_ACCUM", GL_ACCUM , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_LOAD", GL_LOAD , CONST_CS | CONST_PERSISTENT);
@@ -5656,6 +6023,14 @@ PHP_MINIT_FUNCTION(opengl)
 	REGISTER_LONG_CONSTANT("GL_LOGIC_OP", GL_LOGIC_OP , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_TEXTURE_COMPONENTS", GL_TEXTURE_COMPONENTS , CONST_CS | CONST_PERSISTENT);
 
+        REGISTER_LONG_CONSTANT("GL_ARRAY_BUFFER", GL_ARRAY_BUFFER, CONST_CS | CONST_PERSISTENT);
+        REGISTER_LONG_CONSTANT("GL_STATIC_DRAW", GL_STATIC_DRAW, CONST_CS | CONST_PERSISTENT);
+        REGISTER_LONG_CONSTANT("GL_ELEMENT_ARRAY_BUFFER", GL_ELEMENT_ARRAY_BUFFER, CONST_CS | CONST_PERSISTENT);
+        REGISTER_LONG_CONSTANT("GL_VERTEX_SHADER", GL_VERTEX_SHADER, CONST_CS | CONST_PERSISTENT);
+        REGISTER_LONG_CONSTANT("GL_FRAGMENT_SHADER", GL_FRAGMENT_SHADER, CONST_CS | CONST_PERSISTENT);
+        REGISTER_LONG_CONSTANT("GL_MINOR_VERSION", GL_MINOR_VERSION, CONST_CS | CONST_PERSISTENT);
+        REGISTER_LONG_CONSTANT("GL_MAJOR_VERSION", GL_MAJOR_VERSION, CONST_CS | CONST_PERSISTENT);
+        
 	PHP_MINIT(glut)(INIT_FUNC_ARGS_PASSTHRU);
 
 	return SUCCESS;

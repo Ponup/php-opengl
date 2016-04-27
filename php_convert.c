@@ -89,19 +89,22 @@ void c_array_to_php_array(void *c_array,int num,zval *php_array,int type)
 	}
 }
 
-void *php_array_to_c_array(zval *param,int type,int size,int *array_size)
+void *php_array_to_c_array(zval *param, int type, int size, int *array_size)
 {
-	zend_array *param_ht = param->value.arr;
-	zval *cur;
+	zend_array *param_ht = HASH_OF(param);
+	zval *cur = NULL;
 	void *params;
-	int i,tmp_size = zend_hash_num_elements(param_ht);
+	int i, tmp_size = zend_hash_num_elements(param_ht);
 
 	zend_hash_internal_pointer_reset(param_ht);
 	params = (void *)emalloc(size * tmp_size);
 
 	i = 0;
-	while((cur = zend_hash_get_current_data(param_ht))!=NULL)
-	{
+        ZEND_HASH_FOREACH_VAL(param_ht, cur) {
+            
+        
+//	while((cur = zend_hash_get_current_data(param_ht))!=NULL)
+//	{
 		if(Z_TYPE_P(cur) == IS_ARRAY)
 		{
 			int new_array_size;
@@ -158,7 +161,7 @@ void *php_array_to_c_array(zval *param,int type,int size,int *array_size)
 		}
 		zend_hash_move_forward(param_ht);
 		i++;
-	}
+        } ZEND_HASH_FOREACH_END();
 	if(array_size != NULL)
 		*array_size = i;
 	return (void *)params;

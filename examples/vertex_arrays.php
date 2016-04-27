@@ -23,7 +23,7 @@ $colors = [
 /*
  * * Function called to update rendering
  */
-$DisplayFunc = function() {
+$displayCallback = function() {
     global $vertices, $colors;
     static $alpha = 0;
 
@@ -95,7 +95,7 @@ glClearColor(0, 0, 0, 0);
 glEnable(GL_DEPTH_TEST);
 
 /* Declaration of the callbacks */
-glutDisplayFunc($DisplayFunc);
+glutDisplayFunc($displayCallback);
 glutReshapeFunc($ReshapeFunc);
 glutKeyboardFunc($KeyboardFunc);
 glutMainLoop();

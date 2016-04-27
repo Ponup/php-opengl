@@ -44,7 +44,7 @@ function compile_teapot_list() {
 /*
  * * Function called to update rendering
  */
-$DisplayFunc = function() {
+$displayCallback = function() {
     global $rotate_list_id, $teapot_list_id;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
@@ -171,7 +171,7 @@ compile_rotate_teapot_list();
 compile_teapot_list();
 
 /* Declaration of the callbacks */
-glutDisplayFunc($DisplayFunc);
+glutDisplayFunc($displayCallback);
 glutReshapeFunc($ReshapeFunc);
 glutKeyboardFunc($KeyboardFunc);
 glutMouseFunc($MouseFunc);

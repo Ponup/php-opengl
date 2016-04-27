@@ -1,6 +1,6 @@
 /*
   +----------------------------------------------------------------------+
-  | PHP Version 5                                                        |
+  | PHP Version 7                                                        |
   +----------------------------------------------------------------------+
   | Copyright (c) 1997-2016 The PHP Group                                |
   +----------------------------------------------------------------------+
@@ -12,8 +12,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Brad Lafountain                                              |
-  | Author: Santiago Lizardo <santiagolizardo@php.net>            |
+  | Author: Santiago Lizardo <santiagolizardo@php.net>                   |
   +----------------------------------------------------------------------+
 */
 
@@ -375,7 +374,25 @@ PHP_FUNCTION(glvertex4s);
 PHP_FUNCTION(glvertex4sv);
 PHP_FUNCTION(glvertexpointer);
 PHP_FUNCTION(glviewport);
-PHP_FUNCTION(glCreateShader);
 PHP_FUNCTION(glGenVertexArrays);
+PHP_FUNCTION(glBindVertexArray);
+PHP_FUNCTION(glGenBuffers);
+PHP_FUNCTION(glBindBuffer);
+PHP_FUNCTION(glBufferData);
+PHP_FUNCTION(glCreateShader);
+PHP_FUNCTION(glDeleteVertexArrays);
+PHP_FUNCTION(glDeleteBuffers);
+PHP_FUNCTION(glDeleteShader);
+PHP_FUNCTION(glDeleteProgram);
+PHP_FUNCTION(glShaderSource);
+PHP_FUNCTION(glCompileShader);
+PHP_FUNCTION(glAttachShader);
+PHP_FUNCTION(glBindFragDataLocation);
+PHP_FUNCTION(glLinkProgram);
+PHP_FUNCTION(glUseProgram);
+PHP_FUNCTION(glCreateProgram);
+PHP_FUNCTION(glGetAttribLocation);
+PHP_FUNCTION(glEnableVertexAttribArray);
+PHP_FUNCTION(glVertexAttribPointer);
 
 #endif
