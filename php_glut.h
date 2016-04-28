@@ -141,6 +141,9 @@ PHP_FUNCTION(glutsolidcone);
 PHP_FUNCTION(glutwirecone);
 PHP_FUNCTION(glutsolidsphere);
 PHP_FUNCTION(glutwiresphere);
+PHP_FUNCTION(glutInitContextVersion);
+PHP_FUNCTION(glutInitContextProfile);
+PHP_FUNCTION(glutInitContextFlags);
 
 void glutdisplayfunction_callback();
 void glutoverlaydisplayfunc_callback();

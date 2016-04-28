@@ -31,8 +31,8 @@
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+#include <OpenGL/gl3.h>
+//#include <OpenGL/glu.h>
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -40,7 +40,7 @@
 
 #include <ext/standard/info.h>
 
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 
 #include "php_convert.h"
 
@@ -88,6 +88,9 @@ zend_fcall_info mouse_fci;
 zend_fcall_info_cache mouse_fci_cache;
 
 const zend_function_entry glut_functions[] = {
+    ZEND_FE(glutInitContextVersion, NULL)
+    ZEND_FE(glutInitContextProfile, NULL)
+    ZEND_FE(glutInitContextFlags, NULL)
 	ZEND_FE(glutinit,NULL)
 	ZEND_FE(glutinitwindowsize,NULL)
 	ZEND_FE(glutinitwindowposition,NULL)
@@ -332,7 +335,9 @@ PHP_MINIT_FUNCTION(glut)
 	/*Glut Stroke Constants */
 	REGISTER_LONG_CONSTANT("GLUT_STROKE_ROMAN", (long)GLUT_STROKE_ROMAN , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_STROKE_MONO_ROMAN", (long)GLUT_STROKE_MONO_ROMAN , CONST_CS | CONST_PERSISTENT);
-
+#ifdef GLUT_3_2_CORE_PROFILE
+	REGISTER_LONG_CONSTANT("GLUT_3_2_CORE_PROFILE", (long)GLUT_3_2_CORE_PROFILE, CONST_CS | CONST_PERSISTENT);
+#endif
         
 #ifdef GLUT_FORWARD_COMPATIBLE
         REGISTER_LONG_CONSTANT("GLUT_FORWARD_COMPATIBLE", (long)GLUT_FORWARD_COMPATIBLE , CONST_CS | CONST_PERSISTENT);
@@ -357,6 +362,22 @@ PHP_MINFO_FUNCTION(glut)
         php_info_print_table_row(2, "GLUT API version", STRINGIFY(GLUT_API_VERSION));
         php_info_print_table_end();
 }
+
+PHP_FUNCTION(glutInitContextVersion)
+{
+    glutInitContextVersion(3, 2);
+}
+
+PHP_FUNCTION(glutInitContextProfile)
+{
+    glutInitContextProfile(GLUT_CORE_PROFILE);
+}
+
+PHP_FUNCTION(glutInitContextFlags)
+{
+    glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
+}
+
 
 /* Glut Init Functions */
 /* {{{ void glutinit(long argc, array argv) */

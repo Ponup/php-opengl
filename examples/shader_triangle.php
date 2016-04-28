@@ -5,7 +5,7 @@ require 'bootstrap.php';
 //https://open.gl/content/code/c2_triangle.txt
 
 $vertexSource = <<<SQL
-#version 130
+#version 150 core
 in vec2 position;
 void main()
 {
@@ -14,7 +14,7 @@ void main()
 SQL;
 
 $fragmentSource = <<<SQL
-#version 130
+#version 150 core
 out vec4 outColor;
 void main()
 {
@@ -24,21 +24,24 @@ SQL;
 
 //settings.depthBits = 24;
 glutInit($argc, $argv);
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_STENCIL);
+glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL | GLUT_3_2_CORE_PROFILE);
 //glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH);
+glutInitContextVersion(3, 2);
+glutInitContextProfile(GLUT_CORE_PROFILE);
+glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
+
 glutInitWindowSize(800, 600);
 glutCreateWindow("PHP-OpenGL vertex arrays example");
 
+var_dump(glGetString(GL_SHADING_LANGUAGE_VERSION));
+
 glGenVertexArrays(1, $vaos);
 $vao = $vaos[0];
-var_dump($vao);
 glBindVertexArray($vao);
 
 // Create a Vertex Buffer Object and copy the vertex data to it
 glGenBuffers(1, $vbos);
 $vbo = $vbos[0];
-
-var_dump($vbo);
 
 $vertices = [
     0.0, 0.5,
@@ -61,7 +64,6 @@ glCompileShader($fragmentShader);
 
 // Link the vertex and fragment shader into a shader program
 $shaderProgram = glCreateProgram();
-var_dump('shaderProgram', $shaderProgram);
 glAttachShader($shaderProgram, $vertexShader);
 glAttachShader($shaderProgram, $fragmentShader);
 glBindFragDataLocation($shaderProgram, 0, "outColor");
@@ -70,8 +72,6 @@ glUseProgram($shaderProgram);
 
 // Specify the layout of the vertex data
 $posAttrib = glGetAttribLocation($shaderProgram, "position");
-var_dump('getError', glGetError());
-var_dump('posAttrib', $posAttrib);
 glEnableVertexAttribArray($posAttrib);
 glVertexAttribPointer($posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
 

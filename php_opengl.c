@@ -27,7 +27,7 @@
 #define PHP_OSX defined(__APPLE__) && defined(__MACH__)
 
 #if PHP_OSX 
-#include <OpenGL/gl.h>
+#include <OpenGL/gl3.h>
 #include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
 #else
@@ -171,7 +171,8 @@ PHP_FUNCTION(glBufferData)
     
     data = php_array_to_c_array(z_data, TO_C_FLOAT, size, NULL);
     
-    glBufferData(target, size, sizeof(GLfloat) * size, usage);
+    glBufferData(target, size, data, usage);
+    //glBufferData(target, size, sizeof(GLfloat) * size, usage);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glDeleteVertexArrays, 0, 0, 0)
@@ -6028,9 +6029,14 @@ PHP_MINIT_FUNCTION(opengl)
         REGISTER_LONG_CONSTANT("GL_ELEMENT_ARRAY_BUFFER", GL_ELEMENT_ARRAY_BUFFER, CONST_CS | CONST_PERSISTENT);
         REGISTER_LONG_CONSTANT("GL_VERTEX_SHADER", GL_VERTEX_SHADER, CONST_CS | CONST_PERSISTENT);
         REGISTER_LONG_CONSTANT("GL_FRAGMENT_SHADER", GL_FRAGMENT_SHADER, CONST_CS | CONST_PERSISTENT);
+        REGISTER_LONG_CONSTANT("GL_SHADING_LANGUAGE_VERSION", GL_SHADING_LANGUAGE_VERSION, CONST_CS | CONST_PERSISTENT);
+#ifdef GL_MINOR_VERSION
         REGISTER_LONG_CONSTANT("GL_MINOR_VERSION", GL_MINOR_VERSION, CONST_CS | CONST_PERSISTENT);
+#endif
+#ifdef GL_MAJOR_VERSION
         REGISTER_LONG_CONSTANT("GL_MAJOR_VERSION", GL_MAJOR_VERSION, CONST_CS | CONST_PERSISTENT);
-        
+#endif
+
 	PHP_MINIT(glut)(INIT_FUNC_ARGS_PASSTHRU);
 
 	return SUCCESS;
