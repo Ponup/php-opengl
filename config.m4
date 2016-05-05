@@ -4,65 +4,7 @@ PHP_ARG_WITH(opengl, for opengl support,
 [  --with-opengl=DIR       Include OpenGL support])
 
 dnl CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors -framework GLUT -framework OpenGL"
-CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors -g"
-
-if false
-then
-
-  if test -r $PHP_GLUT/include/GL/glut.h; then
-    GLUT_DIR=$PHP_GLUT
-  else
-    AC_MSG_CHECKING(for GLUT development files in default path)
-    for i in /usr/local/Cellar/freeglut/2.8.1 /System/Library/Frameworks/OpenGL.framework/Headers /usr/local /usr
-    do
-      echo $i
-      if test -r $i/include/GL/glut.h; then
-        GLUT_DIR=$i
-        AC_MSG_RESULT(found in $i)
-        break
-      fi
-      if test -r $i/glut.h ; then
-        GLUT_DIR=$i
-        AC_MSG_RESULT(found in $i)
-        break
-      fi
-    done
-
-  fi
-
-  if test -z "$GLUT_DIR"; then
-    AC_MSG_RESULT(not found)
-    AC_MSG_ERROR(Please make sure GLUT is properly installed - glut.h should be in <glut-dir>/include/GL/)
-  fi
-
-  saved_LIBS="$LIBS"
-  AC_MSG_CHECKING(if  GLUT links properly)
-  failed=yes
-  for additional_libs in "" "-lglut" "-lGL" "-lGL -lGLU" "-lGL -lGLU -lm"; do
-    if test ! -z "$additional_libs"; then
-      AC_MSG_CHECKING(with additional library $additional_libs)
-    fi
-    LIBS="$saved_LIBS -lglut $additional_libs"
-    AC_TRY_LINK( ,[glutMainLoop();], have_glut=yes, have_glut=no)
-    AC_MSG_RESULT($have_glut)
-    LIBS="$saved_LIBS"
-
-    if test "$have_glut" != "no"; then
-      PHP_ADD_LIBRARY_WITH_PATH(glut, $GLUT_DIR/lib, GLUT_SHARED_LIBADD)
-      if test ! -z "$additional_libs"; then
-        PHP_EVAL_LIBLINE($additional_libs, GLUT_SHARED_LIBADD)
-      fi
-      failed=no
-      break
-    fi
-  done
-  unset additional_libs
-
-  PHP_ADD_INCLUDE(/System/Library/Frameworks/OpenGL.framework/Headers)
-  PHP_ADD_INCLUDE($GLUT_DIR/include)
-
-  PHP_SUBST(GLUT_SHARED_LIBADD)
-fi
+CFLAGS="$CFLAGS -Wall -Wfatal-errors -g"
 
 if test "$PHP_OPENGL" != "no"; then
 
@@ -127,8 +69,8 @@ if test "$PHP_OPENGL" != "no"; then
       fi
     else
       LIBS="$saved_LIBS"
-      PHP_ADD_LIBRARY_WITH_PATH(GL, $OPENGL_DIR/lib, OPENGL_SHARED_LIBADD)
-      PHP_ADD_LIBRARY_WITH_PATH(GLU, $OPENGL_DIR/lib, OPENGL_SHARED_LIBADD)
+      dnl PHP_ADD_LIBRARY_WITH_PATH(GL, $OPENGL_DIR/lib, OPENGL_SHARED_LIBADD)
+      dnl PHP_ADD_LIBRARY_WITH_PATH(GLU, $OPENGL_DIR/lib, OPENGL_SHARED_LIBADD)
       failed=no
     fi
     if test "$failed" = "no"; then
@@ -144,6 +86,8 @@ if test "$PHP_OPENGL" != "no"; then
   unset additional_libs
 
   PHP_ADD_LIBRARY_WITH_PATH(glut, /usr/lib, OPENGL_SHARED_LIBADD)
+  PHP_ADD_LIBRARY_WITH_PATH(GLU, /usr/lib, OPENGL_SHARED_LIBADD)
+  PHP_ADD_LIBRARY_WITH_PATH(GL, /usr/lib, OPENGL_SHARED_LIBADD)
 
   PHP_ADD_INCLUDE($OPENGL_DIR/include)
   PHP_ADD_INCLUDE(/System/Library/Frameworks/OpenGL.framework/Headers)

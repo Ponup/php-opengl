@@ -5,6 +5,7 @@ require 'bootstrap.php';
 /*
  * * The instructions to rotate each teapot, according to the mouse
  */
+
 function compile_rotate_list() {
     global $rotate_list_id, $rotate_x, $rotate_y;
     glNewList($rotate_list_id, GL_COMPILE);
@@ -16,6 +17,7 @@ function compile_rotate_list() {
 /*
  * * The instructions to rotate each teapot, according to the mouse
  */
+
 function compile_rotate_teapot_list() {
     global $rotate_teapot_list_id, $beta, $alpha;
     glNewList($rotate_teapot_list_id, GL_COMPILE);
@@ -27,6 +29,7 @@ function compile_rotate_teapot_list() {
 /*
  * * The instructions to render a teapot
  */
+
 function compile_teapot_list() {
     global $teapot_list_id, $rotate_teapot_list_id;
     glNewList($teapot_list_id, GL_COMPILE);

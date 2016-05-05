@@ -24,6 +24,8 @@
 #include <windows.h>
 #endif
 
+#include "php_opengl.h"
+
 #define PHP_OSX defined(__APPLE__) && defined(__MACH__)
 
 #if PHP_OSX 
@@ -32,14 +34,17 @@
 #include <OpenGL/glext.h>
 #else
 #include <GL/gl.h>
-#include <GL/glu.h>
+#include <GL/freeglut.h>
+//#include <GL/glu.h>
 #endif
 
-#include "php.h"
-#include "php_opengl.h"
-#include "php_glu.h"
-#include "php_glut.h"
 #include "php_convert.h"
+#include "php_glu.h"
+
+
+/*
+#include "php_glut.h"
+*/
 
 void convert_gluint_array_to_zval(GLuint* array, GLsizei n, zval* val) {
     GLsizei i;
@@ -63,16 +68,16 @@ extern int le_nurb;
 extern int le_tess;
 extern int le_quad;
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glGenVertexArrays, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glgenvertexarrays, 0, 0, 2)
     ZEND_ARG_INFO(0, n)
     ZEND_ARG_INFO(1, arrays)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glGenVertexArrays)
+PHP_FUNCTION(glgenvertexarrays)
 {
     zval *z_arrays;
     zend_long n;
-    GLuint *arrays = NULL;
+    GLuint* arrays = NULL;
     
     if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz/", &n, &z_arrays) == FAILURE) {
         WRONG_PARAM_COUNT;
@@ -82,7 +87,7 @@ PHP_FUNCTION(glGenVertexArrays)
     if(arrays == NULL) {
         RETURN_FALSE;
     }
-    
+
     glGenVertexArrays((GLsizei)n, arrays);
     
     convert_gluint_array_to_zval(arrays, n, z_arrays);
@@ -92,11 +97,11 @@ PHP_FUNCTION(glGenVertexArrays)
     RETURN_TRUE;
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glBindVertexArray, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glbindvertexarray, 0, 0, 1)
     ZEND_ARG_INFO(0, array)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glBindVertexArray)
+PHP_FUNCTION(glbindvertexarray)
 {
     zend_long array;
     
@@ -104,15 +109,15 @@ PHP_FUNCTION(glBindVertexArray)
         WRONG_PARAM_COUNT;
     }
     
-    glBindVertexArray(array);
+    glBindVertexArray((GLuint)array);
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glGenBuffers, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glgenbuffers, 0, 0, 2)
     ZEND_ARG_INFO(0, n)
     ZEND_ARG_INFO(1, buffers)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glGenBuffers)
+PHP_FUNCTION(glgenbuffers)
 {
     zval *z_buffers;
     zend_long n;
@@ -136,12 +141,12 @@ PHP_FUNCTION(glGenBuffers)
     RETURN_TRUE;
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glBindBuffer, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glbindbuffer, 0, 0, 2)
     ZEND_ARG_INFO(0, target)
     ZEND_ARG_INFO(0, buffer)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glBindBuffer)
+PHP_FUNCTION(glbindbuffer)
 {
     zend_long target, buffer;
     
@@ -152,27 +157,34 @@ PHP_FUNCTION(glBindBuffer)
     glBindBuffer(target, buffer);
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glBufferData, 0, 0, 4)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glbufferdata, 0, 0, 4)
     ZEND_ARG_INFO(0, target)
     ZEND_ARG_INFO(0, size)
     ZEND_ARG_INFO(0, data)
     ZEND_ARG_INFO(0, usage)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glBufferData)
+PHP_FUNCTION(glbufferdata)
 {
+    int array_type;
     zend_long target, size, usage;
-    zval *z_data;
+    zval *z_data, *z_first;
     void* data;
-    
+    zend_array *param_ht;
+    int tmp_size;
     if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llal", &target, &size, &z_data, &usage) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     
-    data = php_array_to_c_array(z_data, TO_C_FLOAT, size, NULL);
+    param_ht = HASH_OF(z_data);
+    tmp_size = zend_hash_num_elements(param_ht);
+
+    z_first = zend_hash_index_find(param_ht, 0);
+    array_type = Z_TYPE_P(z_first) == IS_DOUBLE ? TO_C_FLOAT : TO_C_INT;
     
-    glBufferData(target, size, data, usage);
-    //glBufferData(target, size, sizeof(GLfloat) * size, usage);
+    data = php_array_to_c_array(z_data, array_type, tmp_size, NULL);
+    
+    glBufferData((GLenum)target, (GLsizeiptr)size, data, (GLenum)usage);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glDeleteVertexArrays, 0, 0, 0)
@@ -207,14 +219,14 @@ PHP_FUNCTION(glDeleteProgram)
 {
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glShaderSource, 0, 0, 4)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glshadersource, 0, 0, 4)
     ZEND_ARG_INFO(0, shader)
     ZEND_ARG_INFO(0, count)
     ZEND_ARG_INFO(0, string)
     ZEND_ARG_INFO(0, length)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glShaderSource)
+PHP_FUNCTION(glshadersource)
 {
     zend_long shader, count, length;
     char* string;
@@ -227,11 +239,11 @@ PHP_FUNCTION(glShaderSource)
     glShaderSource(shader, count, &string, length == 0 ? NULL : &length);
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glCompileShader, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glcompileshader, 0, 0, 1)
     ZEND_ARG_INFO(0, shader)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glCompileShader)
+PHP_FUNCTION(glcompileshader)
 {
     zend_long shader;
     GLint isCompiled = 0;
@@ -263,12 +275,12 @@ PHP_FUNCTION(glCompileShader)
 
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glAttachShader, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glattachshader, 0, 0, 2)
     ZEND_ARG_INFO(0, program)
     ZEND_ARG_INFO(0, shader)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glAttachShader)
+PHP_FUNCTION(glattachshader)
 {
     zend_long program, shader;
     
@@ -279,13 +291,13 @@ PHP_FUNCTION(glAttachShader)
     glAttachShader((GLuint)program, (GLuint)shader);
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glBindFragDataLocation, 0, 0, 3)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glbindfragdatalocation, 0, 0, 3)
     ZEND_ARG_INFO(0, program)
     ZEND_ARG_INFO(0, colorNumber)
     ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glBindFragDataLocation)
+PHP_FUNCTION(glbindfragdatalocation)
 {
     zend_long program, program_number;
     char *name;
@@ -298,11 +310,11 @@ PHP_FUNCTION(glBindFragDataLocation)
     glBindFragDataLocation(program, program_number, name);
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glLinkProgram, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_gllinkprogram, 0, 0, 1)
     ZEND_ARG_INFO(0, program)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glLinkProgram)
+PHP_FUNCTION(gllinkprogram)
 {
     zend_long program;
         GLint IsLinked;
@@ -327,11 +339,11 @@ PHP_FUNCTION(glLinkProgram)
     }
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glUseProgram, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_gluseprogram, 0, 0, 1)
     ZEND_ARG_INFO(0, program)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glUseProgram)
+PHP_FUNCTION(gluseprogram)
 {
     zend_long program;
     
@@ -342,21 +354,21 @@ PHP_FUNCTION(glUseProgram)
     glUseProgram((GLuint)program);
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glCreateProgram, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glcreateprogram, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glCreateProgram)
+PHP_FUNCTION(glcreateprogram)
 {
     GLuint program = glCreateProgram();
     RETURN_LONG((long)program);
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glGetAttribLocation, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glgetattriblocation, 0, 0, 2)
     ZEND_ARG_INFO(0, program)
     ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glGetAttribLocation)
+PHP_FUNCTION(glgetattriblocation)
 {
     zend_long program;
     char *name;
@@ -369,11 +381,11 @@ PHP_FUNCTION(glGetAttribLocation)
     RETURN_LONG(glGetAttribLocation(program, name));
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glEnableVertexAttribArray, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glenablevertexattribarray, 0, 0, 1)
     ZEND_ARG_INFO(0, index)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glEnableVertexAttribArray)
+PHP_FUNCTION(glenablevertexattribarray)
 {
     zend_long index;
     
@@ -381,10 +393,10 @@ PHP_FUNCTION(glEnableVertexAttribArray)
         WRONG_PARAM_COUNT;
     }
     
-    glEnableVertexAttribArray(index);
+    glEnableVertexAttribArray((GLuint)index);
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_glVertexAttribPointer, 0, 0, 6)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glvertexattribpointer, 0, 0, 6)
     ZEND_ARG_INFO(0, index)
     ZEND_ARG_INFO(0, size)
     ZEND_ARG_INFO(0, type)
@@ -393,7 +405,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_glVertexAttribPointer, 0, 0, 6)
     ZEND_ARG_INFO(0, pointer)
 ZEND_END_ARG_INFO()
 
-PHP_FUNCTION(glVertexAttribPointer)
+PHP_FUNCTION(glvertexattribpointer)
 {
     zend_long index, size, type, normalized, stride, pointer;
     
@@ -401,7 +413,7 @@ PHP_FUNCTION(glVertexAttribPointer)
         WRONG_PARAM_COUNT;
     }
     
-    glVertexAttribPointer(index, size, type, normalized, sizeof(GLfloat) * stride, (void*)pointer);
+    glVertexAttribPointer((GLuint)index, (GLint)size, (GLenum)type, (GLboolean)normalized, (GLsizei)stride, pointer > 0 ? (void*)pointer : 0);
 }
 
 /*
@@ -576,11 +588,11 @@ PHP_FUNCTION(glcalllists)
 /* {{{ void glclear(long mask) */
 PHP_FUNCTION(glclear)
 {
-	long mask;
+	zend_long mask;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}
-	glClear(mask);
+	glClear((GLbitfield)mask);
 }
 /* }}} */
 
@@ -1333,31 +1345,39 @@ PHP_FUNCTION(gldrawbuffer)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDrawElements, 0, 0, 4)
+    ZEND_ARG_INFO(0, mode)
+    ZEND_ARG_INFO(0, count)
+    ZEND_ARG_INFO(0, type)
+    ZEND_ARG_INFO(0, indices)
+ZEND_END_ARG_INFO()
+
 /* {{{ void gldrawelements(long mode, long count, long type, array indices) */
 PHP_FUNCTION(gldrawelements)
 {
     zend_long mode, count, type;
-    zval *indices;
+    zval indices;
     GLvoid *v_indices = NULL;
-    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llla!", &mode, &count, &type, &indices) == FAILURE) {
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lllz!", &mode, &count, &type, &indices) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
-    if(indices) {
-    convert_to_array(indices);
-    switch(type)
-    {
-    case GL_UNSIGNED_BYTE:
-            v_indices = php_array_to_ubyte_array(indices);
-            break;
-    case GL_UNSIGNED_SHORT:
-            v_indices = php_array_to_ushort_array(indices);
-            break;
-    case GL_UNSIGNED_INT:
-            v_indices = php_array_to_uint_array(indices);
-            break;
-    }}
-    glDrawElements((int)mode,(int)count,(int)type,v_indices);
+    if(!ZVAL_IS_NULL(&indices)) {
+        convert_to_array(&indices);
+        switch(type)
+        {
+        case GL_UNSIGNED_BYTE:
+                v_indices = php_array_to_ubyte_array(&indices);
+                break;
+        case GL_UNSIGNED_SHORT:
+                v_indices = php_array_to_ushort_array(&indices);
+                break;
+        case GL_UNSIGNED_INT:
+                v_indices = php_array_to_uint_array(&indices);
+                break;
+        }
+    }
+    glDrawElements((GLenum)mode, (GLsizei)count, (GLenum)type, NULL);
 }
 /* }}} */
 
@@ -4965,7 +4985,7 @@ PHP_FUNCTION(glviewport)
 /* }}} */
 
 /* {{{ void glviewport(long x, long y, long width, long height) */
-PHP_FUNCTION(glCreateShader)
+PHP_FUNCTION(glcreateshader)
 {
     GLuint return_code;
     zend_long shader_type;
@@ -5049,7 +5069,7 @@ const zend_function_entry opengl_functions[] = {
 	ZEND_FE(gldisableclientstate,NULL)
 	ZEND_FE(gldrawarrays,NULL)
 	ZEND_FE(gldrawbuffer,NULL)
-	ZEND_FE(gldrawelements,NULL)
+	ZEND_FE(gldrawelements, arginfo_glDrawElements)
 	ZEND_FE(gldrawpixels,NULL)
 	ZEND_FE(gledgeflag,NULL)
 	ZEND_FE(gledgeflagpointer,NULL)
@@ -5318,26 +5338,26 @@ const zend_function_entry opengl_functions[] = {
 	ZEND_FE(glvertex4sv,NULL)
 	ZEND_FE(glvertexpointer,NULL)
 	ZEND_FE(glviewport,NULL)
-	ZEND_FE(glCreateShader, NULL)
-    ZEND_FE(glGenVertexArrays, arginfo_glGenVertexArrays)
-    ZEND_FE(glBindVertexArray, arginfo_glBindVertexArray)
-    ZEND_FE(glGenBuffers, arginfo_glGenBuffers)
-    ZEND_FE(glBindBuffer, arginfo_glBindBuffer)
-    ZEND_FE(glBufferData, arginfo_glBufferData)
+	ZEND_FE(glcreateshader, NULL)
+    ZEND_FE(glgenvertexarrays, arginfo_glgenvertexarrays)
+    ZEND_FE(glbindvertexarray, arginfo_glbindvertexarray)
+    ZEND_FE(glgenbuffers, arginfo_glgenbuffers)
+    ZEND_FE(glbindbuffer, arginfo_glbindbuffer)
+    ZEND_FE(glbufferdata, arginfo_glbufferdata)
     ZEND_FE(glDeleteVertexArrays, arginfo_glDeleteVertexArrays)
     ZEND_FE(glDeleteBuffers, arginfo_glDeleteBuffers)
     ZEND_FE(glDeleteShader, arginfo_glDeleteShader)
     ZEND_FE(glDeleteProgram, arginfo_glDeleteProgram)
-    ZEND_FE(glShaderSource, arginfo_glShaderSource)
-    ZEND_FE(glCompileShader, arginfo_glCompileShader)
-    ZEND_FE(glAttachShader, arginfo_glAttachShader)
-    ZEND_FE(glBindFragDataLocation, arginfo_glBindFragDataLocation)
-    ZEND_FE(glLinkProgram, arginfo_glLinkProgram)
-    ZEND_FE(glUseProgram, arginfo_glUseProgram)
-    ZEND_FE(glCreateProgram, arginfo_glCreateProgram)
-    ZEND_FE(glGetAttribLocation, arginfo_glGetAttribLocation)
-    ZEND_FE(glEnableVertexAttribArray, arginfo_glEnableVertexAttribArray)
-    ZEND_FE(glVertexAttribPointer, arginfo_glVertexAttribPointer)
+    ZEND_FE(glshadersource, arginfo_glshadersource)
+    ZEND_FE(glcompileshader, arginfo_glcompileshader)
+    ZEND_FE(glattachshader, arginfo_glattachshader)
+    ZEND_FE(glbindfragdatalocation, arginfo_glbindfragdatalocation)
+    ZEND_FE(gllinkprogram, arginfo_gllinkprogram)
+    ZEND_FE(gluseprogram, arginfo_gluseprogram)
+    ZEND_FE(glcreateprogram, arginfo_glcreateprogram)
+    ZEND_FE(glgetattriblocation, arginfo_glgetattriblocation)
+    ZEND_FE(glenablevertexattribarray, arginfo_glenablevertexattribarray)
+    ZEND_FE(glvertexattribpointer, arginfo_glvertexattribpointer)
 
 	/* GLU Functions */
 	ZEND_FE(gluerrorstring,NULL)
@@ -6030,13 +6050,13 @@ PHP_MINIT_FUNCTION(opengl)
         REGISTER_LONG_CONSTANT("GL_VERTEX_SHADER", GL_VERTEX_SHADER, CONST_CS | CONST_PERSISTENT);
         REGISTER_LONG_CONSTANT("GL_FRAGMENT_SHADER", GL_FRAGMENT_SHADER, CONST_CS | CONST_PERSISTENT);
         REGISTER_LONG_CONSTANT("GL_SHADING_LANGUAGE_VERSION", GL_SHADING_LANGUAGE_VERSION, CONST_CS | CONST_PERSISTENT);
-#ifdef GL_MINOR_VERSION
-        REGISTER_LONG_CONSTANT("GL_MINOR_VERSION", GL_MINOR_VERSION, CONST_CS | CONST_PERSISTENT);
-#endif
-#ifdef GL_MAJOR_VERSION
-        REGISTER_LONG_CONSTANT("GL_MAJOR_VERSION", GL_MAJOR_VERSION, CONST_CS | CONST_PERSISTENT);
-#endif
 
+        REGISTER_LONG_CONSTANT("GL_MINOR_VERSION", GL_MINOR_VERSION, CONST_CS | CONST_PERSISTENT);
+
+
+        REGISTER_LONG_CONSTANT("GL_MAJOR_VERSION", GL_MAJOR_VERSION, CONST_CS | CONST_PERSISTENT);
+
+        
 	PHP_MINIT(glut)(INIT_FUNC_ARGS_PASSTHRU);
 
 	return SUCCESS;

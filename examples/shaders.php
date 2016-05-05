@@ -3,7 +3,7 @@
 require 'bootstrap.php';
 
 $vertexSource = <<<SHADER
-#version 130
+#version 150 core
 
 in vec2 position;
 in vec3 color;
@@ -16,7 +16,7 @@ void main() {
 SHADER;
 
 $fragmentSource = <<<SHADER
-#version 130
+#version 150 core
 
 in vec3 Color;
 out vec4 outColor;
@@ -28,53 +28,15 @@ SHADER;
 
 
 // https://open.gl/content/code/c2_triangle_elements.txt
-/*
-  glDeleteProgram($shaderProgram);
-  glDeleteShader($fragmentShader);
-  glDeleteShader($vertexShader);
-
-  glDeleteBuffers(1, $ebo);
-  glDeleteBuffers(1, $vbo);
-
-  glDeleteVertexArrays(1, $vao);
- */
 glutInit($argc, $argv);
-//glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH);
-//glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH);
+glutInitContextVersion(3, 1);
+glutInitContextProfile(GLUT_CORE_PROFILE);
+
+glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 glutInitWindowSize(800, 600);
+glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
 glutCreateWindow("PHP-OpenGL vertex arrays example");
 
-/*
-  glShadeModel(GL_SMOOTH);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  glReadBuffer(GL_BACK);
-  glDrawBuffer(GL_BACK);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);
-  glDepthMask(TRUE);
-  glDisable(GL_STENCIL_TEST);
-  glStencilMask(0xFFFFFFFF);
-  glStencilFunc(GL_EQUAL, 0x00000000, 0x00000001);
-  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-  glFrontFace(GL_CCW);
-  glCullFace(GL_BACK);
-  glEnable(GL_CULL_FACE);
-  glClearColor(1.0, 0.0, 0.0, 0.0);
-  glClearDepth(1.0);
-  glClearStencil(0);
-  glDisable(GL_BLEND);
-  glDisable(GL_ALPHA_TEST);
-  glDisable(GL_DITHER); */
-//glActiveTexture(GL_TEXTURE0);
-glEnable(GL_DEPTH_TEST);
-
-$major = array();
-$minor = array();
-glGetIntegerv(GL_MAJOR_VERSION, $major, 1);
-glGetIntegerv(GL_MINOR_VERSION, $minor, 1);
-
-// Create Vertex Array Object
 glGenVertexArrays(1, $vaos);
 $vao = array_pop($vaos);
 glBindVertexArray($vao);
@@ -91,7 +53,7 @@ $vertices = [
 ];
 
 glBindBuffer(GL_ARRAY_BUFFER, $vbo);
-glBufferData(GL_ARRAY_BUFFER, count($vertices), $vertices, GL_STATIC_DRAW);
+glBufferData(GL_ARRAY_BUFFER, count($vertices) * 4, $vertices, GL_STATIC_DRAW);
 
 // Create an element array
 glGenBuffers(1, $ebos);
@@ -103,7 +65,7 @@ $elements = [
 ];
 
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, $ebo);
-glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof($elements), $elements, GL_STATIC_DRAW);
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof($elements) * 4, $elements, GL_STATIC_DRAW);
 
 // Create and compile the vertex shader
 $vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -121,29 +83,25 @@ glAttachShader($shaderProgram, $vertexShader);
 glAttachShader($shaderProgram, $fragmentShader);
 glBindFragDataLocation($shaderProgram, 0, "outColor");
 glLinkProgram($shaderProgram);
+glUseProgram($shaderProgram);
+// Specify the layout of the vertex data
+$posAttrib = glGetAttribLocation($shaderProgram, "position");
+glEnableVertexAttribArray($posAttrib);
+glVertexAttribPointer($posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * 4, 0);
 
-$displayCallback = function() use ($shaderProgram, $vao) {
-    echo '.';
+$colAttrib = glGetAttribLocation($shaderProgram, "color");
+glEnableVertexAttribArray($colAttrib);
+glVertexAttribPointer($colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * 4, 2 * 4);
+
+$displayCallback = function() {
     // Clear the screen to black
     glClearColor(0, 0.0, 0.0, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram($shaderProgram);
-    // Specify the layout of the vertex data
-    $posAttrib = glGetAttribLocation($shaderProgram, "position");
-    glEnableVertexAttribArray($posAttrib);
-    glVertexAttribPointer($posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * 1, 0);
-
-    $colAttrib = glGetAttribLocation($shaderProgram, "color");
-    glEnableVertexAttribArray($colAttrib);
-    glVertexAttribPointer($colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * 1, 6);
-
-    glBindVertexArray($vao);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // Draw a rectangle from the 2 triangles using 6 indices
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
-    // Swap buffers
-glFLush();
-//    glutSwapBuffers();
+
+    glutSwapBuffers();
 };
 glutDisplayFunc($displayCallback);
 
@@ -153,4 +111,13 @@ $reshapeCallback = function($w, $h) {
 glutReshapeFunc($reshapeCallback);
 
 glutMainLoop();
+
+glDeleteProgram($shaderProgram);
+glDeleteShader($fragmentShader);
+glDeleteShader($vertexShader);
+
+glDeleteBuffers(1, $ebo);
+glDeleteBuffers(1, $vbo);
+
+glDeleteVertexArrays(1, $vao);
 

@@ -80,7 +80,7 @@ $ReshapeFunc = function($width, $height) {
  */
 $KeyboardFunc = function($key, $x, $y) {
     if ('q' == $key || 'Q' == $key || 27 == $key) {
-        exit(0);        
+        exit(0);
     }
 };
 

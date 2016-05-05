@@ -17,6 +17,8 @@
   +----------------------------------------------------------------------+
 */
 
+#include <GL/gl.h>
+#include "php.h"
 
 #define C_INT_TO_PHP_LONG 1
 #define C_LONG_TO_PHP_LONG 2

@@ -26,15 +26,20 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
-#include <GL/gl.h>
-#include <GL/glu.h>
+//#include <GL/gl.h>
+//#include <GL/glu.h>
 #endif
 
-#include "php.h"
-#include "php_glu.h"
-#include "php_opengl.h"
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include "php_convert.h"
 
+#include "php.h"
+
+/*
+#include "php_glu.h"
+#include "php_opengl.h"
+*/
 int le_quad = 0;
 int le_nurb = 0;
 int le_tess = 0;

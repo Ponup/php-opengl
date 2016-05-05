@@ -21,6 +21,7 @@
 
 #define PHP_OPENGL_VERSION "0.9.0"
 
+#include <php.h>
 #include <ext/standard/info.h>
 
 extern zend_module_entry opengl_module_entry;
@@ -374,25 +375,25 @@ PHP_FUNCTION(glvertex4s);
 PHP_FUNCTION(glvertex4sv);
 PHP_FUNCTION(glvertexpointer);
 PHP_FUNCTION(glviewport);
-PHP_FUNCTION(glGenVertexArrays);
-PHP_FUNCTION(glBindVertexArray);
-PHP_FUNCTION(glGenBuffers);
-PHP_FUNCTION(glBindBuffer);
-PHP_FUNCTION(glBufferData);
-PHP_FUNCTION(glCreateShader);
-PHP_FUNCTION(glDeleteVertexArrays);
-PHP_FUNCTION(glDeleteBuffers);
-PHP_FUNCTION(glDeleteShader);
-PHP_FUNCTION(glDeleteProgram);
-PHP_FUNCTION(glShaderSource);
-PHP_FUNCTION(glCompileShader);
-PHP_FUNCTION(glAttachShader);
-PHP_FUNCTION(glBindFragDataLocation);
-PHP_FUNCTION(glLinkProgram);
-PHP_FUNCTION(glUseProgram);
-PHP_FUNCTION(glCreateProgram);
-PHP_FUNCTION(glGetAttribLocation);
-PHP_FUNCTION(glEnableVertexAttribArray);
-PHP_FUNCTION(glVertexAttribPointer);
+PHP_FUNCTION(glgenvertexarrays);
+PHP_FUNCTION(glbindvertexarray);
+PHP_FUNCTION(glgenbuffers);
+PHP_FUNCTION(glbindbuffer);
+PHP_FUNCTION(glbufferdata);
+PHP_FUNCTION(glcreateshader);
+PHP_FUNCTION(gldeletevertexarrays);
+PHP_FUNCTION(gldeletebuffers);
+PHP_FUNCTION(gldeleteshader);
+PHP_FUNCTION(gldeleteprogram);
+PHP_FUNCTION(glshadersource);
+PHP_FUNCTION(glcompileshader);
+PHP_FUNCTION(glattachshader);
+PHP_FUNCTION(glbindfragdatalocation);
+PHP_FUNCTION(gllinkprogram);
+PHP_FUNCTION(gluseprogram);
+PHP_FUNCTION(glcreateprogram);
+PHP_FUNCTION(glgetattriblocation);
+PHP_FUNCTION(glenablevertexattribarray);
+PHP_FUNCTION(glvertexattribpointer);
 
 #endif

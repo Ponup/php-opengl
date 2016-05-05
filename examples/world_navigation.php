@@ -217,7 +217,7 @@ glutMouseFunc($Mouse);
 glutMotionFunc(function( $x, $y ) {
     onMouseMotion($x, $y, false);
 });
-//    glutPassiveMotionFunc(function( $x, $y ) { onMouseMotion( $x, $y, true ); });
+//glutPassiveMotionFunc(function( $x, $y ) { onMouseMotion( $x, $y, true ); });
 glutKeyboardFunc($Keyboard);
 glutKeyboardUpFunc($KeyboardUp);
 glutIdleFunc($Idle);

@@ -326,11 +326,11 @@ $handleMainMenuCallback = function($whichone) use( &$spincamera, &$ballbounce ) 
 $handleSpeedMenuCallback = function($whichone) use( &$ballspeed ) {
     var_dump($whichone, $ballspeed);
     switch ($whichone) {
-        case 1: $ballspeed = 0.5;
+        case 10: $ballspeed = 0.5;
             break;
-        case 2: $ballspeed = 2;
+        case 20: $ballspeed = 2;
             break;
-        case 3: $ballspeed = 10;
+        case 30: $ballspeed = 10;
             break;
     }
 };
@@ -404,12 +404,11 @@ glutSpecialFunc($HandleSpecialKeyboard);
 glutMouseFunc($handleMouse);
 CreateEnvironment();
 
-
 /* Set up some menus */
 $speedmenu = glutCreateMenu($handleSpeedMenuCallback);
-glutAddMenuEntry("Slow", 1);
-glutAddMenuEntry("Medium", 2);
-glutAddMenuEntry("fast", 3);
+glutAddMenuEntry("Slow", 10);
+glutAddMenuEntry("Medium", 20);
+glutAddMenuEntry("Fast", 30);
 
 $mainmenu = glutCreateMenu($handleMainMenuCallback);
 glutAddMenuEntry("Toggle camera spin", 1);

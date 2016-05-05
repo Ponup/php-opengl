@@ -2,8 +2,6 @@
 
 require 'bootstrap.php';
 
-ini_set('display_errors', true);
-
 define('MENU_STARTOVER', 0);
 define('MENU_STOP_RINGS', 1);
 define('MENU_STOP_FADE', 2);
