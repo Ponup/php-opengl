@@ -758,7 +758,8 @@ void glutkeyboardfunc_callback(unsigned char key, int x, int y)
 	zval retval;
 	char str[2];
 
-	sprintf(str, "%c", key);
+    str[0] = key;
+    str[1] = '\0';
 
 	ZVAL_STRING(&params[0], str);
 	ZVAL_LONG(&params[1], x);
@@ -1673,6 +1674,27 @@ PHP_FUNCTION(glutwireteapot)
 }
 /* }}} */
 
+/* {{{ void glutwireteapot(double size) */
+PHP_FUNCTION(glutSetOption)
+{
+    zend_long what, value;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &what, &value) == FAILURE ) {
+		WRONG_PARAM_COUNT;
+	}
+
+    glutSetOption(what, value);
+}
+
+/* {{{ void glutwireteapot(double size) */
+PHP_FUNCTION(glutLeaveMainLoop)
+{
+	if( zend_parse_parameters_none() == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+    glutLeaveMainLoop(); 
+}
+
 
 const zend_function_entry glut_functions[] = {
     ZEND_FE(glutinitcontextversion, arginfo_glutinitcontextversion)
@@ -1767,8 +1789,12 @@ const zend_function_entry glut_functions[] = {
 	ZEND_FE(glutwireicosahedron,NULL)
 	ZEND_FE(glutsolidteapot,NULL)
 	ZEND_FE(glutwireteapot,NULL)
+	ZEND_FE(glutSetOption,NULL)
+	ZEND_FE(glutLeaveMainLoop,NULL)
 	ZEND_FE_END
 };
+
+//glutMainLoopEvent
 
 #ifdef COMPILE_DL_GLUT
 ZEND_GET_MODULE(glut)
@@ -1932,6 +1958,9 @@ PHP_MINIT_FUNCTION(glut)
 #ifdef GLUT_CORE_PROFILE
         REGISTER_LONG_CONSTANT("GLUT_CORE_PROFILE", (long)GLUT_CORE_PROFILE , CONST_CS | CONST_PERSISTENT);
 #endif
+    REGISTER_LONG_CONSTANT("GLUT_DEBUG", (long)GLUT_DEBUG, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GLUT_ACTION_ON_WINDOW_CLOSE", (long)GLUT_ACTION_ON_WINDOW_CLOSE, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GLUT_ACTION_GLUTMAINLOOP_RETURNS", (long)GLUT_ACTION_GLUTMAINLOOP_RETURNS, CONST_CS | CONST_PERSISTENT);
 
 	call_backs = (HashTable*)emalloc(sizeof(HashTable));
 /*	zend_hash_init(call_backs, 0, NULL, ZVAL_PTR_DTOR, 0); */

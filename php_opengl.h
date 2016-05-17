@@ -395,5 +395,8 @@ PHP_FUNCTION(glcreateprogram);
 PHP_FUNCTION(glgetattriblocation);
 PHP_FUNCTION(glenablevertexattribarray);
 PHP_FUNCTION(glvertexattribpointer);
+PHP_FUNCTION(glGetUniformLocation);
+PHP_FUNCTION(glActiveTexture);
+PHP_FUNCTION(glUniformMatrix4fv);
 
 #endif

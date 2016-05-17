@@ -39,7 +39,6 @@
 #endif
 
 #include "php_convert.h"
-#include "php_glu.h"
 
 
 /*
@@ -4508,20 +4507,15 @@ PHP_FUNCTION(glteximage1d)
 /* {{{ void glteximage2d(long target, long level, long internalformat, long width, long height, long border, long format, long type, array pixels) */
 PHP_FUNCTION(glteximage2d)
 {
-	zval *target, *level, *internalformat, *width, *height, *border, *format, *type, *pixels;
+    zend_long target, level, internal_format, width, height, border, format, type;
+    zval *pixels;
 	GLvoid *v_pixels;
-	NINE_PARAM(target, level, internalformat, width, height, border, format, type, pixels);
-	convert_to_long(target);
-	convert_to_long(level);
-	convert_to_long(internalformat);
-	convert_to_long(width);
-	convert_to_long(height);
-	convert_to_long(border);
-	convert_to_long(format);
-	convert_to_long(type);
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llllllllz", &target, &level, &internal_format, &width, &height, &border, &format, &type, &pixels) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
 	convert_to_array(pixels);
-	v_pixels = php_array_to_long_array(pixels);
-	glTexImage2D((int)Z_LVAL_P(target),(int)Z_LVAL_P(level),(int)Z_LVAL_P(internalformat),(int)Z_LVAL_P(width),(int)Z_LVAL_P(height),(int)Z_LVAL_P(border),(int)Z_LVAL_P(format),(int)Z_LVAL_P(type),v_pixels);
+	v_pixels = php_array_to_int_array(pixels);
+	glTexImage2D((GLenum)target, (GLint)level, (GLint)internal_format, (GLsizei)width, (GLsizei)height, (GLint)border, (GLenum)format, (GLenum)type, v_pixels);
 }
 /* }}} */
 
@@ -4598,20 +4592,15 @@ PHP_FUNCTION(gltexsubimage1d)
 /* {{{ void gltexsubimage2d(long target, long level, long xoffset, long yoffset, long width, long height, long format, long type, array pixels) */
 PHP_FUNCTION(gltexsubimage2d)
 {
-	zval *target, *level, *xoffset, *yoffset, *width, *height, *format, *type, *pixels;
+	zend_long target, level, xoffset, yoffset, width, height, format, type;
+    zval* pixels;
 	GLvoid *v_pixels;
-	NINE_PARAM(target, level, xoffset, yoffset, width, height, format, type, pixels);
-	convert_to_long(target);
-	convert_to_long(level);
-	convert_to_long(xoffset);
-	convert_to_long(yoffset);
-	convert_to_long(width);
-	convert_to_long(height);
-	convert_to_long(format);
-	convert_to_long(type);
+	if(zend_parse_parameters(ZEND_NUM_ARGS(), "llllllllz", &target, &level, &xoffset, &yoffset, &width, &height, &format, &type, &pixels) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
 	convert_to_array(pixels);
 	v_pixels = php_array_to_long_array(pixels);
-	glTexSubImage2D((int)Z_LVAL_P(target),(int)Z_LVAL_P(level),(int)Z_LVAL_P(xoffset),(int)Z_LVAL_P(yoffset),(int)Z_LVAL_P(width),(int)Z_LVAL_P(height),(int)Z_LVAL_P(format),(int)Z_LVAL_P(type),v_pixels);
+	glTexSubImage2D((int)(target),(int)(level),(int)(xoffset),(int)(yoffset),(int)(width),(int)(height),(int)(format),(int)(type),v_pixels);
 }
 /* }}} */
 
@@ -5000,6 +4989,88 @@ PHP_FUNCTION(glcreateshader)
 }
 /* }}} */
 
+PHP_FUNCTION(glGetUniformLocation)
+{
+    zend_long program;
+    char* name;
+    size_t name_len;
+
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &program, &name, &name_len) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+    RETURN_LONG(glGetUniformLocation(program, name));
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glUniform1f, 0, 0, 2)
+    ZEND_ARG_INFO(0, location)
+    ZEND_ARG_INFO(0, v0)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glUniform1f)
+{
+    zend_long location;
+    double v0;
+
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ld", &location, &v0) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+    glUniform1f((GLint)location, (GLfloat)v0);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glUniformMatrix4fv, 0, 0, 4)
+    ZEND_ARG_INFO(0, location)
+    ZEND_ARG_INFO(0, count)
+    ZEND_ARG_INFO(0, transpose)
+    ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glUniformMatrix4fv)
+{
+    zend_long location, count;
+    zend_bool transpose;
+    zend_array* z_value;
+    GLfloat* value;
+
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llba", &location, &count, &transpose, &z_value) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+    value = php_array_to_float_array(z_value);
+
+    glUniformMatrix4fv((GLint)location, (GLsizei)count, (GLboolean)transpose, value);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glUniform1i, 0, 0, 2)
+    ZEND_ARG_INFO(0, location)
+    ZEND_ARG_INFO(0, v0)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glUniform1i)
+{
+    zend_long location, v0;
+
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &location, &v0) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+    glUniform1i((GLint)location, (GLint)v0);
+}
+
+
+PHP_FUNCTION(glActiveTexture)
+{
+    zend_long texture;
+
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &texture) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+    glActiveTexture((GLenum)texture);
+}
+
+
 const zend_function_entry opengl_functions[] = {
 	/* GL Functions */
 	ZEND_FE(glaccum,NULL)
@@ -5358,54 +5429,11 @@ const zend_function_entry opengl_functions[] = {
     ZEND_FE(glgetattriblocation, arginfo_glgetattriblocation)
     ZEND_FE(glenablevertexattribarray, arginfo_glenablevertexattribarray)
     ZEND_FE(glvertexattribpointer, arginfo_glvertexattribpointer)
-
-	/* GLU Functions */
-	ZEND_FE(gluerrorstring,NULL)
-	ZEND_FE(gluerrorunicodestringext,NULL)
-	ZEND_FE(glugetstring,NULL)
-	ZEND_FE(gluortho2d,NULL)
-	ZEND_FE(gluperspective,NULL)
-	ZEND_FE(glupickatrix,NULL)
-	ZEND_FE(gluproject,NULL)
-	ZEND_FE(glunuproject,NULL)
-	//ZEND_FE(gluscaleimage,NULL)
-	ZEND_FE(glulookat,NULL)
-	ZEND_FE(glubuild1dmipmaps,NULL)
-	ZEND_FE(glubuild2dmipmaps,NULL)
-	ZEND_FE(glunewquadric,NULL)
-	ZEND_FE(gludeletequadric,NULL)
-	ZEND_FE(gluquadricnormals,NULL)
-	ZEND_FE(gluquadrictexture,NULL)
-	ZEND_FE(gluquadricorientation,NULL)
-	ZEND_FE(gluquadricdrawstyle,NULL)
-	ZEND_FE(glucylinder,NULL)
-	ZEND_FE(gludisk,NULL)
-	ZEND_FE(glupartialdisk,NULL)
-	ZEND_FE(glusphere,NULL)
-	ZEND_FE(glunewtess,NULL)
-	ZEND_FE(gludeletetess,NULL)
-	ZEND_FE(glutessbeginpolygon,NULL)
-	ZEND_FE(glutessbegincontour,NULL)
-	ZEND_FE(glutessvertex,NULL)
-	ZEND_FE(glutessendcontour,NULL)
-	ZEND_FE(glutessendpolygon,NULL)
-	ZEND_FE(glutessproperty,NULL)
-	ZEND_FE(glutessnormal,NULL)
-	ZEND_FE(glugettessproperty,NULL)
-	ZEND_FE(glunewnurbsrenderer,NULL)
-	ZEND_FE(gludeletenurbsrenderer,NULL)
-	ZEND_FE(glubeginsurface,NULL)
-	ZEND_FE(glubegincurve,NULL)
-	ZEND_FE(gluendcurve,NULL)
-	ZEND_FE(gluendsurface,NULL)
-	ZEND_FE(glubegintrim,NULL)
-	ZEND_FE(gluendtrim,NULL)
-	ZEND_FE(glupwlcurve,NULL)
-	ZEND_FE(glunurbscurve,NULL)
-	ZEND_FE(glunurbssurface,NULL)
-	ZEND_FE(gluloadsamplingmatrices,NULL)
-	ZEND_FE(gluNurbsProperty,NULL)
-	ZEND_FE(glugetnurbsproperty,NULL)
+    ZEND_FE(glGetUniformLocation, NULL)
+    ZEND_FE(glUniform1f, arginfo_glUniform1f)
+    ZEND_FE(glUniform1i, arginfo_glUniform1i)
+    ZEND_FE(glActiveTexture, NULL)
+    ZEND_FE(glUniformMatrix4fv, arginfo_glUniformMatrix4fv)
 
 	ZEND_FE_END
 };
@@ -5433,10 +5461,6 @@ ZEND_GET_MODULE(opengl)
 
 PHP_MINIT_FUNCTION(opengl)
 {
-	// le_quad = zend_register_list_destructors_ex(gluquadric_destructor, NULL, "GLUquadric", module_number);
-	// le_nurb = zend_register_list_destructors_ex(glunurbs_destructor, NULL, "GLUnurbs", module_number);
-	// le_tess = zend_register_list_destructors_ex(glutesselator_destructor, NULL, "GLUtesselator", module_number);
-
 	REGISTER_LONG_CONSTANT("GL_ACCUM", GL_ACCUM , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_LOAD", GL_LOAD , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_RETURN", GL_RETURN , CONST_CS | CONST_PERSISTENT);
@@ -6044,18 +6068,20 @@ PHP_MINIT_FUNCTION(opengl)
 	REGISTER_LONG_CONSTANT("GL_LOGIC_OP", GL_LOGIC_OP , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_TEXTURE_COMPONENTS", GL_TEXTURE_COMPONENTS , CONST_CS | CONST_PERSISTENT);
 
-        REGISTER_LONG_CONSTANT("GL_ARRAY_BUFFER", GL_ARRAY_BUFFER, CONST_CS | CONST_PERSISTENT);
-        REGISTER_LONG_CONSTANT("GL_STATIC_DRAW", GL_STATIC_DRAW, CONST_CS | CONST_PERSISTENT);
-        REGISTER_LONG_CONSTANT("GL_ELEMENT_ARRAY_BUFFER", GL_ELEMENT_ARRAY_BUFFER, CONST_CS | CONST_PERSISTENT);
-        REGISTER_LONG_CONSTANT("GL_VERTEX_SHADER", GL_VERTEX_SHADER, CONST_CS | CONST_PERSISTENT);
-        REGISTER_LONG_CONSTANT("GL_FRAGMENT_SHADER", GL_FRAGMENT_SHADER, CONST_CS | CONST_PERSISTENT);
-        REGISTER_LONG_CONSTANT("GL_SHADING_LANGUAGE_VERSION", GL_SHADING_LANGUAGE_VERSION, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GL_ARRAY_BUFFER", GL_ARRAY_BUFFER, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GL_STATIC_DRAW", GL_STATIC_DRAW, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GL_ELEMENT_ARRAY_BUFFER", GL_ELEMENT_ARRAY_BUFFER, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GL_VERTEX_SHADER", GL_VERTEX_SHADER, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GL_FRAGMENT_SHADER", GL_FRAGMENT_SHADER, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GL_SHADING_LANGUAGE_VERSION", GL_SHADING_LANGUAGE_VERSION, CONST_CS | CONST_PERSISTENT);
 
-        REGISTER_LONG_CONSTANT("GL_MINOR_VERSION", GL_MINOR_VERSION, CONST_CS | CONST_PERSISTENT);
-
-
-        REGISTER_LONG_CONSTANT("GL_MAJOR_VERSION", GL_MAJOR_VERSION, CONST_CS | CONST_PERSISTENT);
-
+    REGISTER_LONG_CONSTANT("GL_MINOR_VERSION", GL_MINOR_VERSION, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GL_MAJOR_VERSION", GL_MAJOR_VERSION, CONST_CS | CONST_PERSISTENT);
+    
+    REGISTER_LONG_CONSTANT("GL_TEXTURE0", GL_TEXTURE0, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GL_TEXTURE1", GL_TEXTURE1, CONST_CS | CONST_PERSISTENT);
+    
+    REGISTER_LONG_CONSTANT("GL_CLAMP_TO_EDGE", GL_CLAMP_TO_EDGE, CONST_CS | CONST_PERSISTENT);
         
 	PHP_MINIT(glut)(INIT_FUNC_ARGS_PASSTHRU);
 

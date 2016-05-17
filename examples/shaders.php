@@ -31,10 +31,10 @@ SHADER;
 glutInit($argc, $argv);
 glutInitContextVersion(3, 1);
 glutInitContextProfile(GLUT_CORE_PROFILE);
+glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
 
 glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 glutInitWindowSize(800, 600);
-glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
 glutCreateWindow("PHP-OpenGL vertex arrays example");
 
 glGenVertexArrays(1, $vaos);

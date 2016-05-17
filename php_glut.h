@@ -144,6 +144,8 @@ PHP_FUNCTION(glutwiresphere);
 PHP_FUNCTION(glutinitcontextversion);
 PHP_FUNCTION(glutInitContextProfile);
 PHP_FUNCTION(glutInitContextFlags);
+PHP_FUNCTION(glutSetOption);
+PHP_FUNCTION(glutLeaveMainLoop);
 
 void glutdisplayfunction_callback();
 void glutoverlaydisplayfunc_callback();

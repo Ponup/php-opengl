@@ -25,7 +25,7 @@ function DrawCircle($cx, $cy, $r, $num_segments) {
     glBegin(GL_LINE_LOOP);
     glColor3f(1.0, 0.0, 0.0);
     for ($ii = 0; $ii < $num_segments; $ii++) {
-        $theta = 2.0 * 3.1415926 * (float) $ii / (float) $num_segments; //get the current angle
+        $theta = 2.0 * M_PI * (float) $ii / (float) $num_segments; //get the current angle
 
         $x = $r * cos($theta); //calculate the x component
         $y = $r * sin($theta); //calculate the y component

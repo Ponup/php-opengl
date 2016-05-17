@@ -1,6 +1,6 @@
 /*
   +----------------------------------------------------------------------+
-  | PHP Version 5                                                        |
+  | PHP Version 7                                                        |
   +----------------------------------------------------------------------+
   | Copyright (c) 1997-2016 The PHP Group                                |
   +----------------------------------------------------------------------+
@@ -12,8 +12,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Brad Lafountain                                              |
-  | Author: Santiago Lizardo <santiagolizardo@php.net>            |
+  | Author: Santiago Lizardo <santiagolizardo@php.net>                   |
   +----------------------------------------------------------------------+
 */
 
@@ -93,10 +92,6 @@ int gl_type_size(GLenum type);
 
 #define EIGHT_PARAM(p,p1,p2,p4,p5,p6,p7,p8) \
 	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzzzzz", &p, &p1, &p2, &p4, &p5, &p6, &p7, &p8) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
-#define NINE_PARAM(p,p1,p2,p4,p5,p6,p7,p8,p9) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzzzzzz", &p, &p1, &p2, &p4, &p5, &p6, &p7, &p8, &p9) == FAILURE) \
 		WRONG_PARAM_COUNT; 
 
 #define TEN_PARAM(p,p1,p2,p4,p5,p6,p7,p8,p9,p10) \
