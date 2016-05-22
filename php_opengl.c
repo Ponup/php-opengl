@@ -30,12 +30,10 @@
 
 #if PHP_OSX 
 #include <OpenGL/gl3.h>
-#include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/freeglut.h>
-//#include <GL/glu.h>
 #endif
 
 #include "php_convert.h"
@@ -499,11 +497,11 @@ PHP_FUNCTION(glbegin)
 /* {{{ void glbindtexture(long target, long texture) */
 PHP_FUNCTION(glbindtexture)
 {
-	long target, texture;
+	zend_long target, texture;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &target, &texture) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
-	glBindTexture((int)target,(unsigned int)texture);
+	glBindTexture((GLenum)target, (GLuint)texture);
 }
 /* }}} */
 
@@ -4548,12 +4546,11 @@ PHP_FUNCTION(gltexparameterfv)
 /* {{{ void gltexparameteri(long target, long pname, long param) */
 PHP_FUNCTION(gltexparameteri)
 {
-	zval *target, *pname, *param;
-	THREE_PARAM(target, pname, param);
-	convert_to_long(target);
-	convert_to_long(pname);
-	convert_to_long(param);
-	glTexParameteri((int)Z_LVAL_P(target),(int)Z_LVAL_P(pname),(int)Z_LVAL_P(param));
+	zend_long target, pname, param;
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lll", &target, &pname, &param) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+	glTexParameteri((GLenum)target, (GLenum)pname, (GLint)param);
 }
 /* }}} */
 
@@ -5037,9 +5034,25 @@ PHP_FUNCTION(glUniformMatrix4fv)
         WRONG_PARAM_COUNT;
     }
 
+	convert_to_array(z_value);
     value = php_array_to_float_array(z_value);
 
     glUniformMatrix4fv((GLint)location, (GLsizei)count, (GLboolean)transpose, value);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glGenerateMipmap, 0, 0, 1)
+    ZEND_ARG_INFO(0, target)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glGenerateMipmap)
+{
+    zend_long target;
+
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &target) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+    glGenerateMipmap((GLenum)target);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glUniform1i, 0, 0, 2)
@@ -5069,6 +5082,7 @@ PHP_FUNCTION(glActiveTexture)
 
     glActiveTexture((GLenum)texture);
 }
+
 
 
 const zend_function_entry opengl_functions[] = {
@@ -5434,6 +5448,7 @@ const zend_function_entry opengl_functions[] = {
     ZEND_FE(glUniform1i, arginfo_glUniform1i)
     ZEND_FE(glActiveTexture, NULL)
     ZEND_FE(glUniformMatrix4fv, arginfo_glUniformMatrix4fv)
+    ZEND_FE(glGenerateMipmap, arginfo_glGenerateMipmap)
 
 	ZEND_FE_END
 };
@@ -5848,6 +5863,9 @@ PHP_MINIT_FUNCTION(opengl)
 	REGISTER_LONG_CONSTANT("GL_ALPHA", GL_ALPHA , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_RGB", GL_RGB , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_RGBA", GL_RGBA , CONST_CS | CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("GL_BGR", GL_BGR, CONST_CS | CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("GL_BGRA", GL_BGRA, CONST_CS | CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("GL_RGB_INTEGER", GL_RGB_INTEGER, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_LUMINANCE", GL_LUMINANCE , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_LUMINANCE_ALPHA", GL_LUMINANCE_ALPHA , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GL_BITMAP", GL_BITMAP , CONST_CS | CONST_PERSISTENT);

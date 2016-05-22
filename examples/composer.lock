@@ -1,0 +1,100 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "d89e89138d1c1fa5340a2e5cb24569b6",
+    "content-hash": "21d6992e9c76d93bf2d85737b69ca385",
+    "packages": [
+        {
+            "name": "ponup/gl-loaders",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ponup/gl-loaders.git",
+                "reference": "c3459cea08502c48df8f6cd36c59f6880d7cd605"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ponup/gl-loaders/zipball/c3459cea08502c48df8f6cd36c59f6880d7cd605",
+                "reference": "c3459cea08502c48df8f6cd36c59f6880d7cd605",
+                "shasum": ""
+            },
+            "require": {
+                "ponup/glm": "dev-master"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ponup\\GlLoaders\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Santiago Lizardo",
+                    "email": "santiago.lizardo@gmail.com"
+                }
+            ],
+            "description": "Loaders for many file formats used in OpenGL",
+            "time": "2016-05-22 22:11:50"
+        },
+        {
+            "name": "ponup/glm",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ponup/glm.git",
+                "reference": "966c8b76e1dbc4f453507c8acb80413e5cb1c024"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ponup/glm/zipball/966c8b76e1dbc4f453507c8acb80413e5cb1c024",
+                "reference": "966c8b76e1dbc4f453507c8acb80413e5cb1c024",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "glm\\": "src/"
+                },
+                "files": [
+                    "src/globals.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Santiago Lizardo",
+                    "email": "santiago.lizardo@gmail.com"
+                }
+            ],
+            "description": "A port of the OpenGL Mathematics library (GLM) to PHP",
+            "time": "2016-05-22 08:29:03"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "ponup/glm": 20,
+        "ponup/gl-loaders": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

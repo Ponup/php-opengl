@@ -21,3 +21,5 @@ autom4te.cache
 libtool
 modules
 nbproject
+vendor
+composer.phar

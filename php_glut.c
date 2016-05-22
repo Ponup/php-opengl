@@ -36,16 +36,11 @@
 
 #if defined(__APPLE__) && defined(__MACH__)
 #include <OpenGL/gl3.h>
-#include <OpenGL/glu.h>
 #else
 //#include <GL/gl.h>
-//#include <GL/glu.h>
 #endif
 
 //#include <ext/standard/info.h>
-
-//
-
 //#include "php_convert.h"
 
 static HashTable *call_backs;
@@ -76,6 +71,9 @@ zend_fcall_info_cache special_fci_cache;
 /* GLUT_MOTION_CALLBACK */
 zend_fcall_info motion_fci;
 zend_fcall_info_cache motion_fci_cache;
+zend_fcall_info passive_motion_fci;
+zend_fcall_info_cache passive_motion_fci_cache;
+
 
 /* GLUT_IDLE_CALLBACK */
 zend_fcall_info idle_fci;
@@ -88,6 +86,9 @@ zend_fcall_info_cache visibility_fci_cache;
 /* GLUT_MOUSE_CALLBACK */
 zend_fcall_info mouse_fci;
 zend_fcall_info_cache mouse_fci_cache;
+
+zend_fcall_info mousewheel_fci;
+zend_fcall_info_cache mousewheel_fci_cache;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glutinitcontextversion, 0, 0, 2)
     ZEND_ARG_INFO(0, major)
@@ -824,6 +825,41 @@ PHP_FUNCTION(glutkeyboardupfunc)
 }
 /* }}} */
 
+void glutmousewheelfunc_callback(int wheel, int direction, int x, int y)
+{
+	zval params[4];
+	zval retval;
+
+	ZVAL_LONG(&params[0], wheel);
+	ZVAL_LONG(&params[1], direction);
+	ZVAL_LONG(&params[2], x);
+	ZVAL_LONG(&params[3], y);
+
+	mousewheel_fci.param_count = 4;
+	mousewheel_fci.params = params;
+	mousewheel_fci.retval = &retval;
+
+	if (zend_call_function(&mousewheel_fci, &mousewheel_fci_cache TSRMLS_CC) != SUCCESS) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
+	}
+
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glutMouseWheelFunc, 0, 0, 1)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO()
+
+/* {{{ bool glutmousefunc(mixed callback) */
+PHP_FUNCTION(glutMouseWheelFunc)
+{
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f", &mousewheel_fci, &mousewheel_fci_cache) == FAILURE)
+	{
+		WRONG_PARAM_COUNT;
+	}
+
+	glutMouseWheelFunc(glutmousewheelfunc_callback);
+	RETURN_TRUE;
+}
 
 void glutmousefunc_callback(int button, int state, int x, int y)
 {
@@ -889,27 +925,31 @@ PHP_FUNCTION(glutmotionfunc)
 }
 /* }}} */
 
-void glutpassivemotionfunc_callback(int x,int y)
+void glutpassivemotionfunc_callback(int x, int y)
 {
-	zval **params[2];
-	params[0] = (zval *)emalloc(sizeof(zval));
-	params[1] = (zval *)emalloc(sizeof(zval));
-	ZVAL_LONG(params[0],x);
-	ZVAL_LONG(params[1],y);
-	call_user_callback(call_backs,GLUT_PASSIVE_MOTION_CALLBACK,2,params);
+	zval params[2];
+    zval retval;
+
+	ZVAL_LONG(&params[0], x);
+	ZVAL_LONG(&params[1], y);
+
+	passive_motion_fci.param_count = 2;
+	passive_motion_fci.params = params;
+	passive_motion_fci.retval = &retval;
+
+	if (zend_call_function(&passive_motion_fci, &passive_motion_fci_cache TSRMLS_CC) != SUCCESS) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
+	}
 }
 
 /* {{{ bool glutpassivemotionfunc(mixed callback) */
 PHP_FUNCTION(glutpassivemotionfunc)
 {
-	zval *callback;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f", &passive_motion_fci, &passive_motion_fci_cache) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
 
-	HASH_CALLBACK(callback, 1, GLUT_PASSIVE_MOTION_CALLBACK);
 	glutPassiveMotionFunc(glutpassivemotionfunc_callback);
-	RETURN_TRUE;
 }
 /* }}} */
 
@@ -1791,6 +1831,7 @@ const zend_function_entry glut_functions[] = {
 	ZEND_FE(glutwireteapot,NULL)
 	ZEND_FE(glutSetOption,NULL)
 	ZEND_FE(glutLeaveMainLoop,NULL)
+    ZEND_FE(glutMouseWheelFunc, arginfo_glutMouseWheelFunc)
 	ZEND_FE_END
 };
 

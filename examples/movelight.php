@@ -1,6 +1,7 @@
 <?php
 
 require 'bootstrap.php';
+require 'glu.php';
 
 define('TORUS', 0);
 define('TEAPOT', 1);

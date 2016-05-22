@@ -3,7 +3,10 @@
 // https://open.gl/transformations
 
 require 'bootstrap.php';
-require 'glm.php';
+
+require 'vendor/autoload.php';
+use \glm\vec3;
+use \glm\mat4;
 
 // Shader sources
 $vertexSource = <<<GLSL
@@ -43,6 +46,8 @@ glutInit($argc, $argv);
 glutInitContextVersion(3, 3);
 glutInitContextProfile(GLUT_CORE_PROFILE);
 glutInitWindowSize(800, 600);
+glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+
 glutCreateWindow('PHP');
 
     // Create Vertex Array Object
@@ -108,14 +113,16 @@ glutCreateWindow('PHP');
     glEnableVertexAttribArray($texAttrib);
     glVertexAttribPointer($texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * 4, (5 * 4));
 
+    $imageLoader = new \Ponup\GlLoaders\ImageLoader;
+
     // Load textures
-$textures = [];
+    $textures = [];
     glGenTextures(2, $textures);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, $textures[0]);
-        $image = SOIL_load_image("sample.png", $width, $height);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, $width, $height, 0, GL_RGB, GL_UNSIGNED_BYTE, $image);
+    $image = $imageLoader->load("textures/sample.png", $width, $height);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, $width, $height, 0, GL_RGBA, GL_UNSIGNED_BYTE, $image);
     glUniform1i(glGetUniformLocation($shaderProgram, "texKitten"), 0);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -125,8 +132,8 @@ $textures = [];
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, $textures[1]);
-        $image = SOIL_load_image("sample2.png", $width, $height);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, $width, $height, 0, GL_RGB, GL_UNSIGNED_BYTE, $image);
+    $image = $imageLoader->load("textures/sample2.png", $width, $height);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, $width, $height, 0, GL_RGBA, GL_UNSIGNED_BYTE, $image);
     glUniform1i(glGetUniformLocation($shaderProgram, "texPuppy"), 1);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -137,23 +144,22 @@ $textures = [];
     $uniModel = glGetUniformLocation($shaderProgram, "model");
 
     // Set up projection
-    $view = glm::lookAt(
-        glm::vec3(1.2, 1.2, 1.2),
-        glm::vec3(0.0, 0.0, 0.0),
-        glm::vec3(0.0, 0.0, 1.0)
+    $view = \glm\lookAt(
+        \glm\vec3(1.2, 1.2, 1.2),
+        \glm\vec3(0.0, 0.0, 0.0),
+        \glm\vec3(0.0, 0.0, 1.0)
     );
-    print_r($view);
     $uniView = glGetUniformLocation($shaderProgram, "view");
-    glUniformMatrix4fv($uniView, 1, GL_FALSE, $view->toArray());
+    glUniformMatrix4fv($uniView, 1, GL_FALSE, \glm\value_ptr($view));
 
-    $proj = glm::perspective(glm::radians(45.0), 800.0 / 600.0, 1.0, 10.0);
-    print_r($proj);
+    $proj = \glm\perspective((45.0), 800.0 / 600.0, 1.0, 10.0);
     $uniProj = glGetUniformLocation($shaderProgram, "proj");
-    glUniformMatrix4fv($uniProj, 1, GL_FALSE, $proj->toArray());
+    glUniformMatrix4fv($uniProj, 1, GL_FALSE, \glm\value_ptr($proj));
 
-    $displayCallback = function() use($t_start, $uniModel) {
+    $displayCallback = function() use($uniModel) {
+        global $t_start;
         // Clear the screen to black
-        glClearColor(0.0, 0.0, 0.0, 1.0);
+        glClearColor(0.1, 0.3, 0.3, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Calculate transformation
@@ -161,12 +167,12 @@ $textures = [];
         $time = $t_now - $t_start;
         
         $model = new mat4;
-        $model = glm::rotate(
+        $model = \glm\rotate(
             $model,
-            $time * glm::radians(180.0),
-            glm::vec3(0.0, 0.0, 1.0)
+            $time * \glm\radians(180.0),
+            new vec3(0.0, 0.0, 1.0)
         );
-        glUniformMatrix4fv($uniModel, 1, GL_FALSE, glm::value_ptr($model));
+        glUniformMatrix4fv($uniModel, 1, GL_FALSE, \glm\value_ptr($model));
 
         // Draw a rectangle from the 2 triangles using 6 indices
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -175,7 +181,12 @@ $textures = [];
         glutSwapBuffers();
     };
 
+    $idleCallback = function() {
+        glutPostRedisplay();
+    };
+
     glutDisplayFunc($displayCallback);
+    glutIdleFunc($idleCallback);
     glutMainLoop();
 
     glDeleteTextures(2, $textures);

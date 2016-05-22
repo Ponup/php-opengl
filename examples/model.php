@@ -1,7 +1,13 @@
 <?php
 
 require 'bootstrap.php';
-require 'obj_loader.php';
+
+require 'vendor/autoload.php';
+
+use \glm\vec3;
+use \glm\mat4;
+
+ini_set('memory_limit', '3096M');
 
 glutInit($argc, $argv);
 glutInitContextVersion(3, 3);
@@ -10,24 +16,35 @@ glutInitContextProfile(GLUT_CORE_PROFILE);
 glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
 glutInitWindowSize(800, 600);
+glutInitWindowPosition(20,20);
 
 glutCreateWindow('Rectangle');
 
 $line = false;
 
-$obj = load('cube2.obj');
+$modelName = $argc === 2 ? $argv[1] : 'models/cube2.obj';
 
-$vertices = $obj->getVerticesAsFloatArray();
-$vertices = $obj->ood();
-$indices = $obj->getIndicesAsFloatArray(); 
+//$obj = load('cube2.obj');
+//$obj = load('sample.obj');
+//$obj = load('elephant.obj');
+//$obj = load('pyramid.obj');
+$objLoader = new \Ponup\GlLoaders\ObjLoader;
+$obj = $objLoader->load($modelName);
+echo $obj, PHP_EOL;
+
+$vertices = $obj->getVertices();
+$indices = $obj->getIndices(); 
 
     $vertexSource = <<<PPP
 #version 330 core
 #extension GL_ARB_separate_shader_objects : enable
 layout (location = 0) in vec3 position;
+uniform mat4 view;
+uniform mat4 proj;
+uniform mat4 model;
 uniform float gScale;
 void main() {
-    gl_Position = vec4(gScale*position.x, gScale*position.y, position.z, 1.0);
+    gl_Position = proj * view * model * vec4(gScale*position.x, position.y, position.z, 1.0);
 }
 PPP;
 
@@ -54,9 +71,18 @@ glLinkProgram($shaderProgram);
 
 glUseProgram($shaderProgram);
 $gScaleLocation = glGetUniformLocation($shaderProgram, "gScale");
-if($gScaleLocation == -1) {
-    die('Unable to fin variable glGetUniformLocation');
-}
+$viewLoc = glGetUniformLocation($shaderProgram, "view");
+$modelLoc = glGetUniformLocation($shaderProgram, "model");
+$projLoc = glGetUniformLocation($shaderProgram, "proj");
+
+$view = \glm\lookAt(new vec3(0, 1, 1), new vec3(0,0,0), new vec3(0,1,0));
+$proj = \glm\perspective(45, (float)800/(float)600, 0.1, 100);
+
+$model = new mat4;
+$model = \glm\rotate($model, 40, new vec3(0, 0, 1));
+glUniformMatrix4fv($modelLoc, 1, GL_FALSE, \glm\value_ptr($model));
+glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
+glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($proj));
 
 glGenVertexArrays(1, $vaos);
 $vao = $vaos[0];
@@ -88,8 +114,9 @@ $displayFunc = function() use($shaderProgram, $vao, $indices, $gScaleLocation) {
     glUseProgram($shaderProgram);
 
     glBindVertexArray($vao);
-    $aaa = count($indices)/3;
-    glDrawElements(GL_TRIANGLES, $aaa, GL_UNSIGNED_INT, 0);  
+    $numFaces = count($indices) / 3;
+    glDrawElements(GL_TRIANGLES, $numFaces, GL_UNSIGNED_INT, 0);  
+//    glDrawArrays(GL_TRIANGLES, 0, count($indices)*6);
 
     glBindVertexArray(0);
 
@@ -97,9 +124,10 @@ $displayFunc = function() use($shaderProgram, $vao, $indices, $gScaleLocation) {
 };
 
 $idleFunc = function() use($gScaleLocation) {
+    usleep(3000);
     static $Scale = 0.0;
-    $Scale += 0.001;
-    $uni = sprintf('%0.1f', sin($Scale));
+    $Scale += 0.01;
+    $uni = sprintf('%0.3f', sin($Scale));
     glUniform1f($gScaleLocation, floatval($uni));
     glutPostRedisplay();
 };
@@ -122,6 +150,4 @@ glutDisplayFunc($displayFunc);
 glutIdleFunc($idleFunc);
 glutKeyboardFunc($keyboardFunc);
 glutMainLoop();
-
-echo 'Cleainnig resources';
 

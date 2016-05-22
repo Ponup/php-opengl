@@ -1,6 +1,7 @@
 <?php
 
 require 'bootstrap.php';
+require 'glu.php';
 
 $left_click = GLUT_UP;
 $right_click = GLUT_UP;

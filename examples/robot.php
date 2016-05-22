@@ -46,6 +46,7 @@
  */
 
 require 'bootstrap.php';
+require 'glu.php';
 
 $shoulder = 0;
 $elbow = 0;

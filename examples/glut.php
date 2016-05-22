@@ -1,6 +1,7 @@
 <?php
 
 require 'bootstrap.php';
+require 'glu.php';
 
 define('DRAFT', 0);
 define('MEDIUM', 1);
