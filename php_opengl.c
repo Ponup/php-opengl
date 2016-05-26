@@ -176,12 +176,16 @@ PHP_FUNCTION(glbufferdata)
     param_ht = HASH_OF(z_data);
     tmp_size = zend_hash_num_elements(param_ht);
 
-    z_first = zend_hash_index_find(param_ht, 0);
-    array_type = Z_TYPE_P(z_first) == IS_DOUBLE ? TO_C_FLOAT : TO_C_INT;
-    
-    data = php_array_to_c_array(z_data, array_type, tmp_size, NULL);
-    
-    glBufferData((GLenum)target, (GLsizeiptr)size, data, (GLenum)usage);
+    if(tmp_size > 0) {
+        z_first = zend_hash_index_find(param_ht, 0);
+        array_type = Z_TYPE_P(z_first) == IS_DOUBLE ? TO_C_FLOAT : TO_C_INT;
+        
+        data = php_array_to_c_array(z_data, array_type, tmp_size, NULL);
+        
+        glBufferData((GLenum)target, (GLsizeiptr)size, data, (GLenum)usage);
+    } else {
+        zend_error(E_WARNING, "glBufferData received an empty array");
+    }
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glDeleteVertexArrays, 0, 0, 0)
@@ -609,13 +613,13 @@ PHP_FUNCTION(glclearaccum)
 /* {{{ void glclearcolor(double red, double green, double blue, double alpha) */
 PHP_FUNCTION(glclearcolor)
 {
-	zval *red, *green, *blue, *alpha;
-	FOUR_PARAM(red, green, blue, alpha);
-	convert_to_double(red);
-	convert_to_double(green);
-	convert_to_double(blue);
-	convert_to_double(alpha);
-	glClearColor((float)Z_DVAL_P(red),(float)Z_DVAL_P(green),(float)Z_DVAL_P(blue),(float)Z_DVAL_P(alpha));
+    double red, green, blue, alpha;
+
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "dddd", &red, &green, &blue, &alpha) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+	glClearColor((GLclampf)red, (GLclampf)green, (GLclampf)blue, (GLclampf)alpha);
 }
 /* }}} */
 
@@ -1322,12 +1326,11 @@ PHP_FUNCTION(gldisableclientstate)
 /* {{{ void gldrawarrays(long mode, long first, long count) */
 PHP_FUNCTION(gldrawarrays)
 {
-	zval *mode, *first, *count;
-	THREE_PARAM(mode, first, count);
-	convert_to_long(mode);
-	convert_to_long(first);
-	convert_to_long(count);
-	glDrawArrays((int)Z_LVAL_P(mode),(int)Z_LVAL_P(first),(int)Z_LVAL_P(count));
+    zend_long mode, first, count;
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lll", &mode, &first, &count) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+	glDrawArrays((GLenum)mode, (GLint)first, (GLsizei)count);
 }
 /* }}} */
 
@@ -1436,11 +1439,11 @@ PHP_FUNCTION(gledgeflagv)
 /* {{{ void glenable(long cap) */
 PHP_FUNCTION(glenable)
 {
-	long cap;
+	zend_long cap;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &cap) == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}
-	glEnable((int)cap);
+	glEnable((GLenum)cap);
 }
 /* }}} */
 
@@ -5016,6 +5019,26 @@ PHP_FUNCTION(glUniform1f)
     glUniform1f((GLint)location, (GLfloat)v0);
 }
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glUniform3f, 0, 0, 4)
+    ZEND_ARG_INFO(0, location)
+    ZEND_ARG_INFO(0, v0)
+    ZEND_ARG_INFO(0, v1)
+    ZEND_ARG_INFO(0, v2)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(glUniform3f)
+{
+    zend_long location;
+    double v0, v1, v2;
+
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lddd", &location, &v0, &v1, &v2) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+    glUniform3f((GLint)location, (GLfloat)v0, (GLfloat)v1, (GLfloat)v2);
+}
+
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glUniformMatrix4fv, 0, 0, 4)
     ZEND_ARG_INFO(0, location)
     ZEND_ARG_INFO(0, count)
@@ -5445,6 +5468,7 @@ const zend_function_entry opengl_functions[] = {
     ZEND_FE(glvertexattribpointer, arginfo_glvertexattribpointer)
     ZEND_FE(glGetUniformLocation, NULL)
     ZEND_FE(glUniform1f, arginfo_glUniform1f)
+    ZEND_FE(glUniform3f, arginfo_glUniform3f)
     ZEND_FE(glUniform1i, arginfo_glUniform1i)
     ZEND_FE(glActiveTexture, NULL)
     ZEND_FE(glUniformMatrix4fv, arginfo_glUniformMatrix4fv)

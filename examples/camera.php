@@ -1,12 +1,11 @@
 <?php
 
 require 'bootstrap.php';
-require 'shader.php';
-
 require 'vendor/autoload.php';
 
 use \glm\vec3;
 use \glm\mat4;
+use \Ponup\ddd\Shader;
 
 // http://learnopengl.com/code_viewer.php?code=getting-started/camera_zoom
  
@@ -183,7 +182,8 @@ glEnable(GL_DEPTH_TEST);
 //glFrontFace(GL_CCW);;
 
 // Build and compile our shader program
-$ourShader = new Shader("shaders/camera.vert", "shaders/camera.frag");
+$ourShader = new Shader();
+$ourShader->compileFromPath("shaders/camera.vert", "shaders/camera.frag");
 
 // Set up vertex data (and buffer(s)) and attribute pointers
 $vertices = [
@@ -327,10 +327,10 @@ $displayFunc = function() use($ourShader, $texture1, $texture2, $cameraUp, $VAO,
     // Bind Textures using texture units
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, $texture1);
-    glUniform1i(glGetUniformLocation($ourShader->Program, "ourTexture1"), 0);
+    glUniform1i(glGetUniformLocation($ourShader->programId, "ourTexture1"), 0);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, $texture2);
-    glUniform1i(glGetUniformLocation($ourShader->Program, "ourTexture2"), 1);
+    glUniform1i(glGetUniformLocation($ourShader->programId, "ourTexture2"), 1);
 
     // Activate shader
     $ourShader->Use();
@@ -342,18 +342,25 @@ $displayFunc = function() use($ourShader, $texture1, $texture2, $cameraUp, $VAO,
     // Camera/View transformation
     $view = \glm\lookAt($cameraPos, $cameraPos->add($cameraFront), $cameraUp);
 
-    $modelLoc = glGetUniformLocation($ourShader->Program, "model");
-    $viewLoc = glGetUniformLocation($ourShader->Program, "view");
-    $projLoc = glGetUniformLocation($ourShader->Program, "projection");
+    $modelLoc = glGetUniformLocation($ourShader->programId, "model");
+    $viewLoc = glGetUniformLocation($ourShader->programId, "view");
+    $projLoc = glGetUniformLocation($ourShader->programId, "projection");
     // Pass the matrices to the shader
     glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
     glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($projection));
 
+    static $sizes = array();
+
     glBindVertexArray($VAO);
     for ($i = 0; $i < NUM_CUBES; $i++)
     {
+        if(!isset($sizes[$i])) {
+            $sizes[$i] = rand(0.1, 10);
+        }
+
         // Calculate the model matrix for each object and pass it to shader before drawing
         $model = new mat4;
+        $model = $model->scale($sizes[$i]);
         $model = \glm\translate($model, $cubePositions[$i]);
         $angle = 20.0 * $i;
         $model = \glm\rotate($model, ($angle), new vec3(1.0, 0.3, 0.5));

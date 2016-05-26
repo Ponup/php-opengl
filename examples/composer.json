@@ -1,6 +1,7 @@
 {
     "require": {
         "ponup/glm": "dev-master#966c8b76e1dbc4f453507c8acb80413e5cb1c024",
-        "ponup/gl-loaders": "dev-master"
+        "ponup/gl-loaders": "dev-master",
+        "ponup/ddd": "dev-master"
     }
 }

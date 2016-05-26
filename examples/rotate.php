@@ -1,12 +1,11 @@
 <?php
 //http://learnopengl.com/code_viewer.php?code=getting-started/transformations
 require 'bootstrap.php';
-require 'shader.php';
-
 require 'vendor/autoload.php';
 
 use \glm\vec3;
 use \glm\mat4;
+use \Ponup\ddd\Shader;
 
 define('WIDTH', 800);
 define('HEIGHT', 600);
@@ -23,7 +22,8 @@ glutCreateWindow('Php');
     glViewport(0, 0, WIDTH, HEIGHT);
 
     // Build and compile our shader program
-    $ourShader = new Shader("shaders/transformations.vert", "shaders/transformations.frag");
+    $ourShader = new Shader;
+    $ourShader->compileFromPath("shaders/transformations.vert", "shaders/transformations.frag");
 
     // Set up vertex data (and buffer(s)) and attribute pointers
     $vertices = [
@@ -111,10 +111,10 @@ glutCreateWindow('Php');
         // Bind Textures using texture units
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, $texture1);
-        glUniform1i(glGetUniformLocation($ourShader->Program, "ourTexture1"), 0);
+        glUniform1i(glGetUniformLocation($ourShader->programId, "ourTexture1"), 0);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, $texture2);
-        glUniform1i(glGetUniformLocation($ourShader->Program, "ourTexture2"), 1);
+        glUniform1i(glGetUniformLocation($ourShader->programId, "ourTexture2"), 1);
 
         // Activate shader
         $ourShader->Use();       
@@ -127,7 +127,7 @@ glutCreateWindow('Php');
         $transform = \glm\rotate($transform, ($a * 50.0), new vec3(0.0, 0.0, 1.0));
 
         // Get matrix's uniform location and set matrix
-        $transformLoc = glGetUniformLocation($ourShader->Program, "transform");
+        $transformLoc = glGetUniformLocation($ourShader->programId, "transform");
         glUniformMatrix4fv($transformLoc, 1, GL_FALSE, \glm\value_ptr($transform));
         
         // Draw container

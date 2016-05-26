@@ -27,7 +27,7 @@ function myInit() {
     $InnerRad = 0.70;
     $OutterRad = 5.0;
     $Tilt = 15;
-    $Dist = 10;
+    $Dist = 30;
 
     $sinoftilt = sin($Tilt * M_PI * 2 / 360);
 

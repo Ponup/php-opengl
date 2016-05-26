@@ -4,9 +4,48 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d89e89138d1c1fa5340a2e5cb24569b6",
-    "content-hash": "21d6992e9c76d93bf2d85737b69ca385",
+    "hash": "cc71784cfd3dc45fc5305faa88f4ba88",
+    "content-hash": "2a6db2c6b55ff8e7519ff422e0602b6b",
     "packages": [
+        {
+            "name": "ponup/ddd",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ponup/ddd.git",
+                "reference": "1822b6e5443c77c848695f5909577c8d2ec21ab1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ponup/ddd/zipball/1822b6e5443c77c848695f5909577c8d2ec21ab1",
+                "reference": "1822b6e5443c77c848695f5909577c8d2ec21ab1",
+                "shasum": ""
+            },
+            "require": {
+                "ponup/glm": "dev-master"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ponup\\ddd\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Santiago Lizardo",
+                    "email": "santiago.lizardo@gmail.com"
+                }
+            ],
+            "description": "A PHP framework in top of the PHP-OpenGL extension which simplifies the 3D application development",
+            "time": "2016-05-26 07:57:41"
+        },
         {
             "name": "ponup/gl-loaders",
             "version": "dev-master",
@@ -91,7 +130,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "ponup/glm": 20,
-        "ponup/gl-loaders": 20
+        "ponup/gl-loaders": 20,
+        "ponup/ddd": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

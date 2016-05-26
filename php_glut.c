@@ -108,13 +108,22 @@ PHP_FUNCTION(glutinitcontextversion)
 
 PHP_FUNCTION(glutInitContextProfile)
 {
-    glutInitContextProfile(GLUT_CORE_PROFILE);
+    zend_long profile;
+
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &profile) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+    glutInitContextProfile(profile);
 }
 
 PHP_FUNCTION(glutInitContextFlags)
 {
-    glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
-
+    zend_long flags;
+    if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &flags) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+    glutInitContextFlags(flags);
 }
 
 /* Glut Init Functions */
@@ -137,7 +146,7 @@ PHP_FUNCTION(glutinit)
 /* {{{ void glutinitwindowsize(long width, long height) */
 PHP_FUNCTION(glutinitwindowsize)
 {
-	long width, height;
+	zend_long width, height;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &width, &height) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
@@ -159,7 +168,7 @@ PHP_FUNCTION(glutinitwindowposition)
 /* {{{ void glutinitdisplaymode(long disp) */
 PHP_FUNCTION(glutinitdisplaymode)
 {
-	long disp;
+	zend_long disp;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &disp) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
@@ -262,7 +271,7 @@ PHP_FUNCTION(glutswapbuffers)
 /* {{{ void glutpositionwindow(long x, long y) */
 PHP_FUNCTION(glutpositionwindow)
 {
-	long x, y;
+	zend_long x, y;
 	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &x, &y) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
