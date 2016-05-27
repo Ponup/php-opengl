@@ -12,7 +12,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Santiago Lizardo <http://www.santiagolizardo.com>            |
+  | Author: Santiago Lizardo <santiagolizardo@php.net>                   |
   +----------------------------------------------------------------------+
 */
 
@@ -28,7 +28,6 @@
 #include <GL/gl.h>
 #include <GL/freeglut.h>
 #include "php_convert.h"
-
 
 #ifdef PHP_WIN32
 #include <windows.h>

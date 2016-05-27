@@ -354,13 +354,8 @@ $displayFunc = function() use($ourShader, $texture1, $texture2, $cameraUp, $VAO,
     glBindVertexArray($VAO);
     for ($i = 0; $i < NUM_CUBES; $i++)
     {
-        if(!isset($sizes[$i])) {
-            $sizes[$i] = rand(0.1, 10);
-        }
-
         // Calculate the model matrix for each object and pass it to shader before drawing
         $model = new mat4;
-        $model = $model->scale($sizes[$i]);
         $model = \glm\translate($model, $cubePositions[$i]);
         $angle = 20.0 * $i;
         $model = \glm\rotate($model, ($angle), new vec3(1.0, 0.3, 0.5));

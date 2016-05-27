@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ponup/ddd.git",
-                "reference": "1822b6e5443c77c848695f5909577c8d2ec21ab1"
+                "reference": "c93697ce6e804dd1e3e83de0185d051a2fb95d89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ponup/ddd/zipball/1822b6e5443c77c848695f5909577c8d2ec21ab1",
-                "reference": "1822b6e5443c77c848695f5909577c8d2ec21ab1",
+                "url": "https://api.github.com/repos/Ponup/ddd/zipball/c93697ce6e804dd1e3e83de0185d051a2fb95d89",
+                "reference": "c93697ce6e804dd1e3e83de0185d051a2fb95d89",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "A PHP framework in top of the PHP-OpenGL extension which simplifies the 3D application development",
-            "time": "2016-05-26 07:57:41"
+            "time": "2016-05-26 13:35:27"
         },
         {
             "name": "ponup/gl-loaders",
@@ -52,12 +52,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ponup/gl-loaders.git",
-                "reference": "c3459cea08502c48df8f6cd36c59f6880d7cd605"
+                "reference": "ca8e153dfd5e6814702262a3361bd8df7045e971"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ponup/gl-loaders/zipball/c3459cea08502c48df8f6cd36c59f6880d7cd605",
-                "reference": "c3459cea08502c48df8f6cd36c59f6880d7cd605",
+                "url": "https://api.github.com/repos/Ponup/gl-loaders/zipball/ca8e153dfd5e6814702262a3361bd8df7045e971",
+                "reference": "ca8e153dfd5e6814702262a3361bd8df7045e971",
                 "shasum": ""
             },
             "require": {
@@ -83,7 +83,7 @@
                 }
             ],
             "description": "Loaders for many file formats used in OpenGL",
-            "time": "2016-05-22 22:11:50"
+            "time": "2016-05-26 15:38:30"
         },
         {
             "name": "ponup/glm",

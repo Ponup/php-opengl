@@ -33,9 +33,24 @@ echo extension=opengl.so | sudo tee /etc/php5/conf.d/opengl.ini
 
 ```php
 <?php
+glutInit($argc, $argv);
 
+glutInitWindowSize(800, 600);
+glutInitWindowPosition(300, 100);
+glutCreateWindow('Basic PHP-OpenGL example');
+
+echo glGetString(GL_VENDOR), PHP_EOL;
+echo glGetString(GL_RENDERER), PHP_EOL;
+
+glutDisplayFunc(function() {
+    glClearColor(0, 0, .2, 1); 
+    glClear(GL_COLOR_BUFFER_BIT);
+    glutSwapBuffers();
+});
+glutMainLoop();
 ```
 
 ## License
 
+GPL-3.0+
 
