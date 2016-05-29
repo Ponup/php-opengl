@@ -182,8 +182,11 @@ glEnable(GL_DEPTH_TEST);
 //glFrontFace(GL_CCW);;
 
 // Build and compile our shader program
-$ourShader = new Shader();
-$ourShader->compileFromPath("shaders/camera.vert", "shaders/camera.frag");
+$shaderProgram = new Shader\Program;
+$shaderProgram->add(new Shader\Vertex("shaders/camera.vert"));
+$shaderProgram->add(new Shader\Fragment("shaders/camera.frag"));
+$shaderProgram->compile();
+$shaderProgram->link();
 
 // Set up vertex data (and buffer(s)) and attribute pointers
 $vertices = [
@@ -303,7 +306,7 @@ glBindTexture(GL_TEXTURE_2D, 0);
 
 
 // Game loop
-$displayFunc = function() use($ourShader, $texture1, $texture2, $cameraUp, $VAO, $cubePositions)
+$displayFunc = function() use($shaderProgram, $texture1, $texture2, $cameraUp, $VAO, $cubePositions)
 {
     $cameraPos = &$GLOBALS['cameraPos'];
     $cameraFront = &$GLOBALS['cameraFront'];
@@ -327,13 +330,13 @@ $displayFunc = function() use($ourShader, $texture1, $texture2, $cameraUp, $VAO,
     // Bind Textures using texture units
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, $texture1);
-    glUniform1i(glGetUniformLocation($ourShader->programId, "ourTexture1"), 0);
+    glUniform1i(glGetUniformLocation($shaderProgram->getId(), "ourTexture1"), 0);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, $texture2);
-    glUniform1i(glGetUniformLocation($ourShader->programId, "ourTexture2"), 1);
+    glUniform1i(glGetUniformLocation($shaderProgram->getId(), "ourTexture2"), 1);
 
     // Activate shader
-    $ourShader->Use();
+    $shaderProgram->Use();
 
     // Projection 
     $projection = \glm\perspective($fov, (float)WIDTH/(float)HEIGHT, 0.1, 100.0);  
@@ -342,9 +345,9 @@ $displayFunc = function() use($ourShader, $texture1, $texture2, $cameraUp, $VAO,
     // Camera/View transformation
     $view = \glm\lookAt($cameraPos, $cameraPos->add($cameraFront), $cameraUp);
 
-    $modelLoc = glGetUniformLocation($ourShader->programId, "model");
-    $viewLoc = glGetUniformLocation($ourShader->programId, "view");
-    $projLoc = glGetUniformLocation($ourShader->programId, "projection");
+    $modelLoc = glGetUniformLocation($shaderProgram->getId(), "model");
+    $viewLoc = glGetUniformLocation($shaderProgram->getId(), "view");
+    $projLoc = glGetUniformLocation($shaderProgram->getId(), "projection");
     // Pass the matrices to the shader
     glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
     glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($projection));

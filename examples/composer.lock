@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ponup/ddd.git",
-                "reference": "c93697ce6e804dd1e3e83de0185d051a2fb95d89"
+                "reference": "cc3ce62f48523beaaed4b4079eb34f35de0adbcf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ponup/ddd/zipball/c93697ce6e804dd1e3e83de0185d051a2fb95d89",
-                "reference": "c93697ce6e804dd1e3e83de0185d051a2fb95d89",
+                "url": "https://api.github.com/repos/Ponup/ddd/zipball/cc3ce62f48523beaaed4b4079eb34f35de0adbcf",
+                "reference": "cc3ce62f48523beaaed4b4079eb34f35de0adbcf",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "A PHP framework in top of the PHP-OpenGL extension which simplifies the 3D application development",
-            "time": "2016-05-26 13:35:27"
+            "time": "2016-05-29 15:37:25"
         },
         {
             "name": "ponup/gl-loaders",

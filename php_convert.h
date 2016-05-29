@@ -78,14 +78,6 @@ int gl_type_size(GLenum type);
 	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzz", &p, &p1, &p2, &p4) == FAILURE) \
 		WRONG_PARAM_COUNT; 
 
-#define FIVE_PARAM(p,p1,p2,p4,p5) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzz", &p, &p1, &p2, &p4, &p5) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
-#define SIX_PARAM(p,p1,p2,p4,p5,p6) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzzz", &p, &p1, &p2, &p4, &p5, &p6) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
 #define SEVEN_PARAM(p,p1,p2,p4,p5,p6,p7) \
 	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzzzz", &p, &p1, &p2, &p4, &p5, &p6, &p7) == FAILURE) \
 		WRONG_PARAM_COUNT; 
