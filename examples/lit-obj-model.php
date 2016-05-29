@@ -44,11 +44,17 @@ glViewport(0, 0, WIDTH, HEIGHT);
 // OpenGL options
 glEnable(GL_DEPTH_TEST);
 
-// Build and compile our shader program
-$lightingShader = new Shader;
-$lightingShader->compileFromPath("shaders/basic_lighting.vs", "shaders/basic_lighting.frag");
-$lampShader = new shader;
-$lampShader->compileFromPath("shaders/lamp.vs", "shaders/lamp.frag");
+$lightingShader = new Shader\Program;
+$lightingShader->add(new Shader\Vertex("shaders/basic_lighting.vs"));
+$lightingShader->add(new Shader\Fragment("shaders/basic_lighting.frag"));
+$lightingShader->compile();
+$lightingShader->link();
+
+$lampShader = new shader\Program;
+$lampShader->add(new Shader\Vertex("shaders/lamp.vs"));
+$lampShader->add(new Shader\Fragment("shaders/lamp.frag"));
+$lampShader->compile();
+$lampShader->link();
 
 $lightvertices = [
     -0.5, -0.5, -0.5,  0.0,  0.0, -1.0,
@@ -184,13 +190,13 @@ $displayCallback = function() use($lightPos, $camera, $containerVAO, $lightVAO, 
 
     // Use cooresponding shader when setting uniforms/drawing objects
     $lightingShader->use();
-    $objectColorLoc = glGetUniformLocation($lightingShader->programId, "objectColor");
+    $objectColorLoc = glGetUniformLocation($lightingShader->getId(), "objectColor");
     glUniform3f($objectColorLoc,  1.0, .5, 0.31);
-    $lightColorLoc  = glGetUniformLocation($lightingShader->programId, "lightColor");
+    $lightColorLoc  = glGetUniformLocation($lightingShader->getId(), "lightColor");
     glUniform3f($lightColorLoc,  1.0, 1.0, 1.0);
-    $lightPosLoc    = glGetUniformLocation($lightingShader->programId, "lightPos");
+    $lightPosLoc    = glGetUniformLocation($lightingShader->getId(), "lightPos");
     glUniform3f($lightPosLoc,    $lightPos->x, $lightPos->y, $lightPos->z);
-    $viewPosLoc     = glGetUniformLocation($lightingShader->programId, "viewPos");
+    $viewPosLoc     = glGetUniformLocation($lightingShader->getId(), "viewPos");
     glUniform3f($viewPosLoc,     $camera->position->x, $camera->position->y, $camera->position->z);
 
     // Create camera transformations
@@ -198,9 +204,9 @@ $displayCallback = function() use($lightPos, $camera, $containerVAO, $lightVAO, 
     $view = $camera->GetViewMatrix();
     $projection = \glm\perspective($camera->zoom, floatval(WIDTH / HEIGHT), 0.1, 100.0);
     // Get the uniform locations
-    $modelLoc = glGetUniformLocation($lightingShader->programId, "model");
-    $viewLoc  = glGetUniformLocation($lightingShader->programId,  "view");
-    $projLoc  = glGetUniformLocation($lightingShader->programId,  "projection");
+    $modelLoc = glGetUniformLocation($lightingShader->getId(), "model");
+    $viewLoc  = glGetUniformLocation($lightingShader->getId(),  "view");
+    $projLoc  = glGetUniformLocation($lightingShader->getId(),  "projection");
     // Pass the matrices to the shader
     glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
     glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($projection));
@@ -218,9 +224,9 @@ $displayCallback = function() use($lightPos, $camera, $containerVAO, $lightVAO, 
     // Also draw the lamp object, again binding the appropriate shader
     $lampShader->use();
     // Get location objects for the matrices on the lamp shader (these could be different on a different shader)
-    $modelLoc = glGetUniformLocation($lampShader->programId, "model");
-    $viewLoc  = glGetUniformLocation($lampShader->programId, "view");
-    $projLoc  = glGetUniformLocation($lampShader->programId, "projection");
+    $modelLoc = glGetUniformLocation($lampShader->getId(), "model");
+    $viewLoc  = glGetUniformLocation($lampShader->getId(), "view");
+    $projLoc  = glGetUniformLocation($lampShader->getId(), "projection");
     // Set matrices
     glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
     glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($projection));

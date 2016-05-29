@@ -6,7 +6,7 @@ PHP bindings of the OpenGL library.
 ## Requirements
 
 - PHP7
-- OpenGL library
+- OpenGL and FreeGLUT libraries
 - Linux/MacOS (Windows support coming soon)
 
 ## Installation

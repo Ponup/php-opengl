@@ -511,63 +511,6 @@ PHP_FUNCTION(glcolormask)
 }
 /* }}} */
 
-/* {{{ void glcolormaterial(long face, long mode) */
-PHP_FUNCTION(glcolormaterial)
-{
-	long face, mode;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &face, &mode) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-	glColorMaterial((int)face,(int)mode);
-}
-/* }}} */
-
-/* {{{ null glcolorpointer(long size, long type, long stride, array pointer) */
-PHP_FUNCTION(glcolorpointer)
-{
-	zval *size, *type, *stride, *pointer;
-	GLvoid *v_pointer;
-	FOUR_PARAM(size, type, stride, pointer);
-	convert_to_long(size);
-	convert_to_long(type);
-	convert_to_long(stride);
-	convert_to_array(pointer);
-
-	switch(Z_LVAL_P(type))
-	{
-	case GL_BYTE:
-		v_pointer = php_array_to_byte_array(pointer);
-		break;
-	case GL_UNSIGNED_BYTE:
-		v_pointer = php_array_to_ubyte_array(pointer);
-		break;
-	case GL_DOUBLE:
-		v_pointer = php_array_to_double_array(pointer);
-		break;
-	case GL_SHORT:
-		v_pointer = php_array_to_short_array(pointer);
-		break;
-	case GL_UNSIGNED_SHORT:
-		v_pointer = php_array_to_ushort_array(pointer);
-		break;
-	case GL_INT:
-		v_pointer = php_array_to_int_array(pointer);
-		break;
-	case GL_UNSIGNED_INT:
-		v_pointer = php_array_to_uint_array(pointer);
-		break;
-	case GL_FLOAT:
-		v_pointer = php_array_to_float_array(pointer);
-		break;
-	default:
-		zend_error(E_ERROR,"Wrong data type");
-		RETURN_NULL();
-		break;
-	}
-	glColorPointer((int)Z_LVAL_P(size),(int)Z_LVAL_P(type),(int)Z_LVAL_P(stride),v_pointer);
-}
-/* }}} */
-
 /* {{{ void glcopyteximage1d(long target, long level, long internalFormat, long x, long y, long width, long border) */
 PHP_FUNCTION(glcopyteximage1d)
 {
@@ -699,17 +642,6 @@ PHP_FUNCTION(gldisable)
 }
 /* }}} */
 
-/* {{{ void gldisableclientstate(long array) */
-PHP_FUNCTION(gldisableclientstate)
-{
-	long array;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &array) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glDisableClientState((int)array);
-}
-/* }}} */
-
 /* {{{ void gldrawarrays(long mode, long first, long count) */
 PHP_FUNCTION(gldrawarrays)
 {
@@ -768,45 +700,6 @@ PHP_FUNCTION(gldrawelements)
 }
 /* }}} */
 
-/* {{{ void gledgeflag(boolean flag) */
-PHP_FUNCTION(gledgeflag)
-{
-	zend_bool flag;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "b", &flag) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glEdgeFlag(flag);
-}
-/* }}} */
-
-/* {{{ void gledgeflagpointer(long stride, array pointer) */
-PHP_FUNCTION(gledgeflagpointer)
-{
-	long stride;
-	zval *pointer;
-	GLvoid *v_pointer;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &stride, &pointer) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-
-	v_pointer = php_array_to_uchar_array(pointer);
-	glEdgeFlagPointer((int)(stride),v_pointer);
-}
-/* }}} */
-
-/* {{{ void gledgeflagv(array flag) */
-PHP_FUNCTION(gledgeflagv)
-{
-	zval *flag;
-	GLboolean *v_flag;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &flag) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	v_flag = php_array_to_uchar_array(flag);
-	glEdgeFlagv(v_flag);
-}
-/* }}} */
-
 /* {{{ void glenable(long cap) */
 PHP_FUNCTION(glenable)
 {
@@ -815,33 +708,6 @@ PHP_FUNCTION(glenable)
 		WRONG_PARAM_COUNT;
 	}
 	glEnable((GLenum)cap);
-}
-/* }}} */
-
-/* {{{ void glenableclientstate(long array) */
-PHP_FUNCTION(glenableclientstate)
-{
-	long array;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &array) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glEnableClientState((int)array);
-}
-/* }}} */
-
-/* {{{ void glfeedbackbuffer(long size, long type, array buffer) */
-PHP_FUNCTION(glfeedbackbuffer)
-{
-	zval *size, *type, *buffer;
-	GLfloat *v_buffer;
-	THREE_PARAM(size, type, buffer);
-	convert_to_long(size);
-	convert_to_long(type);
-	convert_to_array(buffer);
-	v_buffer = (GLfloat *)emalloc(sizeof(GLfloat) * Z_LVAL_P(size));
-	glFeedbackBuffer((int)Z_LVAL_P(size),(int)Z_LVAL_P(type),v_buffer);
-	float_array_to_php_array(v_buffer,Z_LVAL_P(size),buffer);
-	efree(v_buffer);
 }
 /* }}} */
 
@@ -906,21 +772,6 @@ PHP_FUNCTION(glgetbooleanv)
 	glGetBooleanv((unsigned int)Z_LVAL_P(pname),v_params);
 	boolean_array_to_php_array(v_params,Z_LVAL_P(num),params);
 	efree(v_params);
-}
-/* }}} */
-
-/* {{{ void glgetclipplane(long plane, array equation) */
-PHP_FUNCTION(glgetclipplane)
-{
-	long plane;
-	zval *equation;
-	GLdouble v_equation[4];
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &plane, &equation ) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-
-	glGetClipPlane((int)(plane),v_equation);
-	double_array_to_php_array(v_equation,4,equation);
 }
 /* }}} */
 
@@ -999,20 +850,6 @@ PHP_FUNCTION(glgetpointerv)
 	convert_to_array(params);
 	v_params = php_array_to_long_array(params);
 	glGetPointerv((int)(pname),v_params);*/
-}
-/* }}} */
-
-/* {{{ void glgetpolygonstipple(string mask) */
-PHP_FUNCTION(glgetpolygonstipple)
-{
-	zval *mask;
-	GLubyte *v_mask;
-	v_mask = (GLubyte *)emalloc(32 * 32);
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &mask) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glGetPolygonStipple(v_mask);
-	ZVAL_STRING(mask,v_mask);
 }
 /* }}} */
 
@@ -1114,60 +951,6 @@ PHP_FUNCTION(glhint)
 }
 /* }}} */
 
-/* {{{ void glindexmask(long mask) */
-PHP_FUNCTION(glindexmask)
-{
-	long mask;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glIndexMask((unsigned int)mask);
-}
-/* }}} */
-
-/* {{{ void glindexpointer(long type, long stride, array pointer) */
-PHP_FUNCTION(glindexpointer)
-{
-	zval *type, *stride, *pointer;
-	GLvoid *v_pointer;
-	THREE_PARAM(type, stride, pointer);
-	convert_to_long(type);
-	convert_to_long(stride);
-	convert_to_array(pointer);
-	switch(Z_LVAL_P(type))
-	{
-	case GL_SHORT:
-		v_pointer = php_array_to_short_array(pointer);
-		break;
-	case GL_INT:
-		v_pointer = php_array_to_int_array(pointer);
-		break;
-	case GL_FLOAT:
-		v_pointer = php_array_to_float_array(pointer);
-		break;
-	case GL_DOUBLE:
-		v_pointer = php_array_to_double_array(pointer);
-		break;
-	}
-	glIndexPointer((int)Z_LVAL_P(type),(int)Z_LVAL_P(stride),v_pointer);
-}
-/* }}} */
-
-/* {{{ void glinterleavedarrays(long format, long stride, array pointer) */
-PHP_FUNCTION(glinterleavedarrays)
-{
-	/*TODO: Do this function */
-	/*zval *format, *stride, *pointer;
-	GLvoid *v_pointer;
-	THREE_PARAM(format, stride, pointer);
-	convert_to_long(format);
-	convert_to_long(stride);
-	convert_to_array(pointer);
-	v_pointer = php_array_to_long_array(pointer);
-	glInterleavedArrays((int)Z_LVAL_P(format),(int)Z_LVAL_P(stride),v_pointer);*/
-}
-/* }}} */
-
 /* {{{ bool glisenabled(long cap) */
 PHP_FUNCTION(glisenabled)
 {
@@ -1194,71 +977,6 @@ PHP_FUNCTION(glistexture)
 }
 /* }}} */
 
-/* {{{ void gllightmodelf(long pname, double param) */
-PHP_FUNCTION(gllightmodelf)
-{
-	long pname;
-	double param;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ld", &pname, &param) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-
-	glLightModelf((int)(pname),(float)(param));
-}
-/* }}} */
-
-/* {{{ void gllightmodelfv(long pname, array params) */
-PHP_FUNCTION(gllightmodelfv)
-{
-	long pname;
-	zval *params;
-	GLfloat *v_params;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &pname, &params) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-
-	v_params = php_array_to_float_array(params);
-	glLightModelfv((int)(pname),v_params);
-}
-/* }}} */
-
-/* {{{ void gllightmodeli(long pname, long param) */
-PHP_FUNCTION(gllightmodeli)
-{
-	long pname, param;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &pname, &param) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-	glLightModeli((int)(pname),(int)(param));
-}
-/* }}} */
-
-/* {{{ void gllightmodeliv(long pname, array params) */
-PHP_FUNCTION(gllightmodeliv)
-{
-	long pname;
-	zval *params;
-	GLint *v_params;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &pname, &params) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-
-	v_params = php_array_to_int_array(params);
-	glLightModeliv((int)(pname),v_params);
-}
-/* }}} */
-
-/* {{{ void gllinestipple(long factor, long pattern) */
-PHP_FUNCTION(gllinestipple)
-{
-	long factor, pattern;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &factor, &pattern) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-	glLineStipple((int)(factor),(unsigned short)(pattern));
-}
-/* }}} */
-
 /* {{{ void gllinewidth(double width) */
 PHP_FUNCTION(gllinewidth)
 {
@@ -1270,28 +988,6 @@ PHP_FUNCTION(gllinewidth)
 }
 /* }}} */
 
-/* {{{ void gllistbase(long base) */
-PHP_FUNCTION(gllistbase)
-{
-	long base;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &base) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glListBase((unsigned int)base);
-}
-/* }}} */
-
-/* {{{ void glloadname(long name) */
-PHP_FUNCTION(glloadname)
-{
-	long name;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &name) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glLoadName((unsigned int)name);
-}
-/* }}} */
-
 /* {{{ void gllogicop(long opcode) */
 PHP_FUNCTION(gllogicop)
 {
@@ -1300,59 +996,6 @@ PHP_FUNCTION(gllogicop)
 		WRONG_PARAM_COUNT;
 	}
 	glLogicOp((int)opcode);
-}
-/* }}} */
-
-/* {{{ void glmatrixmode(long mode) */
-PHP_FUNCTION(glmatrixmode)
-{
-	long mode;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glMatrixMode((int)mode);
-}
-/* }}} */
-
-/* {{{ void glnormalpointer(long type, long stride, array pointer) */
-PHP_FUNCTION(glnormalpointer)
-{
-	zval *type, *stride, *pointer;
-	GLvoid *v_pointer;
-	THREE_PARAM(type, stride, pointer);
-	convert_to_long(type);
-	convert_to_long(stride);
-	convert_to_array(pointer);
-	switch(Z_LVAL_P(type))
-	{
-	case GL_BYTE:
-		v_pointer = php_array_to_byte_array(pointer);
-		break;
-	case GL_SHORT:
-		v_pointer = php_array_to_short_array(pointer);
-		break;
-	case GL_INT:
-		v_pointer = php_array_to_int_array(pointer);
-		break;
-	case GL_FLOAT:
-		v_pointer = php_array_to_float_array(pointer);
-		break;
-	case GL_DOUBLE:
-		v_pointer = php_array_to_double_array(pointer);
-		break;
-	}
-	glNormalPointer((int)Z_LVAL_P(type),(int)Z_LVAL_P(stride),v_pointer);
-}
-/* }}} */
-
-/* {{{ void glpassthrough(double token) */
-PHP_FUNCTION(glpassthrough)
-{
-	double token;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &token) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glPassThrough((float)token);
 }
 /* }}} */
 
@@ -1427,64 +1070,6 @@ PHP_FUNCTION(glpolygonstipple)
 }
 /* }}} */
 
-/* {{{ void glpopclientattrib() */
-PHP_FUNCTION(glpopclientattrib)
-{
-	if( zend_parse_parameters_none() == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glPopClientAttrib();
-}
-/* }}} */
-
-/* {{{ void glpopname() */
-PHP_FUNCTION(glpopname)
-{
-	if( zend_parse_parameters_none() == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glPopName();
-}
-/* }}} */
-
-/* {{{ void glprioritizetextures(long n, array textures, array priorities) */
-PHP_FUNCTION(glprioritizetextures)
-{
-	zval *n, *textures, *priorities;
-	GLuint *v_textures;
-	GLclampf *v_priorities;
-	THREE_PARAM(n, textures, priorities);
-	convert_to_long(n);
-	convert_to_array(textures);
-	convert_to_array(priorities);
-	v_textures = php_array_to_uint_array(textures);
-	v_priorities = php_array_to_float_array(priorities);
-	glPrioritizeTextures((int)Z_LVAL_P(n),v_textures,v_priorities);
-}
-/* }}} */
-
-/* {{{ void glpushclientattrib(long mask) */
-PHP_FUNCTION(glpushclientattrib)
-{
-	long mask;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glPushClientAttrib(mask);
-}
-/* }}} */
-
-/* {{{ void glpushname(long name) */
-PHP_FUNCTION(glpushname)
-{
-	long name;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &name) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glPushName((unsigned int)name);
-}
-/* }}} */
-
 /* {{{ void glreadbuffer(long mode) */
 PHP_FUNCTION(glreadbuffer)
 {
@@ -1514,19 +1099,6 @@ PHP_FUNCTION(glreadpixels)
 }
 /* }}} */
 
-/* {{{ long glrendermode(long mode) */
-PHP_FUNCTION(glrendermode)
-{
-	long mode;
-	int return_int;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	return_int = glRenderMode((int)mode);
-	RETURN_LONG(return_int);
-}
-/* }}} */
-
 /* {{{ void glscissor(long x, long y, long width, long height) */
 PHP_FUNCTION(glscissor)
 {
@@ -1537,33 +1109,6 @@ PHP_FUNCTION(glscissor)
 	convert_to_long(width);
 	convert_to_long(height);
 	glScissor((int)Z_LVAL_P(x),(int)Z_LVAL_P(y),(int)Z_LVAL_P(width),(int)Z_LVAL_P(height));
-}
-/* }}} */
-
-/* {{{ void glselectbuffer(long size, array buffer) */
-PHP_FUNCTION(glselectbuffer)
-{
-	long size;
-	zval *buffer;
-	GLuint *v_buffer;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &size, &buffer) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-
-	convert_to_array(buffer);
-	v_buffer = php_array_to_uint_array(buffer);
-	glSelectBuffer((int)(size),v_buffer);
-}
-/* }}} */
-
-/* {{{ void glshademodel(long mode) */
-PHP_FUNCTION(glshademodel)
-{
-	long mode;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-	glShadeModel((int)mode);
 }
 /* }}} */
 
@@ -1599,35 +1144,6 @@ PHP_FUNCTION(glstencilop)
 	convert_to_long(zfail);
 	convert_to_long(zpass);
 	glStencilOp((int)Z_LVAL_P(fail),(int)Z_LVAL_P(zfail),(int)Z_LVAL_P(zpass));
-}
-/* }}} */
-
-/* {{{ void gltexcoordpointer(long size, long type, long stride, array pointer) */
-PHP_FUNCTION(gltexcoordpointer)
-{
-	zval *size, *type, *stride, *pointer;
-	GLvoid *v_pointer;
-	FOUR_PARAM(size, type, stride, pointer);
-	convert_to_long(size);
-	convert_to_long(type);
-	convert_to_long(stride);
-	convert_to_array(pointer);
-	switch(Z_LVAL_P(type))
-	{
-	case GL_SHORT:
-		v_pointer = php_array_to_short_array(pointer);
-		break;
-	case GL_INT:
-		v_pointer = php_array_to_int_array(pointer);
-		break;
-	case GL_FLOAT:
-		v_pointer = php_array_to_float_array(pointer);
-		break;
-	case GL_DOUBLE:
-		v_pointer = php_array_to_double_array(pointer);
-		break;
-	}
-	glTexCoordPointer((int)Z_LVAL_P(size),(int)Z_LVAL_P(type),(int)Z_LVAL_P(stride),v_pointer);
 }
 /* }}} */
 
@@ -1746,35 +1262,6 @@ PHP_FUNCTION(gltexsubimage2d)
 	convert_to_array(pixels);
 	v_pixels = php_array_to_long_array(pixels);
 	glTexSubImage2D((int)(target),(int)(level),(int)(xoffset),(int)(yoffset),(int)(width),(int)(height),(int)(format),(int)(type),v_pixels);
-}
-/* }}} */
-
-/* {{{ void glvertexpointer(long size, long type, long stride, array pointer) */
-PHP_FUNCTION(glvertexpointer)
-{
-	zval *size, *type, *stride, *pointer;
-	GLvoid *v_pointer;
-	FOUR_PARAM(size, type, stride, pointer);
-	convert_to_long(size);
-	convert_to_long(type);
-	convert_to_long(stride);
-	convert_to_array(pointer);
-	switch(Z_LVAL_P(type))
-	{
-	case GL_SHORT:
-		v_pointer = php_array_to_short_array(pointer);
-		break;
-	case GL_INT:
-		v_pointer = php_array_to_int_array(pointer);
-		break;
-	case GL_FLOAT:
-		v_pointer = php_array_to_float_array(pointer);
-		break;
-	case GL_DOUBLE:
-		v_pointer = php_array_to_double_array(pointer);
-		break;
-	}
-	glVertexPointer((int)Z_LVAL_P(size),(int)Z_LVAL_P(type),(int)Z_LVAL_P(stride),v_pointer);
 }
 /* }}} */
 
@@ -1933,8 +1420,6 @@ const zend_function_entry opengl_functions[] = {
 	ZEND_FE(glcleardepth,NULL)
 	ZEND_FE(glclearstencil,NULL)
 	ZEND_FE(glcolormask,NULL)
-	ZEND_FE(glcolormaterial,NULL)
-	ZEND_FE(glcolorpointer,NULL)
 	ZEND_FE(glcopyteximage1d,NULL)
 	ZEND_FE(glcopyteximage2d,NULL)
 	ZEND_FE(glcopytexsubimage1d,NULL)
@@ -1945,28 +1430,20 @@ const zend_function_entry opengl_functions[] = {
 	ZEND_FE(gldepthmask,NULL)
 	ZEND_FE(gldepthrange,NULL)
 	ZEND_FE(gldisable,NULL)
-	ZEND_FE(gldisableclientstate,NULL)
 	ZEND_FE(gldrawarrays,NULL)
 	ZEND_FE(gldrawbuffer,NULL)
 	ZEND_FE(gldrawelements, arginfo_glDrawElements)
-	ZEND_FE(gledgeflag,NULL)
-	ZEND_FE(gledgeflagpointer,NULL)
-	ZEND_FE(gledgeflagv,NULL)
 	ZEND_FE(glenable,NULL)
-	ZEND_FE(glenableclientstate,NULL)
-	ZEND_FE(glfeedbackbuffer,NULL)
 	ZEND_FE(glfinish,NULL)
 	ZEND_FE(glflush,NULL)
 	ZEND_FE(glfrontface,NULL)
 	ZEND_FE(glgentextures,NULL)
 	ZEND_FE(glgetbooleanv,NULL)
-	ZEND_FE(glgetclipplane,NULL)
 	ZEND_FE(glgetdoublev,NULL)
 	ZEND_FE(glgeterror,NULL)
 	ZEND_FE(glgetfloatv,NULL)
 	ZEND_FE(glgetintegerv,NULL)
 	ZEND_FE(glgetpointerv,NULL)
-	ZEND_FE(glgetpolygonstipple,NULL)
 	ZEND_FE(glgetstring,NULL)
 	ZEND_FE(glgetteximage,NULL)
 	ZEND_FE(glgettexlevelparameterfv,NULL)
@@ -1974,44 +1451,22 @@ const zend_function_entry opengl_functions[] = {
 	ZEND_FE(glgettexparameterfv,NULL)
 	ZEND_FE(glgettexparameteriv,NULL)
 	ZEND_FE(glhint,NULL)
-	ZEND_FE(glindexmask,NULL)
-	ZEND_FE(glindexpointer,NULL)
-	ZEND_FE(glinterleavedarrays,NULL)
 	ZEND_FE(glisenabled,NULL)
 	ZEND_FE(glistexture,NULL)
-	ZEND_FE(gllightmodelf,NULL)
-	ZEND_FE(gllightmodelfv,NULL)
-	ZEND_FE(gllightmodeli,NULL)
-	ZEND_FE(gllightmodeliv,NULL)
-	ZEND_FE(gllinestipple,NULL)
 	ZEND_FE(gllinewidth,NULL)
-	ZEND_FE(gllistbase,NULL)
-	ZEND_FE(glloadname,NULL)
 	ZEND_FE(gllogicop,NULL)
-	ZEND_FE(glmatrixmode,NULL)
-	ZEND_FE(glnormalpointer,NULL)
-	ZEND_FE(glpassthrough,NULL)
 	ZEND_FE(glpixelstoref,NULL)
 	ZEND_FE(glpixelstorei,NULL)
 	ZEND_FE(glpointsize,NULL)
 	ZEND_FE(glpolygonmode,NULL)
 	ZEND_FE(glpolygonoffset,NULL)
 	ZEND_FE(glpolygonstipple,NULL)
-	ZEND_FE(glpopclientattrib,NULL)
-	ZEND_FE(glpopname,NULL)
-	ZEND_FE(glprioritizetextures,NULL)
-	ZEND_FE(glpushclientattrib,NULL)
-	ZEND_FE(glpushname,NULL)
 	ZEND_FE(glreadbuffer,NULL)
 	ZEND_FE(glreadpixels,NULL)
-	ZEND_FE(glrendermode,NULL)
 	ZEND_FE(glscissor,NULL)
-	ZEND_FE(glselectbuffer,NULL)
-	ZEND_FE(glshademodel,NULL)
 	ZEND_FE(glstencilfunc,NULL)
 	ZEND_FE(glstencilmask,NULL)
 	ZEND_FE(glstencilop,NULL)
-	ZEND_FE(gltexcoordpointer,NULL)
 	ZEND_FE(glteximage1d,NULL)
 	ZEND_FE(glteximage2d,NULL)
 	ZEND_FE(gltexparameterf,NULL)
@@ -2020,7 +1475,6 @@ const zend_function_entry opengl_functions[] = {
 	ZEND_FE(gltexparameteriv,NULL)
 	ZEND_FE(gltexsubimage1d,NULL)
 	ZEND_FE(gltexsubimage2d,NULL)
-	ZEND_FE(glvertexpointer,NULL)
 	ZEND_FE(glviewport,NULL)
 	ZEND_FE(glcreateshader, NULL)
     ZEND_FE(glgenvertexarrays, arginfo_glgenvertexarrays)

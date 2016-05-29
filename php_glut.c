@@ -129,7 +129,7 @@ PHP_FUNCTION(glutInitContextFlags)
 /* {{{ void glutinit(long argc, array argv) */
 PHP_FUNCTION(glutinit)
 {
-	long argc;
+	zend_long argc;
 	zval *argv_arg;
 	char **argv;
 
@@ -156,7 +156,7 @@ PHP_FUNCTION(glutinitwindowsize)
 /* {{{ void glutinitwindowposition(long x, long y) */
 PHP_FUNCTION(glutinitwindowposition)
 {
-	long x, y;
+	zend_long x, y;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &x, &y) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
@@ -204,7 +204,7 @@ PHP_FUNCTION(glutcreatewindow)
 /* {{{ void glutcreatesubwindow(long win, long x, long y, long width, long height) */
 PHP_FUNCTION(glutcreatesubwindow)
 {
-	long win, x, y, width, height;
+	zend_long win, x, y, width, height;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lllll", &win , &x, &y, &width, &height ) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
@@ -217,7 +217,7 @@ PHP_FUNCTION(glutcreatesubwindow)
 /* {{{ void glutsetwindow(long win) */
 PHP_FUNCTION(glutsetwindow)
 {
-	long win;
+	zend_long win;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &win) == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}
@@ -237,7 +237,7 @@ PHP_FUNCTION(glutgetwindow)
 /* {{{ void glutdestroywindow(long win) */
 PHP_FUNCTION(glutdestroywindow)
 {
-	long win;
+	zend_long win;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &win) == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}

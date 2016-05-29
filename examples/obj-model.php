@@ -131,38 +131,42 @@ glBindVertexArray(0);
 
 // Then, we set the light's VAO (VBO stays the same. After all, the vertices are the same for the light object (also a 3D cube))
 
-    $lampShader = new Shader();
-    $lampShader->compileFromPath('shaders/lamp.vs', 'shaders/lamp.frag');
-
-    glGenVertexArrays(1, $lightVAOS); $lightVAO = $lightVAOS[0];
-    glBindVertexArray($lightVAO);
-    // We only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need.
-    $lightVertices2 = [ 
-      (new vec3(-0.1, -0.1, -0.1, 0.0)),
-      (new vec3( 0.1, -0.1, -0.1, 0.0)),
-      (new vec3( 0.1,  0.1, -0.1, 0.0)),
-      (new vec3(-0.1,  0.1, -0.1, 0.0)),
-      (new vec3(-0.1, -0.1,  0.1, 0.0)),
-      (new vec3( 0.1, -0.1,  0.1, 0.0)),
-      (new vec3( 0.1,  0.1,  0.1, 0.0)),
-      (new vec3(-0.1,  0.1,  0.1, 0.0)),
-    ];
-    $lightVertices = [];
-    foreach($lightVertices2 as $l) {
-        $lightVertices[] = $l->x;
-        $lightVertices[] = $l->y;
-        $lightVertices[] = $l->z;
-    }
+$lampShader = new Shader\Program();
+$lampShader->add(new Shader\Vertex('shaders/lamp.vs'));
+$lampShader->add(new Shader\Fragment('shaders/lamp.frag'));
+$lampShader->compile();
+$lampShader->link();
 
 
+glGenVertexArrays(1, $lightVAOS); $lightVAO = $lightVAOS[0];
+glBindVertexArray($lightVAO);
+// We only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need.
+$lightVertices2 = [ 
+  (new vec3(-0.1, -0.1, -0.1, 0.0)),
+  (new vec3( 0.1, -0.1, -0.1, 0.0)),
+  (new vec3( 0.1,  0.1, -0.1, 0.0)),
+  (new vec3(-0.1,  0.1, -0.1, 0.0)),
+  (new vec3(-0.1, -0.1,  0.1, 0.0)),
+  (new vec3( 0.1, -0.1,  0.1, 0.0)),
+  (new vec3( 0.1,  0.1,  0.1, 0.0)),
+  (new vec3(-0.1,  0.1,  0.1, 0.0)),
+];
+$lightVertices = [];
+foreach($lightVertices2 as $l) {
+    $lightVertices[] = $l->x;
+    $lightVertices[] = $l->y;
+    $lightVertices[] = $l->z;
+}
 
-    glGenBuffers(1, $vbo_lights); $vbo_light = $vbo_lights[0];
-    glBindBuffer(GL_ARRAY_BUFFER, $vbo_light);
-    glBufferData(GL_ARRAY_BUFFER, count($lightVertices) * 4, $lightVertices, GL_STATIC_DRAW);
-    // Set the vertex attributes (only position data for the lamp))
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * 4, 0); // Note that we skip over the normal vectors
-    glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
+
+
+glGenBuffers(1, $vbo_lights); $vbo_light = $vbo_lights[0];
+glBindBuffer(GL_ARRAY_BUFFER, $vbo_light);
+glBufferData(GL_ARRAY_BUFFER, count($lightVertices) * 4, $lightVertices, GL_STATIC_DRAW);
+// Set the vertex attributes (only position data for the lamp))
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * 4, 0); // Note that we skip over the normal vectors
+glEnableVertexAttribArray(0);
+glBindVertexArray(0);
 glPolygonMode(GL_FRONT_AND_BACK, $line ? GL_LINE : GL_FILL);
 
 $displayFunc = function() use($shaderProgram, $vao, $lightVAO, $lampShader, $view, $proj, $lightPos, $indices) {
@@ -178,9 +182,9 @@ $displayFunc = function() use($shaderProgram, $vao, $lightVAO, $lampShader, $vie
 
         $lampShader->Use();
         // Get location objects for the matrices on the lamp shader (these could be different on a different shader)
-        $modelLoc = glGetUniformLocation($lampShader->programId, "model");
-        $viewLoc  = glGetUniformLocation($lampShader->programId, "view");
-        $projLoc  = glGetUniformLocation($lampShader->programId, "projection");
+        $modelLoc = glGetUniformLocation($lampShader->getId(), "model");
+        $viewLoc  = glGetUniformLocation($lampShader->getId(), "view");
+        $projLoc  = glGetUniformLocation($lampShader->getId(), "projection");
         // Set matrices
         glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
         glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($proj));
