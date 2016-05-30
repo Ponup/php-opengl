@@ -3,8 +3,8 @@ idnl config.m4 for extension opengl
 PHP_ARG_WITH(opengl, for opengl support,
 [  --with-opengl=DIR       Include OpenGL support])
 
-dnl CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors -Wdeprecated -framework GLUT -framework OpenGL"
-CFLAGS="$CFLAGS -pedantic -Wall -Wfatal-errors -Wdeprecated"
+dnl CFLAGS="$CFLAGS -Wall -Wfatal-errors -framework GLUT -framework OpenGL"
+CFLAGS="$CFLAGS -Wall -Wfatal-errors"
 
 if test "$PHP_OPENGL" != "no"; then
 

@@ -45,7 +45,7 @@ void call_user_callback(HashTable *call_backs,int call_type,int num_params,zval 
 	}
 }
 
-void c_array_to_php_array(void *c_array,int num,zval *php_array,int type)
+void c_array_to_php_array(void *c_array, int num,zval *php_array, int type)
 {
 	zval val;
 	HashTable *ht;
@@ -97,11 +97,7 @@ void *php_array_to_c_array(zval *param, int type, int size, int *array_size)
 	params = (void *)emalloc(size * tmp_size);
 
 	i = 0;
-        ZEND_HASH_FOREACH_VAL(param_ht, cur) {
-            
-        
-//	while((cur = zend_hash_get_current_data(param_ht))!=NULL)
-//	{
+    ZEND_HASH_FOREACH_VAL(param_ht, cur) {
 		if(Z_TYPE_P(cur) == IS_ARRAY)
 		{
 			int new_array_size;
@@ -158,10 +154,10 @@ void *php_array_to_c_array(zval *param, int type, int size, int *array_size)
 		}
 		zend_hash_move_forward(param_ht);
 		i++;
-        } ZEND_HASH_FOREACH_END();
+    } ZEND_HASH_FOREACH_END();
 	if(array_size != NULL)
 		*array_size = i;
-	return (void *)params;
+	return params;
 }
 
 int gl_pixel_size(GLenum format)

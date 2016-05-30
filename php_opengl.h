@@ -35,8 +35,6 @@ extern zend_module_entry opengl_module_entry;
 /* Functions */
 
 PHP_MINIT_FUNCTION(opengl);
-PHP_RINIT_FUNCTION(opengl);
-PHP_RSHUTDOWN_FUNCTION(opengl);
 PHP_MINFO_FUNCTION(opengl);
 
 PHP_FUNCTION(glbindtexture);
@@ -70,7 +68,7 @@ PHP_FUNCTION(glgeterror);
 PHP_FUNCTION(glgetfloatv);
 PHP_FUNCTION(glgetintegerv);
 PHP_FUNCTION(glgetpointerv);
-PHP_FUNCTION(glgetstring);
+PHP_FUNCTION(glGetString);
 PHP_FUNCTION(glgetteximage);
 PHP_FUNCTION(glgettexlevelparameterfv);
 PHP_FUNCTION(glgettexlevelparameteriv);

@@ -130,14 +130,20 @@ PHP_FUNCTION(glutInitContextFlags)
 PHP_FUNCTION(glutinit)
 {
 	zend_long argc;
-	zval *argv_arg;
+	zval *z_argv;
 	char **argv;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &argc, &argv_arg) == FAILURE) {
+    int i = 0;
+    
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "la", &argc, &z_argv) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
-	argv = php_array_to_string_array(argv_arg);
+	argv = php_array_to_string_array(z_argv);
 	glutInit((int *)&argc, argv);
+
+    for(; i < argc; i++) {
+        efree(argv[i]);
+    }
+    efree(argv);
 }
 /* }}} */
 
@@ -1748,7 +1754,7 @@ const zend_function_entry glut_functions[] = {
     ZEND_FE(glutinitcontextversion, arginfo_glutinitcontextversion)
     ZEND_FE(glutInitContextProfile, NULL)
     ZEND_FE(glutInitContextFlags, NULL)
-	ZEND_FE(glutinit,NULL)
+	ZEND_FE(glutinit, NULL)
 	ZEND_FE(glutinitwindowsize,NULL)
 	ZEND_FE(glutinitwindowposition,NULL)
 	ZEND_FE(glutinitdisplaymode,NULL)

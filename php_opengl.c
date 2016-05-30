@@ -38,11 +38,6 @@
 
 #include "php_convert.h"
 
-
-/*
-#include "php_glut.h"
-*/
-
 void convert_gluint_array_to_zval(GLuint* array, GLsizei n, zval* val) {
     GLsizei i;
 
@@ -52,18 +47,6 @@ void convert_gluint_array_to_zval(GLuint* array, GLsizei n, zval* val) {
         add_index_long(val, i, array[i]);
     }
 }
-
-int* convert_php_array_to_void_pointer(zend_array* array, int size) {
-    int* data;
-    
-    data = (int*)emalloc(sizeof(int) * size);
-    
-    return data;
-}
-
-extern int le_nurb;
-extern int le_tess;
-extern int le_quad;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glgenvertexarrays, 0, 0, 2)
     ZEND_ARG_INFO(0, n)
@@ -853,16 +836,19 @@ PHP_FUNCTION(glgetpointerv)
 }
 /* }}} */
 
-/* {{{ string glgetstring(long name) */
-PHP_FUNCTION(glgetstring)
+/* {{{ string glGetString(long name) */
+PHP_FUNCTION(glGetString)
 {
-	long name;
-	GLubyte *ret;
+	zend_long name;
+	const GLubyte *string;
 	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &name) == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}
-	ret = (GLubyte*)glGetString(name);
-	RETURN_STRING((char*)ret);
+	string = glGetString(name);
+    if(NULL == string) {
+        RETURN_NULL();
+    }
+    RETURN_STRING(string);
 }
 /* }}} */
 
@@ -1444,7 +1430,7 @@ const zend_function_entry opengl_functions[] = {
 	ZEND_FE(glgetfloatv,NULL)
 	ZEND_FE(glgetintegerv,NULL)
 	ZEND_FE(glgetpointerv,NULL)
-	ZEND_FE(glgetstring,NULL)
+	ZEND_FE(glGetString,NULL)
 	ZEND_FE(glgetteximage,NULL)
 	ZEND_FE(glgettexlevelparameterfv,NULL)
 	ZEND_FE(glgettexlevelparameteriv,NULL)
