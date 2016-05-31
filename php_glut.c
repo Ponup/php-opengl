@@ -39,12 +39,13 @@
 //#include <GL/gl.h>
 #endif
 
-//#include <ext/standard/info.h>
-//#include "php_convert.h"
+#define HASH_CALLBACK(callback,param_num,hash_key) \
+	{ \
+		zval_add_ref(&callback); \
+		zend_hash_index_update(call_backs, hash_key, callback); \
+	}
 
 static HashTable *call_backs;
-
-static HashTable *menu_entry_callbacks;
 
 /* GLUT_DISPLAY_CALLBACK */
 zend_fcall_info display_fci;
@@ -61,9 +62,6 @@ zend_fcall_info_cache keyboard_fci_cache;
 zend_fcall_info keyboardup_fci;
 zend_fcall_info_cache keyboardup_fci_cache;
 
-zend_fcall_info createmenu_fci;
-zend_fcall_info_cache createmenu_fci_cache;
-
 zend_fcall_info special_fci;
 zend_fcall_info_cache special_fci_cache;
 
@@ -72,7 +70,6 @@ zend_fcall_info motion_fci;
 zend_fcall_info_cache motion_fci_cache;
 zend_fcall_info passive_motion_fci;
 zend_fcall_info_cache passive_motion_fci_cache;
-
 
 /* GLUT_IDLE_CALLBACK */
 zend_fcall_info idle_fci;
@@ -466,147 +463,18 @@ PHP_FUNCTION(gluthideoverlay)
 }
 /* }}} */
 
-
-void menu_callback(int selection)
-{
-	zval *z_menu_entry, **z_menu_id, **z_menu_parameter, *z_menu_function = NULL, params[1];
-	zval retval;
-	TSRMLS_FETCH();
-
-	if (!(z_menu_entry = zend_hash_index_find(menu_entry_callbacks, selection))) {
-		php_error(E_WARNING, "unknown menu entry callback %d", selection);
-		return;
-	}
-	if (!(z_menu_id = zend_hash_index_find(Z_ARRVAL_P(z_menu_entry), 0))) {
-		php_error(E_WARNING, "can't find menu_id");
-		return;
-	}
-	if (!(z_menu_parameter = zend_hash_index_find(Z_ARRVAL_P(z_menu_entry), 1))) {
-		php_error(E_WARNING, "can't find menu_parameter");
-		return;
-	}
-	ZVAL_LONG(&params[0], Z_LVAL_PP(z_menu_parameter));
-	if (call_user_function(CG(function_table), NULL, z_menu_function, &retval, 1, params TSRMLS_CC) != SUCCESS)
-		zend_error(E_ERROR, "Function call failed");
-}
-
-#define HASH_CALLBACK(callback,param_num,hash_key) \
-	{ \
-		zval_add_ref(&callback); \
-		zend_hash_index_update(call_backs, hash_key, callback); \
-	}
-
-void glutcreatemenu_callback(int value)
-{
-	zval params[1];
-	zval retval;
-
-	ZVAL_LONG(&params[0], value);
-
-	createmenu_fci.param_count = 1;
-	createmenu_fci.params = params;
-	createmenu_fci.retval = &retval;
-
-	if (zend_call_function(&createmenu_fci, &createmenu_fci_cache TSRMLS_CC) != SUCCESS) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while invoking the callback");
-	}
-}
-
-/* {{{ long glutcreatemenu(mixed menu_callback) */
-PHP_FUNCTION(glutcreatemenu)
-{
-	int menu_id;
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f", &createmenu_fci, &createmenu_fci_cache) == FAILURE)
-	{
-		WRONG_PARAM_COUNT;
-	}
-
-	menu_id = glutCreateMenu(glutcreatemenu_callback);
-	RETURN_LONG(menu_id);
-}
-/* }}} */
-
-/* {{{ void glutsetmenu(long menu) */
-PHP_FUNCTION(glutsetmenu)
-{
-	long menu;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &menu) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-
-	glutSetMenu(menu);
-}
-/* }}} */
-
-/* {{{ long glutgetmenu() */
-PHP_FUNCTION(glutgetmenu)
-{
-	int menu;
-	if( zend_parse_parameters_none() == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-	menu = glutGetMenu();
-	RETURN_LONG(menu);
-}
-/* }}} */
-
-
-/* {{{ void glutdestroymenu(long menu) */
-PHP_FUNCTION(glutdestroymenu)
-{
-	long menu;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &menu) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-
-	glutDestroyMenu(menu);
-}
-/* }}} */
-
-/* {{{ void glutIgnoreKeyRepeat(long menu) */
+/* {{{ void glutIgnoreKeyRepeat(long ignore) */
 PHP_FUNCTION(glutignorekeyrepeat)
 {
-	long menu;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &menu) == FAILURE ) {
+	zend_long ignore;
+	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &ignore) == FAILURE ) {
 		WRONG_PARAM_COUNT;
 	}
 
-	glutIgnoreKeyRepeat(menu);
+	glutIgnoreKeyRepeat((int)ignore);
 }
 /* }}} */
 
-
-
-/* {{{ bool glutaddmenuentry(string name, long value) */
-PHP_FUNCTION(glutaddmenuentry)
-{
-	char *name = NULL;
-	size_t name_len;
-	long value;
-
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &name, &name_len, &value ) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-
-	glutAddMenuEntry(name, (int)value);
-}
-/* }}} */
-
-
-/* {{{ void glutaddsubmenu(string name, long value) */
-PHP_FUNCTION(glutaddsubmenu)
-{
-	char *name = NULL;
-	size_t name_len;
-	long value;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &name, &name_len, &value) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-	glutAddSubMenu(name,value);
-}
-/* }}} */
-
-/* {{{ void glutaddsubmenu(string name, long value) */
 PHP_FUNCTION(glutwarppointer)
 {
 	long x, y;
@@ -615,78 +483,6 @@ PHP_FUNCTION(glutwarppointer)
 	}
 	glutWarpPointer(x,y);
 }
-/* }}} */
-
-
-
-
-/* {{{ void glutchangetomenuentry(long entry, string name, long value) */
-PHP_FUNCTION(glutchangetomenuentry)
-{
-	long entry, value;
-	char *name;
-	size_t name_len;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lsl", &entry, &name, &name_len, &value) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-
-	glutChangeToMenuEntry((entry),(name),(value));
-}
-/* }}} */
-
-
-/* {{{ void glutchangetosubmenu(long entry, string name, long value) */
-PHP_FUNCTION(glutchangetosubmenu)
-{
-	long entry, value;
-	char *name;
-	size_t name_len;	
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lsl", &entry, &name, &name_len, &value) == FAILURE) {
-		WRONG_PARAM_COUNT;
-	}
-
-	glutChangeToSubMenu((entry),(name),(value));
-}
-/* }}} */
-
-
-/* {{{ void glutremovemenuitem(long entry) */
-PHP_FUNCTION(glutremovemenuitem)
-{
-	long entry;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &entry) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-
-	glutRemoveMenuItem(entry);
-}
-/* }}} */
-
-
-/* {{{ void glutattachmenu(long button) */
-PHP_FUNCTION(glutattachmenu)
-{
-	long button;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &button) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-
-	glutAttachMenu(button);
-}
-/* }}} */
-
-
-/* {{{ void glutdetachmenu(long button) */
-PHP_FUNCTION(glutdetachmenu)
-{
-	long button;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &button) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-
-	glutDetachMenu(button);
-}
-/* }}} */
 
 void glutdisplayfunction_callback()
 {
@@ -1237,58 +1033,6 @@ PHP_FUNCTION(gluttabletbuttonfunc)
 }
 /* }}} */
 
-
-
-void glutmenustatusfunc_callback(int state,int x,int y)
-{
-	zval *params[3];
-	params[0] = (zval *)emalloc(sizeof(zval));
-	params[1] = (zval *)emalloc(sizeof(zval));
-	params[2] = (zval *)emalloc(sizeof(zval));
-	ZVAL_LONG(params[0],state);
-	ZVAL_LONG(params[1],x);
-	ZVAL_LONG(params[2],y);
-	call_user_callback(call_backs,GLUT_MENUSTATUS_CALLBACK,3,params);
-}
-
-/* {{{ bool glutmenustatusfunc(mixed callback) */
-PHP_FUNCTION(glutmenustatusfunc)
-{
-	zval *callback;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-
-	HASH_CALLBACK(callback, 1, GLUT_MENUSTATUS_CALLBACK);
-	glutMenuStatusFunc(glutmenustatusfunc_callback);
-	RETURN_TRUE;
-}
-/* }}} */
-
-
-void glutmenustatefunc_callback(int state)
-{
-	zval *params[1];
-	params[0] = (zval *)emalloc(sizeof(zval));
-	ZVAL_LONG(params[0],state);
-	call_user_callback(call_backs,GLUT_MENUSTATE_CALLBACK,1,params);
-}
-
-/* {{{ bool glutmenustatefunc(mixed callback) */
-PHP_FUNCTION(glutmenustatefunc)
-{
-	zval *callback;
-	if( zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &callback) == FAILURE ) {
-		WRONG_PARAM_COUNT;
-	}
-
-	HASH_CALLBACK(callback, 1, GLUT_MENUSTATE_CALLBACK);
-	glutMenuStateFunc(glutmenustatefunc_callback);
-	RETURN_TRUE;
-}
-/* }}} */
-
-
 void glutidlefunc_callback()
 {
 	zval retval;
@@ -1783,17 +1527,6 @@ const zend_function_entry glut_functions[] = {
 	ZEND_FE(glutuselayer,NULL)
 	ZEND_FE(glutremoveoverlay,NULL)
 	ZEND_FE(glutpostoverlayredisplay,NULL)
-	ZEND_FE(glutcreatemenu,NULL)
-	ZEND_FE(glutaddmenuentry,NULL)
-	ZEND_FE(glutsetmenu,NULL)
-	ZEND_FE(glutgetmenu,NULL)
-	ZEND_FE(glutdestroymenu,NULL)
-	ZEND_FE(glutaddsubmenu,NULL)
-	ZEND_FE(glutchangetomenuentry,NULL)
-	ZEND_FE(glutchangetosubmenu,NULL)
-	ZEND_FE(glutremovemenuitem,NULL)
-	ZEND_FE(glutattachmenu,NULL)
-	ZEND_FE(glutdetachmenu,NULL)
 	ZEND_FE(glutoverlaydisplayfunc,NULL)
 	ZEND_FE(glutreshapefunc,NULL)
 	ZEND_FE(glutkeyboardfunc,NULL)
@@ -1925,13 +1658,12 @@ PHP_MINIT_FUNCTION(glut)
 	REGISTER_LONG_CONSTANT("GLUT_KEY_HOME", GLUT_KEY_HOME , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_KEY_END", GLUT_KEY_END , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_KEY_INSERT", GLUT_KEY_INSERT , CONST_CS | CONST_PERSISTENT);
-	/*Glut Menu Status Constants */
-	REGISTER_LONG_CONSTANT("GLUT_MENU_IN_USE", GLUT_MENU_IN_USE , CONST_CS | CONST_PERSISTENT);
-	REGISTER_LONG_CONSTANT("GLUT_MENU_NOT_IN_USE", GLUT_MENU_NOT_IN_USE , CONST_CS | CONST_PERSISTENT);
+
 	/*Glut Color Constants */
 	REGISTER_LONG_CONSTANT("GLUT_RED", GLUT_RED , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_GREEN", GLUT_GREEN , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_BLUE", GLUT_BLUE , CONST_CS | CONST_PERSISTENT);
+
 	/*Glut Get Attribute Constants */
 	REGISTER_LONG_CONSTANT("GLUT_WINDOW_X", GLUT_WINDOW_X , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_WINDOW_Y", GLUT_WINDOW_Y , CONST_CS | CONST_PERSISTENT);
@@ -1960,7 +1692,6 @@ PHP_MINIT_FUNCTION(glut)
 	REGISTER_LONG_CONSTANT("GLUT_SCREEN_HEIGHT", GLUT_SCREEN_HEIGHT , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_SCREEN_WIDTH_MM", GLUT_SCREEN_WIDTH_MM , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_SCREEN_HEIGHT_MM", GLUT_SCREEN_HEIGHT_MM , CONST_CS | CONST_PERSISTENT);
-	REGISTER_LONG_CONSTANT("GLUT_MENU_NUM_ITEMS", GLUT_MENU_NUM_ITEMS , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_DISPLAY_MODE_POSSIBLE", GLUT_DISPLAY_MODE_POSSIBLE , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_INIT_DISPLAY_MODE", GLUT_INIT_DISPLAY_MODE , CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GLUT_INIT_WINDOW_X", GLUT_INIT_WINDOW_X , CONST_CS | CONST_PERSISTENT);
@@ -2020,9 +1751,6 @@ PHP_MINIT_FUNCTION(glut)
 	call_backs = (HashTable*)emalloc(sizeof(HashTable));
 /*	zend_hash_init(call_backs, 0, NULL, ZVAL_PTR_DTOR, 0); */
 	
-	ALLOC_HASHTABLE( menu_entry_callbacks  );
-	zend_hash_init(menu_entry_callbacks, 0, NULL, ZVAL_PTR_DTOR, 0);
-
 	return (zend_register_functions(NULL, glut_functions, NULL, MODULE_PERSISTENT TSRMLS_CC));
 }
 

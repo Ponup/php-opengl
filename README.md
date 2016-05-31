@@ -1,7 +1,12 @@
 
 # PHP-OpenGL
 
-PHP bindings of the OpenGL library.
+PHP bindings of the OpenGL and GLUT libraries.
+
+Not all of the previously mentioned API is available on this extension. In order to keep the code small, maintainable and hopefully less buggy, it was decided to support only these subsets:
+
+- OpenGL: All but the functions that are part of the compatibility profile. (glRotate, glBegin, glLight, ...). Compatibility profile usage is discouraged in other platforms and this extension only let you use the modern (core) GL profile. 
+- GLUT: Only the API related to window management, input handling and main loop are available. Other functions (such as the one to render popup menus) are not available for the same reasons given before.
 
 ## Requirements
 

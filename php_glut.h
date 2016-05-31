@@ -19,7 +19,6 @@
 #ifndef PHP_GLUT_H
 #define PHP_GLUT_H
 
-#define GLUT_MENU_CALLBACK 0
 #define GLUT_DISPLAY_CALLBACK 1
 #define GLUT_OVERLAY_DISPLAY_CALLBACK 2
 #define GLUT_KEYBOARD_CALLBACK 3
@@ -36,8 +35,6 @@
 #define GLUT_DIALS_CALLBACK 14
 #define GLUT_TABLETMOTION_CALLBACK 15
 #define GLUT_TABLETBUTTON_CALLBACK 16
-#define GLUT_MENUSTATUS_CALLBACK 17
-#define GLUT_MENUSTATE_CALLBACK 18
 #define GLUT_IDLE_CALLBACK 19
 #define GLUT_TIMER_CALLBACK 20
 #define GLUT_RESHAPE_CALLBACK 21
@@ -75,17 +72,6 @@ PHP_FUNCTION(glutremoveoverlay);
 PHP_FUNCTION(glutpostoverlayredisplay);
 PHP_FUNCTION(glutshowoverlay);
 PHP_FUNCTION(gluthideoverlay);
-PHP_FUNCTION(glutcreatemenu);
-PHP_FUNCTION(glutaddmenuentry);
-PHP_FUNCTION(glutattachmenu);
-PHP_FUNCTION(glutdetachmenu);
-PHP_FUNCTION(glutsetmenu);
-PHP_FUNCTION(glutgetmenu);
-PHP_FUNCTION(glutdestroymenu);
-PHP_FUNCTION(glutaddsubmenu);
-PHP_FUNCTION(glutchangetomenuentry);
-PHP_FUNCTION(glutchangetosubmenu);
-PHP_FUNCTION(glutremovemenuitem);
 PHP_FUNCTION(glutoverlaydisplayfunc);
 PHP_FUNCTION(glutreshapefunc);
 PHP_FUNCTION(glutwarppointer);
@@ -105,8 +91,6 @@ PHP_FUNCTION(glutbuttonboxfunc);
 PHP_FUNCTION(glutdialsfunc);
 PHP_FUNCTION(gluttabletmotionfunc);
 PHP_FUNCTION(gluttabletbuttonfunc);
-PHP_FUNCTION(glutmenustatusfunc);
-PHP_FUNCTION(glutmenustatefunc);
 PHP_FUNCTION(glutidlefunc);
 PHP_FUNCTION(gluttimerfunc);
 PHP_FUNCTION(glutsetcolor);
@@ -161,8 +145,6 @@ void glutbuttonboxfunc_callback(int button,int state);
 void glutdialsfunc_callback(int dial,int value);
 void gluttabletmotionfunc_callback(int x,int y);
 void gluttabletbuttonfunc_callback(int button,int state,int x,int y);
-void glutmenustatusfunc_callback(int state,int x,int y);
-void glutmenustatefunc_callback(int state);
 void glutidlefunc_callback();
 void gluttimerfunc_callback(int value);
 
