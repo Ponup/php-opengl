@@ -42,7 +42,6 @@
 
 #include "php_glut.h"
 
-
 void convert_gluint_array_to_zval(GLuint* array, GLsizei n, zval* val) {
     GLsizei i;
 
@@ -251,7 +250,6 @@ PHP_FUNCTION(glcompileshader) {
 
         glDeleteShader(shader); // Don't leak the shader.
     }
-
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glattachshader, 0, 0, 2)
@@ -385,12 +383,6 @@ PHP_FUNCTION(glvertexattribpointer) {
     glVertexAttribPointer((GLuint) index, (GLint) size, (GLenum) type, (GLboolean) normalized, (GLsizei) stride, pointer > 0 ? (void*) pointer : 0);
 }
 
-PHP_MINFO_FUNCTION(opengl) {
-    php_info_print_table_start();
-    php_info_print_table_header(2, "OpenGL support", "enabled");
-    php_info_print_table_end();
-}
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glbindtexture, 0, 0, 2)
 ZEND_ARG_INFO(0, target)
 ZEND_ARG_INFO(0, texture)
@@ -432,6 +424,13 @@ PHP_FUNCTION(glclear) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glClearColor, 0, 0, 4)
+ZEND_ARG_INFO(0, red)
+ZEND_ARG_INFO(0, green)
+ZEND_ARG_INFO(0, blue)
+ZEND_ARG_INFO(0, alpha)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glclearcolor(double red, double green, double blue, double alpha) */
 PHP_FUNCTION(glclearcolor) {
     double red, green, blue, alpha;
@@ -444,6 +443,10 @@ PHP_FUNCTION(glclearcolor) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glClearDepth, 0, 0, 1)
+ZEND_ARG_INFO(0, depth)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glcleardepth(double depth) */
 PHP_FUNCTION(glcleardepth) {
     double depth;
@@ -454,15 +457,28 @@ PHP_FUNCTION(glcleardepth) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glClearStencil, 0, 0, 1)
+ZEND_ARG_INFO(0, s)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glclearstencil(long s) */
 PHP_FUNCTION(glclearstencil) {
-    long s;
+    zend_long s;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &s) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glClearStencil((int) s);
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glCopyTexSubImage1d, 0, 0, 6)
+ZEND_ARG_INFO(0, target)
+ZEND_ARG_INFO(0, level)
+ZEND_ARG_INFO(0, xoffset)
+ZEND_ARG_INFO(0, x)
+ZEND_ARG_INFO(0, y)
+ZEND_ARG_INFO(0, widht)
+ZEND_END_ARG_INFO()
 
 /* {{{ void glcopytexsubimage1d(long target, long level, long xoffset, long x, long y, long width) */
 PHP_FUNCTION(glcopytexsubimage1d) {
@@ -474,6 +490,10 @@ PHP_FUNCTION(glcopytexsubimage1d) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glCullFace, 0, 0, 1)
+ZEND_ARG_INFO(0, mode)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glcullface(long mode) */
 PHP_FUNCTION(glcullface) {
     long mode;
@@ -484,9 +504,14 @@ PHP_FUNCTION(glcullface) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDeleteTextures, 0, 0, 2)
+ZEND_ARG_INFO(0, n)
+ZEND_ARG_INFO(0, textures)
+ZEND_END_ARG_INFO()
+
 /* {{{ void gldeletetextures(long n, array textures) */
 PHP_FUNCTION(gldeletetextures) {
-    long n;
+    zend_long n;
     zval *textures;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &n, &textures) == FAILURE) {
         WRONG_PARAM_COUNT;
@@ -498,15 +523,23 @@ PHP_FUNCTION(gldeletetextures) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDepthFunc, 0, 0, 1)
+ZEND_ARG_INFO(0, func)
+ZEND_END_ARG_INFO()
+
 /* {{{ void gldepthfunc(long func) */
 PHP_FUNCTION(gldepthfunc) {
-    long func;
+    zend_long func;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &func) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glDepthFunc((int) func);
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDepthMask, 0, 0, 1)
+ZEND_ARG_INFO(0, flag)
+ZEND_END_ARG_INFO()
 
 /* {{{ void gldepthmask(boolean flag) */
 PHP_FUNCTION(gldepthmask) {
@@ -518,6 +551,11 @@ PHP_FUNCTION(gldepthmask) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDepthRange, 0, 0, 2)
+ZEND_ARG_INFO(0, zNear)
+ZEND_ARG_INFO(0, zFar)
+ZEND_END_ARG_INFO()
+
 /* {{{ void gldepthrange(double zNear, double zFar) */
 PHP_FUNCTION(gldepthrange) {
     double zNear, zFar;
@@ -527,6 +565,10 @@ PHP_FUNCTION(gldepthrange) {
     glDepthRange(zNear, zFar);
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDisable, 0, 0, 1)
+ZEND_ARG_INFO(0, cap)
+ZEND_END_ARG_INFO()
 
 /* {{{ void gldisable(long cap) */
 PHP_FUNCTION(gldisable) {
@@ -538,6 +580,12 @@ PHP_FUNCTION(gldisable) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDrawArrays, 0, 0, 3)
+ZEND_ARG_INFO(0, mode)
+ZEND_ARG_INFO(0, first)
+ZEND_ARG_INFO(0, count)
+ZEND_END_ARG_INFO()
+
 /* {{{ void gldrawarrays(long mode, long first, long count) */
 PHP_FUNCTION(gldrawarrays) {
     zend_long mode, first, count;
@@ -547,6 +595,10 @@ PHP_FUNCTION(gldrawarrays) {
     glDrawArrays((GLenum) mode, (GLint) first, (GLsizei) count);
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glDrawBuffer, 0, 0, 1)
+ZEND_ARG_INFO(0, mode)
+ZEND_END_ARG_INFO()
 
 /* {{{ void gldrawbuffer(long mode) */
 PHP_FUNCTION(gldrawbuffer) {
@@ -588,10 +640,15 @@ PHP_FUNCTION(gldrawelements) {
                 v_indices = php_array_to_uint_array(&indices);
                 break;
         }
+        v_indices = NULL;
     }
     glDrawElements((GLenum) mode, (GLsizei) count, (GLenum) type, v_indices);
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glEnable, 0, 0, 1)
+ZEND_ARG_INFO(0, cap)
+ZEND_END_ARG_INFO()
 
 /* {{{ void glenable(long cap) */
 PHP_FUNCTION(glenable) {
@@ -603,6 +660,9 @@ PHP_FUNCTION(glenable) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glFinish, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glfinish() */
 PHP_FUNCTION(glfinish) {
     if (zend_parse_parameters_none() == FAILURE) {
@@ -611,6 +671,9 @@ PHP_FUNCTION(glfinish) {
     glFinish();
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glFlush, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 /* {{{ void glflush() */
 PHP_FUNCTION(glflush) {
@@ -621,6 +684,10 @@ PHP_FUNCTION(glflush) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glFrontFace, 0, 0, 1)
+ZEND_ARG_INFO(0, mode)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glfrontface(long mode) */
 PHP_FUNCTION(glfrontface) {
     long mode;
@@ -630,6 +697,11 @@ PHP_FUNCTION(glfrontface) {
     glFrontFace((int) mode);
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glGenTextures, 0, 0, 2)
+ZEND_ARG_INFO(0, n)
+ZEND_ARG_INFO(0, textures)
+ZEND_END_ARG_INFO()
 
 /* {{{ void glgentextures(long n, array textures) */
 PHP_FUNCTION(glgentextures) {
@@ -647,6 +719,9 @@ PHP_FUNCTION(glgentextures) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glGetError, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 /* {{{ long glgeterror() */
 PHP_FUNCTION(glgeterror) {
     GLenum error_code;
@@ -657,6 +732,10 @@ PHP_FUNCTION(glgeterror) {
     RETURN_LONG(error_code);
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glGetString, 0, 0, 1)
+ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
 
 /* {{{ string glGetString(long name) */
 PHP_FUNCTION(glGetString) {
@@ -673,6 +752,14 @@ PHP_FUNCTION(glGetString) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glGetTexImage, 0, 0, 5)
+ZEND_ARG_INFO(0, target)
+ZEND_ARG_INFO(0, level)
+ZEND_ARG_INFO(0, format)
+ZEND_ARG_INFO(0, type)
+ZEND_ARG_INFO(0, pixels)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glgetteximage(long target, long level, long format, long type, array pixels) */
 PHP_FUNCTION(glgetteximage) {
     zend_long target, level, format, type;
@@ -687,9 +774,14 @@ PHP_FUNCTION(glgetteximage) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glHint, 0, 0, 2)
+ZEND_ARG_INFO(0, target)
+ZEND_ARG_INFO(0, mode)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glhint(long target, long mode) */
 PHP_FUNCTION(glhint) {
-    long target, mode;
+    zend_long target, mode;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &target, &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -697,6 +789,10 @@ PHP_FUNCTION(glhint) {
     glHint((int) (target), (int) (mode));
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glIsEnabled, 0, 0, 1)
+ZEND_ARG_INFO(0, cap)
+ZEND_END_ARG_INFO()
 
 /* {{{ bool glisenabled(long cap) */
 PHP_FUNCTION(glisenabled) {
@@ -710,6 +806,10 @@ PHP_FUNCTION(glisenabled) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glIsTexture, 0, 0, 1)
+ZEND_ARG_INFO(0, texture)
+ZEND_END_ARG_INFO()
+
 /* {{{ bool glistexture(long texture) */
 PHP_FUNCTION(glistexture) {
     long texture;
@@ -722,6 +822,10 @@ PHP_FUNCTION(glistexture) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glLineWidth, 0, 0, 1)
+ZEND_ARG_INFO(0, width)
+ZEND_END_ARG_INFO()
+
 /* {{{ void gllinewidth(double width) */
 PHP_FUNCTION(gllinewidth) {
     double width;
@@ -732,9 +836,13 @@ PHP_FUNCTION(gllinewidth) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glLogicOp, 0, 0, 1)
+ZEND_ARG_INFO(0, opcode)
+ZEND_END_ARG_INFO()
+
 /* {{{ void gllogicop(long opcode) */
 PHP_FUNCTION(gllogicop) {
-    long opcode;
+    zend_long opcode;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &opcode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -742,9 +850,14 @@ PHP_FUNCTION(gllogicop) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glPixelStoref, 0, 0, 2)
+ZEND_ARG_INFO(0, pname)
+ZEND_ARG_INFO(0, param)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glpixelstoref(long pname, double param) */
 PHP_FUNCTION(glpixelstoref) {
-    long pname;
+    zend_long pname;
     double param;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ld", &pname, &param) == FAILURE) {
         WRONG_PARAM_COUNT;
@@ -753,15 +866,24 @@ PHP_FUNCTION(glpixelstoref) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glPixelStorei, 0, 0, 2)
+ZEND_ARG_INFO(0, pname)
+ZEND_ARG_INFO(0, param)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glpixelstorei(long pname, long param) */
 PHP_FUNCTION(glpixelstorei) {
-    long pname, param;
+    zend_long pname, param;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &pname, &param) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glPixelStorei((int) (pname), (int) (param));
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glPointSize, 0, 0, 1)
+ZEND_ARG_INFO(0, size)
+ZEND_END_ARG_INFO()
 
 /* {{{ void glpointsize(double size) */
 PHP_FUNCTION(glpointsize) {
@@ -773,9 +895,14 @@ PHP_FUNCTION(glpointsize) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glPolygonMode, 0, 0, 2)
+ZEND_ARG_INFO(0, face)
+ZEND_ARG_INFO(0, mode)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glpolygonmode(long face, long mode) */
 PHP_FUNCTION(glpolygonmode) {
-    long face, mode;
+    zend_long face, mode;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &face, &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -783,6 +910,11 @@ PHP_FUNCTION(glpolygonmode) {
     glPolygonMode((int) (face), (int) (mode));
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glPolygonOffset, 0, 0, 2)
+ZEND_ARG_INFO(0, factor)
+ZEND_ARG_INFO(0, units)
+ZEND_END_ARG_INFO()
 
 /* {{{ void glpolygonoffset(double factor, double units) */
 PHP_FUNCTION(glpolygonoffset) {
@@ -794,6 +926,10 @@ PHP_FUNCTION(glpolygonoffset) {
     glPolygonOffset((float) (factor), (float) (units));
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glPolygonStipple, 0, 0, 1)
+ZEND_ARG_INFO(0, mask)
+ZEND_END_ARG_INFO()
 
 /* {{{ void glpolygonstipple(array mask) */
 PHP_FUNCTION(glpolygonstipple) {
@@ -807,9 +943,13 @@ PHP_FUNCTION(glpolygonstipple) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glReadBuffer, 0, 0, 1)
+ZEND_ARG_INFO(0, mode)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glreadbuffer(long mode) */
 PHP_FUNCTION(glreadbuffer) {
-    long mode;
+    zend_long mode;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -817,15 +957,31 @@ PHP_FUNCTION(glreadbuffer) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glStencilMask, 0, 0, 1)
+ZEND_ARG_INFO(0, mask)
+ZEND_END_ARG_INFO()
+
 /* {{{ void glstencilmask(long mask) */
 PHP_FUNCTION(glstencilmask) {
-    long mask;
+    zend_long mask;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glStencilMask((unsigned int) mask);
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glTexImage2d, 0, 0, 9)
+ZEND_ARG_INFO(0, target)
+ZEND_ARG_INFO(0, level)
+ZEND_ARG_INFO(0, internalformat)
+ZEND_ARG_INFO(0, width)
+ZEND_ARG_INFO(0, height)
+ZEND_ARG_INFO(0, border)
+ZEND_ARG_INFO(0, format)
+ZEND_ARG_INFO(0, type)
+ZEND_ARG_INFO(0, pixels)
+ZEND_END_ARG_INFO()
 
 /* {{{ void glteximage2d(long target, long level, long internalformat, long width, long height, long border, long format, long type, array pixels) */
 PHP_FUNCTION(glteximage2d) {
@@ -841,6 +997,12 @@ PHP_FUNCTION(glteximage2d) {
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glTexParameteri, 0, 0, 3)
+ZEND_ARG_INFO(0, target)
+ZEND_ARG_INFO(0, pname)
+ZEND_ARG_INFO(0, param)
+ZEND_END_ARG_INFO()
+
 /* {{{ void gltexparameteri(long target, long pname, long param) */
 PHP_FUNCTION(gltexparameteri) {
     zend_long target, pname, param;
@@ -850,6 +1012,18 @@ PHP_FUNCTION(gltexparameteri) {
     glTexParameteri((GLenum) target, (GLenum) pname, (GLint) param);
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glTexSubImage2d, 0, 0, 9)
+ZEND_ARG_INFO(0, target)
+ZEND_ARG_INFO(0, level)
+ZEND_ARG_INFO(0, xoffset)
+ZEND_ARG_INFO(0, yoffset)
+ZEND_ARG_INFO(0, width)
+ZEND_ARG_INFO(0, height)
+ZEND_ARG_INFO(0, format)
+ZEND_ARG_INFO(0, type)
+ZEND_ARG_INFO(0, pixels)
+ZEND_END_ARG_INFO()
 
 /* {{{ void gltexsubimage2d(long target, long level, long xoffset, long yoffset, long width, long height, long format, long type, array pixels) */
 PHP_FUNCTION(gltexsubimage2d) {
@@ -864,6 +1038,13 @@ PHP_FUNCTION(gltexsubimage2d) {
     glTexSubImage2D((int) (target), (int) (level), (int) (xoffset), (int) (yoffset), (int) (width), (int) (height), (int) (format), (int) (type), v_pixels);
 }
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glViewport, 0, 0, 4)
+ZEND_ARG_INFO(0, x)
+ZEND_ARG_INFO(0, y)
+ZEND_ARG_INFO(0, width)
+ZEND_ARG_INFO(0, height)
+ZEND_END_ARG_INFO()
 
 /* {{{ void glviewport(long x, long y, long width, long height) */
 PHP_FUNCTION(glviewport) {
@@ -894,6 +1075,11 @@ PHP_FUNCTION(glCreateShader) {
 }
 
 /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glGetUniformLocation, 0, 0, 2)
+ZEND_ARG_INFO(0, program)
+ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
 
 PHP_FUNCTION(glGetUniformLocation) {
     zend_long program;
@@ -993,6 +1179,10 @@ PHP_FUNCTION(glUniform1i) {
     glUniform1i((GLint) location, (GLint) v0);
 }
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_glActiveTexture, 0, 0, 1)
+ZEND_ARG_INFO(0, texture)
+ZEND_END_ARG_INFO()
+
 PHP_FUNCTION(glActiveTexture) {
     zend_long texture;
 
@@ -1007,44 +1197,44 @@ const zend_function_entry opengl_functions[] = {
     ZEND_FE(glbindtexture, arginfo_glbindtexture)
     ZEND_FE(glblendfunc, arginfo_glblendfunc)
     ZEND_FE(glclear, arginfo_glclear)
-    ZEND_FE(glclearcolor, NULL)
-    ZEND_FE(glcleardepth, NULL)
-    ZEND_FE(glclearstencil, NULL)
-    ZEND_FE(glcopytexsubimage1d, NULL)
-    ZEND_FE(glcullface, NULL)
-    ZEND_FE(gldeletetextures, NULL)
-    ZEND_FE(gldepthfunc, NULL)
-    ZEND_FE(gldepthmask, NULL)
-    ZEND_FE(gldepthrange, NULL)
-    ZEND_FE(gldisable, NULL)
-    ZEND_FE(gldrawarrays, NULL)
-    ZEND_FE(gldrawbuffer, NULL)
+    ZEND_FE(glclearcolor, arginfo_glClearColor)
+    ZEND_FE(glcleardepth, arginfo_glClearDepth)
+    ZEND_FE(glclearstencil, arginfo_glClearStencil)
+    ZEND_FE(glcopytexsubimage1d, arginfo_glCopyTexSubImage1d)
+    ZEND_FE(glcullface, arginfo_glCullFace)
+    ZEND_FE(gldeletetextures, arginfo_glDeleteTextures)
+    ZEND_FE(gldepthfunc, arginfo_glDepthFunc)
+    ZEND_FE(gldepthmask, arginfo_glDepthMask)
+    ZEND_FE(gldepthrange, arginfo_glDepthRange)
+    ZEND_FE(gldisable, arginfo_glDisable)
+    ZEND_FE(gldrawarrays, arginfo_glDrawArrays)
+    ZEND_FE(gldrawbuffer, arginfo_glDrawBuffer)
     ZEND_FE(gldrawelements, arginfo_glDrawElements)
-    ZEND_FE(glenable, NULL)
-    ZEND_FE(glfinish, NULL)
-    ZEND_FE(glflush, NULL)
-    ZEND_FE(glfrontface, NULL)
-    ZEND_FE(glgentextures, NULL)
-    ZEND_FE(glgeterror, NULL)
-    ZEND_FE(glGetString, NULL)
-    ZEND_FE(glgetteximage, NULL)
-    ZEND_FE(glhint, NULL)
-    ZEND_FE(glisenabled, NULL)
-    ZEND_FE(glistexture, NULL)
-    ZEND_FE(gllinewidth, NULL)
-    ZEND_FE(gllogicop, NULL)
-    ZEND_FE(glpixelstoref, NULL)
-    ZEND_FE(glpixelstorei, NULL)
-    ZEND_FE(glpointsize, NULL)
-    ZEND_FE(glpolygonmode, NULL)
-    ZEND_FE(glpolygonoffset, NULL)
-    ZEND_FE(glpolygonstipple, NULL)
-    ZEND_FE(glreadbuffer, NULL)
-    ZEND_FE(glstencilmask, NULL)
-    ZEND_FE(glteximage2d, NULL)
-    ZEND_FE(gltexparameteri, NULL)
-    ZEND_FE(gltexsubimage2d, NULL)
-    ZEND_FE(glviewport, NULL)
+    ZEND_FE(glenable, arginfo_glEnable)
+    ZEND_FE(glfinish, arginfo_glFinish)
+    ZEND_FE(glflush, arginfo_glFlush)
+    ZEND_FE(glfrontface, arginfo_glFrontFace)
+    ZEND_FE(glgentextures, arginfo_glGenTextures)
+    ZEND_FE(glgeterror, arginfo_glGetError)
+    ZEND_FE(glGetString, arginfo_glGetString)
+    ZEND_FE(glgetteximage, arginfo_glGetTexImage)
+    ZEND_FE(glhint, arginfo_glHint)
+    ZEND_FE(glisenabled, arginfo_glIsEnabled)
+    ZEND_FE(glistexture, arginfo_glIsTexture)
+    ZEND_FE(gllinewidth, arginfo_glLineWidth)
+    ZEND_FE(gllogicop, arginfo_glLogicOp)
+    ZEND_FE(glpixelstoref, arginfo_glPixelStoref)
+    ZEND_FE(glpixelstorei, arginfo_glPixelStorei)
+    ZEND_FE(glpointsize, arginfo_glPointSize)
+    ZEND_FE(glpolygonmode, arginfo_glPolygonMode)
+    ZEND_FE(glpolygonoffset, arginfo_glPolygonOffset)
+    ZEND_FE(glpolygonstipple, arginfo_glPolygonStipple)
+    ZEND_FE(glreadbuffer, arginfo_glReadBuffer)
+    ZEND_FE(glstencilmask, arginfo_glStencilMask)
+    ZEND_FE(glteximage2d, arginfo_glTexImage2d)
+    ZEND_FE(gltexparameteri, arginfo_glTexParameteri)
+    ZEND_FE(gltexsubimage2d, arginfo_glTexSubImage2d)
+    ZEND_FE(glviewport, arginfo_glViewport)
     ZEND_FE(glCreateShader, arginfo_glCreateShader)
     ZEND_FE(glGenVertexArrays, arginfo_glGenVertexArrays)
     ZEND_FE(glBindVertexArray, arginfo_glBindVertexArray)
@@ -1065,21 +1255,25 @@ const zend_function_entry opengl_functions[] = {
     ZEND_FE(glgetattriblocation, arginfo_glgetattriblocation)
     ZEND_FE(glenablevertexattribarray, arginfo_glenablevertexattribarray)
     ZEND_FE(glvertexattribpointer, arginfo_glvertexattribpointer)
-    ZEND_FE(glGetUniformLocation, NULL)
+    ZEND_FE(glGetUniformLocation, arginfo_glGetUniformLocation)
     ZEND_FE(glUniform1f, arginfo_glUniform1f)
     ZEND_FE(glUniform3f, arginfo_glUniform3f)
     ZEND_FE(glUniform1i, arginfo_glUniform1i)
-    ZEND_FE(glActiveTexture, NULL)
+    ZEND_FE(glActiveTexture, arginfo_glActiveTexture)
     ZEND_FE(glUniformMatrix4fv, arginfo_glUniformMatrix4fv)
     ZEND_FE(glGenerateMipmap, arginfo_glGenerateMipmap)
 
     ZEND_FE_END
 };
 
+PHP_MINFO_FUNCTION(opengl) {
+    php_info_print_table_start();
+    php_info_print_table_header(2, "OpenGL support", "enabled");
+    php_info_print_table_end();
+}
+
 zend_module_entry opengl_module_entry = {
-#if ZEND_MODULE_API_NO > 20010901
     STANDARD_MODULE_HEADER,
-#endif
     "OpenGL",
     opengl_functions,
     PHP_MINIT(opengl),
@@ -1087,14 +1281,11 @@ zend_module_entry opengl_module_entry = {
     NULL,
     NULL,
     PHP_MINFO(opengl),
-#if ZEND_MODULE_API_NO > 20010901
     PHP_OPENGL_VERSION,
-#endif
     STANDARD_MODULE_PROPERTIES,
 };
 
 #ifdef COMPILE_DL_OPENGL
-
 ZEND_GET_MODULE(opengl)
 #endif
 

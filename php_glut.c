@@ -254,7 +254,7 @@ PHP_FUNCTION(glutpositionwindow) {
 
 /* {{{ void glutreshapewindow(long width, long height) */
 PHP_FUNCTION(glutreshapewindow) {
-    long width, height;
+    zend_long width, height;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &width, &height) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -341,7 +341,7 @@ PHP_FUNCTION(glutseticontitle) {
 
 /* {{{ void glutsetcursor(long cursor) */
 PHP_FUNCTION(glutsetcursor) {
-    long cursor;
+    zend_long cursor;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &cursor) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -361,7 +361,7 @@ PHP_FUNCTION(glutestablishoverlay) {
 
 /* {{{ void glutuselayer(long layer) */
 PHP_FUNCTION(glutuselayer) {
-    long layer;
+    zend_long layer;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &layer) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -419,7 +419,7 @@ PHP_FUNCTION(glutignorekeyrepeat) {
 /* }}} */
 
 PHP_FUNCTION(glutwarppointer) {
-    long x, y;
+    zend_long x, y;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &x, &y) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -980,7 +980,7 @@ void gluttimerfunc_callback(int value) {
 /* {{{ void gluttimerfunc(long seconds, mixed callback, long value) */
 PHP_FUNCTION(gluttimerfunc) {
     zval *callback;
-    long seconds, value;
+    zend_long seconds, value;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lzl", &seconds, &callback, &value) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -992,7 +992,7 @@ PHP_FUNCTION(gluttimerfunc) {
 
 /* {{{ void glutsetcolor(long cell, double red, double green, double blue) */
 PHP_FUNCTION(glutsetcolor) {
-    long cell, red, green, blue;
+    zend_long cell, red, green, blue;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llll", &cell, &red, &green, &blue) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -1002,7 +1002,7 @@ PHP_FUNCTION(glutsetcolor) {
 
 /* {{{ double glutgetcolor(long cell, long component) */
 PHP_FUNCTION(glutgetcolor) {
-    long cell, component;
+    zend_long cell, component;
     GLfloat color;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &cell, &component) == FAILURE) {
         WRONG_PARAM_COUNT;
@@ -1014,7 +1014,7 @@ PHP_FUNCTION(glutgetcolor) {
 
 /* {{{ void glutcopycolormap(long win) */
 PHP_FUNCTION(glutcopycolormap) {
-    long win;
+    zend_long win;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &win) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -1025,7 +1025,7 @@ PHP_FUNCTION(glutcopycolormap) {
 
 /* {{{ void glutget(long state) */
 PHP_FUNCTION(glutget) {
-    long state;
+    zend_long state;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &state) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -1036,7 +1036,7 @@ PHP_FUNCTION(glutget) {
 
 /* {{{ void glutlayerget(long info) */
 PHP_FUNCTION(glutlayerget) {
-    long info;
+    zend_long info;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &info) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -1047,7 +1047,7 @@ PHP_FUNCTION(glutlayerget) {
 
 /* {{{ void glutdeviceget(long info) */
 PHP_FUNCTION(glutdeviceget) {
-    long info;
+    zend_long info;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &info) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -1181,7 +1181,7 @@ PHP_FUNCTION(glutwirecube) {
 /* {{{ void glutsolidcone(double base, doable height, long slices, long stacks) */
 PHP_FUNCTION(glutsolidcone) {
     double base, height;
-    long slices, stacks;
+    zend_long slices, stacks;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddll", &base, &height, &slices, &stacks) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -1205,7 +1205,7 @@ PHP_FUNCTION(glutwirecone) {
 /* {{{ void glutsolidtorus(double innerRadius, double outerRadius, long nsides, long rings) */
 PHP_FUNCTION(glutsolidtorus) {
     double innerRadius, outerRadius;
-    long nsides, rings;
+    zend_long nsides, rings;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddll", &innerRadius, &outerRadius, &nsides, &rings) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -1217,7 +1217,7 @@ PHP_FUNCTION(glutsolidtorus) {
 /* {{{ void glutwiretorus(double innerRadius, double outerRadius, long nsides, long rings) */
 PHP_FUNCTION(glutwiretorus) {
     double innerRadius, outerRadius;
-    long nsides, rings;
+    zend_long nsides, rings;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ddll", &innerRadius, &outerRadius, &nsides, &rings) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -1339,7 +1339,6 @@ PHP_FUNCTION(glutLeaveMainLoop) {
     glutLeaveMainLoop();
 }
 
-
 const zend_function_entry glut_functions[] = {
     ZEND_FE(glutinitcontextversion, arginfo_glutinitcontextversion)
     ZEND_FE(glutInitContextProfile, NULL)
@@ -1431,7 +1430,6 @@ const zend_function_entry glut_functions[] = {
 //glutMainLoopEvent
 
 #ifdef COMPILE_DL_GLUT
-
 ZEND_GET_MODULE(glut)
 #endif
 
