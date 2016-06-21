@@ -14,15 +14,15 @@
   +----------------------------------------------------------------------+
   | Author: Santiago Lizardo <santiagolizardo@php.net>                   |
   +----------------------------------------------------------------------+
-*/
+ */
 
 #ifndef PHP_OPENGL_H
 #define PHP_OPENGL_H
 
 #define PHP_OPENGL_VERSION "0.9.0"
 
-#include <php.h>
-#include <ext/standard/info.h>
+#include "php.h"
+#include "ext/standard/info.h"
 
 extern zend_module_entry opengl_module_entry;
 #define opengl_module_ptr &opengl_module_entry
@@ -31,8 +31,6 @@ extern zend_module_entry opengl_module_entry;
 #ifdef ZTS
 #include "TSRM.h"
 #endif
-
-/* Functions */
 
 PHP_MINIT_FUNCTION(opengl);
 PHP_MINFO_FUNCTION(opengl);
@@ -45,9 +43,7 @@ PHP_FUNCTION(glcleardepth);
 PHP_FUNCTION(glclearstencil);
 PHP_FUNCTION(glcolormask);
 PHP_FUNCTION(glcopyteximage1d);
-PHP_FUNCTION(glcopyteximage2d);
 PHP_FUNCTION(glcopytexsubimage1d);
-PHP_FUNCTION(glcopytexsubimage2d);
 PHP_FUNCTION(glcullface);
 PHP_FUNCTION(gldeletetextures);
 PHP_FUNCTION(gldepthfunc);
@@ -67,7 +63,6 @@ PHP_FUNCTION(glgetdoublev);
 PHP_FUNCTION(glgeterror);
 PHP_FUNCTION(glgetfloatv);
 PHP_FUNCTION(glgetintegerv);
-PHP_FUNCTION(glgetpointerv);
 PHP_FUNCTION(glGetString);
 PHP_FUNCTION(glgetteximage);
 PHP_FUNCTION(glgettexlevelparameterfv);
@@ -91,7 +86,6 @@ PHP_FUNCTION(glscissor);
 PHP_FUNCTION(glstencilfunc);
 PHP_FUNCTION(glstencilmask);
 PHP_FUNCTION(glstencilop);
-PHP_FUNCTION(glteximage1d);
 PHP_FUNCTION(glteximage2d);
 PHP_FUNCTION(gltexparameterf);
 PHP_FUNCTION(gltexparameterfv);
@@ -100,12 +94,12 @@ PHP_FUNCTION(gltexparameteriv);
 PHP_FUNCTION(gltexsubimage1d);
 PHP_FUNCTION(gltexsubimage2d);
 PHP_FUNCTION(glviewport);
-PHP_FUNCTION(glgenvertexarrays);
-PHP_FUNCTION(glbindvertexarray);
-PHP_FUNCTION(glgenbuffers);
-PHP_FUNCTION(glbindbuffer);
+PHP_FUNCTION(glGenVertexArrays);
+PHP_FUNCTION(glBindVertexArray);
+PHP_FUNCTION(glGenBuffers);
+PHP_FUNCTION(glBindBuffer);
 PHP_FUNCTION(glbufferdata);
-PHP_FUNCTION(glcreateshader);
+PHP_FUNCTION(glCreateShader);
 PHP_FUNCTION(gldeletevertexarrays);
 PHP_FUNCTION(gldeletebuffers);
 PHP_FUNCTION(gldeleteshader);
@@ -123,5 +117,7 @@ PHP_FUNCTION(glvertexattribpointer);
 PHP_FUNCTION(glGetUniformLocation);
 PHP_FUNCTION(glActiveTexture);
 PHP_FUNCTION(glUniformMatrix4fv);
+PHP_FUNCTION(glUniform1i);
+PHP_FUNCTION(glUniform3f);
 
 #endif

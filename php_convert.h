@@ -14,7 +14,7 @@
   +----------------------------------------------------------------------+
   | Author: Santiago Lizardo <santiagolizardo@php.net>                   |
   +----------------------------------------------------------------------+
-*/
+ */
 
 #include <GL/gl.h>
 #include "php.h"
@@ -41,9 +41,9 @@
 #define TO_C_BYTE 11
 #define TO_C_UBYTE 12
 
-void call_user_callback(HashTable *callbacks,int call_type,int num_params,zval *params[]);
+void call_user_callback(HashTable *callbacks, int call_type, uint32_t num_params, zval *params[]);
 
-void c_array_to_php_array(void *c_array,int num,zval *php_array,int type);
+void c_array_to_php_array(void *c_array, int num, zval *php_array, int type);
 #define int_array_to_php_array(a,i,z) c_array_to_php_array(a,i,z,C_INT_TO_PHP_LONG)
 #define uint_array_to_php_array(a,i,z) c_array_to_php_array(a,i,z,C_UINT_TO_PHP_LONG)
 #define long_array_to_php_array(a,i,z) c_array_to_php_array(a,i,z,C_LONG_TO_PHP_LONG)
@@ -53,7 +53,7 @@ void c_array_to_php_array(void *c_array,int num,zval *php_array,int type);
 #define ushort_array_to_php_array(a,i,z) c_array_to_php_array(a,i,z,C_USHORT_TO_PHP_LONG)
 #define char_array_to_php_array(a,i,z) c_array_to_php_array(a,i,z,C_CHAR_TO_PHP_LONG)
 
-void *php_array_to_c_array(zval *param,int type,int size,int *array_size);
+void *php_array_to_c_array(zval *param, int type, int size, int *array_size);
 #define php_array_to_string_array(z) (char **)php_array_to_c_array(z,TO_C_STRING,sizeof(char *),NULL)
 #define php_array_to_byte_array(z) (char *)php_array_to_c_array(z,TO_C_BYTE,sizeof(char),NULL)
 #define php_array_to_ubyte_array(z) (unsigned char*)php_array_to_c_array(z,TO_C_UBYTE,sizeof(unsigned char),NULL)
@@ -70,44 +70,22 @@ void *php_array_to_c_array(zval *param,int type,int size,int *array_size);
 int gl_pixel_size(GLenum format);
 int gl_type_size(GLenum type);
 
-#define THREE_PARAM(p,p1,p2) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzz", &p, &p1, &p2) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
-#define FOUR_PARAM(p,p1,p2,p4) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzz", &p, &p1, &p2, &p4) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
-#define SEVEN_PARAM(p,p1,p2,p4,p5,p6,p7) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzzzz", &p, &p1, &p2, &p4, &p5, &p6, &p7) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
-#define EIGHT_PARAM(p,p1,p2,p4,p5,p6,p7,p8) \
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzzzzz", &p, &p1, &p2, &p4, &p5, &p6, &p7, &p8) == FAILURE) \
-		WRONG_PARAM_COUNT; 
-
 #define IS_CALLBACK(callback, param_num) \
-	{ \
-		char *callback_name; \
-		if (!zend_is_callable(callback, 0, &callback_name)) { \
-			php_error(E_WARNING, "%s() requires argument %d, '%s', to be a valid callback", \
-				get_active_function_name(TSRMLS_C), param_num, callback_name); \
-			efree(callback_name); \
-			RETURN_FALSE; \
-		} \
-		efree(callback_name); \
-	}
+        { \
+                zend_string *callback_name; \
+                if (!zend_is_callable(callback, 0, &callback_name)) { \
+                        php_error(E_WARNING, "%s() requires argument %d, '%s', to be a valid callback", \
+                                get_active_function_name(TSRMLS_C), param_num, ZSTR_VAL(callback_name)); \
+                        efree(callback_name); \
+                        RETURN_FALSE; \
+                } \
+                efree(callback_name); \
+        }
 
-#define HASH_CALLBACK(callback,param_num,hash_key) \
-	{ \
-		IS_CALLBACK(callback,param_num); \
-		zval_add_ref(&callback); \
-		zend_hash_index_update(call_backs, hash_key, callback, sizeof(zval), NULL); \
-	}
+#define HASH_CALLBACK(callback, param_num, hash_key) \
+        { \
+                IS_CALLBACK(callback,param_num); \
+                zval_add_ref(callback); \
+                zend_hash_index_update(call_backs, hash_key, callback); \
+        }
 
-#define HASH_MENU_CALLBACK(callback,param_num,menu_id) \
-	{ \
-		IS_CALLBACK(callback,param_num); \
-		zval_add_ref(&callback); \
-		zend_hash_index_update(menu_callbacks, menu_id, callback, sizeof(zval), NULL); \
-	}

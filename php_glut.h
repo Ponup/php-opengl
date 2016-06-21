@@ -14,10 +14,12 @@
   +----------------------------------------------------------------------+
   | Author: Santiago Lizardo <santiagolizardo@php.net>                   |
   +----------------------------------------------------------------------+
-*/
+ */
 
 #ifndef PHP_GLUT_H
 #define PHP_GLUT_H
+
+#include "php.h"
 
 #define GLUT_DISPLAY_CALLBACK 1
 #define GLUT_OVERLAY_DISPLAY_CALLBACK 2
@@ -131,20 +133,20 @@ PHP_FUNCTION(glutLeaveMainLoop);
 
 void glutdisplayfunction_callback();
 void glutoverlaydisplayfunc_callback();
-void glutreshapefunc_callback(int width,int height);
-void glutkeyboardfunc_callback(unsigned char key,int x,int y);
-void glutmotionfunc_callback(int x,int y);
-void glutpassivemotionfunc_callback(int x,int y);
+void glutreshapefunc_callback(int width, int height);
+void glutkeyboardfunc_callback(unsigned char key, int x, int y);
+void glutmotionfunc_callback(int x, int y);
+void glutpassivemotionfunc_callback(int x, int y);
 void glutvisibilityfunc_callback(int state);
 void glutentryfunc_callback(int state);
-void glutspecialfunc_callback(int key,int x,int y);
-void glutspaceballmotionfunc_callback(int x,int y,int z);
-void glutspaceballrotatefunc_callback(int x,int y,int z);
-void glutspaceballbuttonfunc_callback(int button,int state);
-void glutbuttonboxfunc_callback(int button,int state);
-void glutdialsfunc_callback(int dial,int value);
-void gluttabletmotionfunc_callback(int x,int y);
-void gluttabletbuttonfunc_callback(int button,int state,int x,int y);
+void glutspecialfunc_callback(int key, int x, int y);
+void glutspaceballmotionfunc_callback(int x, int y, int z);
+void glutspaceballrotatefunc_callback(int x, int y, int z);
+void glutspaceballbuttonfunc_callback(int button, int state);
+void glutbuttonboxfunc_callback(int button, int state);
+void glutdialsfunc_callback(int dial, int value);
+void gluttabletmotionfunc_callback(int x, int y);
+void gluttabletbuttonfunc_callback(int button, int state, int x, int y);
 void glutidlefunc_callback();
 void gluttimerfunc_callback(int value);
 
