@@ -16,7 +16,11 @@
   +----------------------------------------------------------------------+
  */
 
+#if defined(__APPLE__) && defined(__MACH__)
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 #include "php.h"
 
 #define C_INT_TO_PHP_LONG 1
