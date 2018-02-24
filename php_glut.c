@@ -34,7 +34,8 @@
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <OpenGL/gl3.h>
+#include <OpenGL/gl.h>
+#include <GL/freeglut.h>
 #else
 #include <GL/gl.h>
 #include <GL/freeglut.h>
