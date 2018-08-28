@@ -2,15 +2,14 @@
 
 require 'bootstrap.php';
 
-glutInit($argc, $argv);
-glutInitContextVersion(3, 3);
-glutInitContextProfile(GLUT_CORE_PROFILE);
+SDL_Init(SDL_INIT_EVERYTHING);
 
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
-glutInitWindowSize(800, 600);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-glutCreateWindow('Rectangle');
+$window = SDL_CreateWindow("Fixed pipeline example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+SDL_GL_CreateContext($window);
 
 $vertices = [
     +0.5, +.5, 0, // top right
@@ -72,9 +71,9 @@ glBindVertexArray($vao);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 glBindVertexArray(0);
 
-//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+$event = new SDL_Event;
 
-$displayFunc = function() use($shaderProgram, $vao) {
+while(true) {
     glClearColor(.2, .3, .3, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -82,19 +81,12 @@ $displayFunc = function() use($shaderProgram, $vao) {
     glBindVertexArray($vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);  
     glBindVertexArray(0);
+	SDL_GL_SwapWindow($window);
 
-    glutSwapBuffers();
-};
+	SDL_Delay(50);
+	SDL_PollEvent($event);
+	if($event->type == SDL_KEYDOWN) break; 
+}
 
-glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
-
-$keyboardFunc = function($key, $x, $y) {
-    if(ord($key) === 27) {
-        glutLeaveMainLoop();
-    }
-};
-
-glutDisplayFunc($displayFunc);
-glutKeyboardFunc($keyboardFunc);
-glutMainLoop();
+SDL_DestroyWindow($window);
 

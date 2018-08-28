@@ -164,14 +164,14 @@ $mouse_callback = function($button, $state, $xpos, $ypos)
     $GLOBALS['cameraFront'] = \glm\normalize($front);
 };
 
-glutInit($argc, $argv);
-glutInitContextVersion(3, 3);
-glutInitContextProfile(GLUT_CORE_PROFILE);
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-glutInitWindowSize(WIDTH, HEIGHT);
-glutCreateWindow('LearnOpengl');
+SDL_Init(SDL_INIT_EVERYTHING);
 
-glutSetCursor(GLUT_CURSOR_NONE); 
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+$window = SDL_CreateWindow("Fixed pipeline example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+SDL_GL_CreateContext($window);
 
 // Define the viewport dimensions
 glViewport(0, 0, WIDTH, HEIGHT);
@@ -304,20 +304,22 @@ glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, $width, $height, 0, GL_BGRA, GL_UNSIGNED
 glGenerateMipmap(GL_TEXTURE_2D);
 glBindTexture(GL_TEXTURE_2D, 0);
 
+$event = new SDL_Event;
 
 // Game loop
-$displayFunc = function() use($shaderProgram, $texture1, $texture2, $cameraUp, $VAO, $cubePositions)
-{
-    $cameraPos = &$GLOBALS['cameraPos'];
-    $cameraFront = &$GLOBALS['cameraFront'];
-    $deltaTime = &$GLOBALS['deltaTime'];
-    $lastFrame = &$GLOBALS['lastFrame'];
-    $fov = &$GLOBALS['fov'];
-
+while(true) {
     // Calculate deltatime of current frame
     $currentFrame = microtime(true);
     $deltaTime = $currentFrame - $lastFrame;
     $lastFrame = $currentFrame;
+
+	SDL_PollEvent($event);
+	if($event->type == SDL_KEYDOWN) {
+		$keys['w'] = $event->key->keysym->sym == 'w';
+		$keys['s'] = $event->key->keysym->sym == 's';
+		$keys['a'] = $event->key->keysym->sym == 'a';
+		$keys['d'] = $event->key->keysym->sym == 'd';
+	}
 
     // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
     do_movement();
@@ -369,21 +371,12 @@ $displayFunc = function() use($shaderProgram, $texture1, $texture2, $cameraUp, $
     glBindVertexArray(0);
 
     // Swap the screen buffers
-    glutSwapBuffers();
-};
+    SDL_GL_SwapWindow($window);
+}
 
-$idleFunc = function() {
-    glutPostRedisplay();
-};
-
-glutKeyboardFunc($onKeyDownCallback);
-glutKeyboardUpFunc($onKeyUpCallback);
-glutDisplayFunc($displayFunc);
-glutIdleFunc($idleFunc);
-glutMouseWheelFunc($scroll_callback);
-glutMouseFunc($mouse_callback);
-glutMotionFunc($motion_callback);
-glutMainLoop();
+//glutMouseWheelFunc($scroll_callback);
+//glutMouseFunc($mouse_callback);
+//glutMotionFunc($motion_callback);
 
 // Properly de-allocate all resources once they've outlived their purpose
 glDeleteVertexArrays(1, $VAO);

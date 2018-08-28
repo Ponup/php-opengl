@@ -41,8 +41,6 @@
 #define TO_C_BYTE 11
 #define TO_C_UBYTE 12
 
-void call_user_callback(HashTable *callbacks, int call_type, uint32_t num_params, zval *params[]);
-
 void c_array_to_php_array(void *c_array, int num, zval *php_array, int type);
 #define int_array_to_php_array(a,i,z) c_array_to_php_array(a,i,z,C_INT_TO_PHP_LONG)
 #define uint_array_to_php_array(a,i,z) c_array_to_php_array(a,i,z,C_UINT_TO_PHP_LONG)
@@ -69,23 +67,4 @@ void *php_array_to_c_array(zval *param, int type, int size, int *array_size);
 
 int gl_pixel_size(GLenum format);
 int gl_type_size(GLenum type);
-
-#define IS_CALLBACK(callback, param_num) \
-        { \
-                zend_string *callback_name; \
-                if (!zend_is_callable(callback, 0, &callback_name)) { \
-                        php_error(E_WARNING, "%s() requires argument %d, '%s', to be a valid callback", \
-                                get_active_function_name(TSRMLS_C), param_num, ZSTR_VAL(callback_name)); \
-                        efree(callback_name); \
-                        RETURN_FALSE; \
-                } \
-                efree(callback_name); \
-        }
-
-#define HASH_CALLBACK(callback, param_num, hash_key) \
-        { \
-                IS_CALLBACK(callback,param_num); \
-                zval_add_ref(callback); \
-                zend_hash_index_update(call_backs, hash_key, callback); \
-        }
 

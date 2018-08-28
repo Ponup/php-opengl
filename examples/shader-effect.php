@@ -4,7 +4,7 @@ require 'bootstrap.php';
 require 'vendor/autoload.php';
 
 // Shader sources
-$vertexSource = <<<SQL
+$vertexSource = <<<GLSL
 #version 150 core
 in vec2 position;
 in vec3 color;
@@ -20,8 +20,8 @@ Fade = fade;
     Texcoord = texcoord;
     gl_Position = vec4(position, 0.0, 1.0);
 }
-SQL;
-$fragmentSource = <<<SQL
+GLSL;
+$fragmentSource = <<<GLSL
 #version 150 core
 in vec3 Color;
 in vec2 Texcoord;
@@ -41,16 +41,16 @@ void main()
                 vec2(Texcoord.x + sin(Texcoord.y * 60.0 + time * 2.0) / 30.0, 1.0 - Texcoord.y)
             ) * vec4(0.7, 0.7, 1.0, 1.0);
 }
-SQL;
+GLSL;
 
-glutInit($argc, $argv);
-glutInitContextVersion(3, 3);
-glutInitContextProfile(GLUT_CORE_PROFILE);
-glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
+SDL_Init(SDL_INIT_EVERYTHING);
 
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-glutInitWindowSize(700, 700);
-glutCreateWindow('OpenGL texture');
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+$window = SDL_CreateWindow("Shader effect", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+SDL_GL_CreateContext($window);
 
     // Create Vertex Array Object
     glGenVertexArrays(1, $vaos);
@@ -148,14 +148,16 @@ glutCreateWindow('OpenGL texture');
 
     $start = microtime(true);
 
-    $displayCallback = function() use($shaderProgram) {
-        global $fade, $start;
+	$event = new SDL_Event;
+
+	while(true) {
         // Clear the screen to black
         glClearColor(0.0, 0.0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         static $a = 0;
         $a += 0.0001;
+        $fade += 0.0001;
 
         // Draw a rectangle from the 2 triangles using 6 indices
         glUniform1f(glGetUniformLocation($shaderProgram, "fade"), $fade);
@@ -163,28 +165,22 @@ glutCreateWindow('OpenGL texture');
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // Swap buffers
-        glutSwapBuffers();
-    };
-    $idleCallback = function() use(&$fade) {
-        $fade += 0.0001;
-        usleep(50000);
-        glutPostRedisplay();
-    };
+		SDL_GL_SwapWindow($window);
+		SDL_PollEvent($event);
+		if($event->type == SDL_KEYDOWN) break;
 
-    glutDisplayFunc($displayCallback);
-    glutIdleFunc($idleCallback);
-    glutMainLoop();
+		SDL_Delay(100);
+    }
 
-    glDeleteTextures(2, $textures);
 
-    glDeleteProgram($shaderProgram);
-    glDeleteShader($fragmentShader);
-    glDeleteShader($vertexShader);
+glDeleteTextures(2, $textures);
 
-    glDeleteBuffers(1, $ebo);
-    glDeleteBuffers(1, $vbo);
+glDeleteProgram($shaderProgram);
+glDeleteShader($fragmentShader);
+glDeleteShader($vertexShader);
 
-    glDeleteVertexArrays(1, $vao);
+glDeleteBuffers(1, $ebo);
+glDeleteBuffers(1, $vbo);
 
-    return 0;
+glDeleteVertexArrays(1, $vao);
 

@@ -26,16 +26,16 @@ void main() {
 }
 SHADER;
 
+SDL_Init(SDL_INIT_EVERYTHING);
+
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+$window = SDL_CreateWindow("Basic shader example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+SDL_GL_CreateContext($window);
 
 // https://open.gl/content/code/c2_triangle_elements.txt
-glutInit($argc, $argv);
-glutInitContextVersion(3, 1);
-glutInitContextProfile(GLUT_CORE_PROFILE);
-glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
-
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-glutInitWindowSize(800, 600);
-glutCreateWindow("PHP-OpenGL vertex arrays example");
 
 glGenVertexArrays(1, $vaos);
 $vao = array_pop($vaos);
@@ -93,7 +93,9 @@ $colAttrib = glGetAttribLocation($shaderProgram, "color");
 glEnableVertexAttribArray($colAttrib);
 glVertexAttribPointer($colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * 4, 2 * 4);
 
-$displayCallback = function() {
+$event = new SDL_Event;
+
+while(true) {
     // Clear the screen to black
     glClearColor(0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -101,16 +103,14 @@ $displayCallback = function() {
     // Draw a rectangle from the 2 triangles using 6 indices
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 
-    glutSwapBuffers();
-};
-glutDisplayFunc($displayCallback);
+	SDL_GL_SwapWindow($window);
 
-$reshapeCallback = function($w, $h) {
-    glViewport(0, 0, $w, $h);
-};
-glutReshapeFunc($reshapeCallback);
+	SDL_PollEvent($event);
+	if($event->type == SDL_KEYDOWN) break;
 
-glutMainLoop();
+	SDL_Delay(50);
+}
+
 
 glDeleteProgram($shaderProgram);
 glDeleteShader($fragmentShader);

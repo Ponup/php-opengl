@@ -12,10 +12,9 @@ define('HEIGHT', 600);
 
 SDL_Init(SDL_INIT_EVERYTHING);
 
-SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);                                               
-SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);                                               
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
 
 $window = SDL_CreateWindow("3.2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,                
                 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);                                                                                               
@@ -146,6 +145,8 @@ while(true) {
     // Swap the screen buffers
     SDL_GL_SwapWindow($window);
 	SDL_PollEvent($event);
+	if($event->type == SDL_KEYDOWN) break;
+
 	SDL_Delay(5);
 }
 // Properly de-allocate all resources once they've outlived their purpose

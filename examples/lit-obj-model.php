@@ -240,8 +240,8 @@ $displayCallback = function() use($lightPos, $camera, $containerVAO, $lightVAO, 
     glBindVertexArray(0);
 
     // Swap the screen buffers
-    glutSwapBuffers();
-};
+    SDL_GL_SwapWindow($window);
+}
 
 $onKeyDownCallback= function($key, $x, $y) 
 {
@@ -285,17 +285,6 @@ $mouse_callback= function($xpos, $ypos)
 glutPassiveMotionFunc($mouse_callback);
 glutKeyboardFunc($onKeyDownCallback);
 glutKeyboardUpFunc($onKeyUpCallback);
-
-    // Terminate GLFW, clearing any resources allocated by GLFW.
-
-    // Set the required callback functions
-glutDisplayFunc($displayCallback);
-$idleFunc = function() {
-    glutPostRedisplay();
-};
-glutIdleFunc($idleFunc);
-//$displayCallback();
-glutMainLoop();
 
 function do_movement()
 {

@@ -42,13 +42,14 @@ GLSL;
 
     $t_start = microtime(true);
 
-glutInit($argc, $argv);
-glutInitContextVersion(3, 3);
-glutInitContextProfile(GLUT_CORE_PROFILE);
-glutInitWindowSize(800, 600);
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+SDL_Init(SDL_INIT_EVERYTHING);
 
-glutCreateWindow('PHP');
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+$window = SDL_CreateWindow("Shader animation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+SDL_GL_CreateContext($window);
 
 // Create Vertex Array Object
 glGenVertexArrays(1, $vaos);
@@ -156,8 +157,9 @@ $proj = \glm\perspective((45.0), 800.0 / 600.0, 1.0, 10.0);
 $uniProj = glGetUniformLocation($shaderProgram, "proj");
 glUniformMatrix4fv($uniProj, 1, GL_FALSE, \glm\value_ptr($proj));
 
-$displayCallback = function() use($uniModel) {
-    global $t_start;
+$event = new SDL_Event;
+
+while(true) {
     // Clear the screen to black
     glClearColor(0.1, 0.3, 0.3, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -178,16 +180,13 @@ $displayCallback = function() use($uniModel) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     // Swap buffers
-    glutSwapBuffers();
-};
+    SDL_GL_SwapWindow($window);
 
-$idleCallback = function() {
-    glutPostRedisplay();
-};
-
-glutDisplayFunc($displayCallback);
-glutIdleFunc($idleCallback);
-glutMainLoop();
+	SDL_PollEvent($event);
+	if($event->type == SDL_KEYDOWN) break;
+	
+	SDL_Delay(20);
+}
 
 glDeleteTextures(2, $textures);
 
@@ -199,5 +198,4 @@ glDeleteBuffers(1, $ebo);
 glDeleteBuffers(1, $vbo);
 
 glDeleteVertexArrays(1, $vao);
-
 

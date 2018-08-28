@@ -24,18 +24,6 @@
 #include "php.h"
 #include "php_convert.h"
 
-void call_user_callback(HashTable *call_backs, int call_type, uint32_t num_params, zval **params) {
-    zval retval;
-    zval *function_name;
-    function_name = zend_hash_index_find(call_backs, call_type);
-    if (function_name) {
-        TSRMLS_FETCH();
-        if (call_user_function(CG(function_table), NULL, function_name, &retval, num_params, *params TSRMLS_CC) != SUCCESS) {
-            zend_error(E_ERROR, "Function call failed");
-        }
-    }
-}
-
 void c_array_to_php_array(void *c_array, int num, zval *php_array, int type) {
     zval val;
     HashTable *ht;

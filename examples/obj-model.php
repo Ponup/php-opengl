@@ -10,16 +10,14 @@ use \Ponup\ddd\Shader;
 
 ini_set('memory_limit', '3096M');
 
-glutInit($argc, $argv);
-glutInitContextVersion(3, 3);
-glutInitContextProfile(GLUT_CORE_PROFILE);
+SDL_Init(SDL_INIT_EVERYTHING);
 
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA);
-glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
-glutInitWindowSize(800, 600);
-glutInitWindowPosition(20,20);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-glutCreateWindow('Rectangle');
+$window = SDL_CreateWindow("Fixed pipeline example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+SDL_GL_CreateContext($window);
 
 $line = false;
 
@@ -46,7 +44,6 @@ foreach($normalObjects as $index => $normalObject) {
     if(!($normalObject instanceof \glm\vec3)) {
         echo "INDEX: $index\n";
         var_dump($normalObject);
-        //die;
     }
      else {
         $normals[] = $normalObject->x;
@@ -158,8 +155,6 @@ foreach($lightVertices2 as $l) {
     $lightVertices[] = $l->z;
 }
 
-
-
 glGenBuffers(1, $vbo_lights); $vbo_light = $vbo_lights[0];
 glBindBuffer(GL_ARRAY_BUFFER, $vbo_light);
 glBufferData(GL_ARRAY_BUFFER, count($lightVertices) * 4, $lightVertices, GL_STATIC_DRAW);
@@ -169,7 +164,8 @@ glEnableVertexAttribArray(0);
 glBindVertexArray(0);
 glPolygonMode(GL_FRONT_AND_BACK, $line ? GL_LINE : GL_FILL);
 
-$displayFunc = function() use($shaderProgram, $vao, $lightVAO, $lampShader, $view, $proj, $lightPos, $indices) {
+$event = new SDL_Event;
+while(true) {
     glClearColor(.2, .3, .3, 1);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
@@ -195,27 +191,17 @@ $displayFunc = function() use($shaderProgram, $vao, $lightVAO, $lampShader, $vie
     glBindVertexArray($lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36); //8*4
     glBindVertexArray(0);
-    glutSwapBuffers();
-};
-
-glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
-
-$keyboardFunc = function($key, $x, $y) use(&$line) {
-    if(ord($key) === 27) {
-        glutLeaveMainLoop();
-    }
-    elseif(ord($key) === 32) {
+	SDL_GL_SwapWindow($window);
+	SDL_Delay(10);
+	SDL_PollEvent($event);
+	if($event->type == SDL_KEYDOWN) {
         $line = !$line;
         
         glPolygonMode(GL_FRONT_AND_BACK, $line ? GL_LINE : GL_FILL);
-        glutPostRedisplay();
-    }
-};
+	}
+}
 
-glutDisplayFunc($displayFunc);
-glutKeyboardFunc($keyboardFunc);
 glEnable(GL_BLEND);
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 glEnable(GL_DEPTH_TEST);
-glutMainLoop();
 
