@@ -26,7 +26,6 @@ http://pear.php.net/dtd/package-2.0.xsd">
 	<license uri="http://www.php.net/license">PHP License</license>
 	<notes>
     - PHP7 support.
-    - GLUT and OpenGL are now part of the same module. (GLUT to be replaced with a modern alternative in future releases)
     - Example scripts included in the main extension package.
 	</notes>
 	<contents>
@@ -34,8 +33,6 @@ http://pear.php.net/dtd/package-2.0.xsd">
 			<file role="src" name="config.m4" />
 			<file role="src" name="php_convert.c" />
 			<file role="src" name="php_convert.h" />
-			<file role="src" name="php_glut.c" />
-			<file role="src" name="php_glut.h" />
 			<file role="src" name="php_opengl.c" />
 			<file role="src" name="php_opengl.h" />
 			<file role="doc" name="CREDITS" />

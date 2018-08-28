@@ -7,7 +7,6 @@ env:
   - REPORT_EXIT_STATUS=1
 
 before_install:
-  - sudo apt-get install freeglut3-dev;
   - sudo apt-get install -qq --force-yes mesa-utils libgl1-mesa-swx11 libgl1-mesa-swx11-dev xvfb  
 
 before_script:
