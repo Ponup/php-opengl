@@ -1,58 +1,60 @@
 
 # PHP-OpenGL
 
-PHP bindings of the OpenGL and GLUT libraries.
+PHP bindings of the OpenGL library.
 
 Not all of the previously mentioned API is available on this extension. In order to keep the code small, maintainable and hopefully less buggy, it was decided to support only these subsets:
 
 - OpenGL: All but the functions that are part of the compatibility profile. (glRotate, glBegin, glLight, ...). Compatibility profile usage is discouraged in other platforms and this extension only let you use the modern (core) GL profile. 
-- GLUT: Only the API related to window management, input handling and main loop are available. Other functions (such as the one to render popup menus) are not available for the same reasons given before.
 
 ## Requirements
 
-- PHP7
-- OpenGL and FreeGLUT libraries
+- PHP7.2
+- [SDL extension for PHP](https://github.com/Ponup/phpsdl)
+- OpenGL library/framework
 - Linux/MacOS (Windows support coming soon)
 
 ## Installation
 
 ### Linux
 
-```sh
+```bash
 pecl install phpopengl
 ```
 
 Or
 
-```sh
-git clone git://github.com/phpopengl/extension.git --recursive phpopengl
-cd phpopengl
-phpize
-./configure --enable-opengl
-make
-sudo make install
-echo extension=opengl.so | sudo tee /etc/php5/conf.d/opengl.ini
+```bash
+$ git clone git://github.com/phpopengl/extension.git --recursive phpopengl
+$ cd phpopengl
+$ phpize
+$ ./configure --enable-opengl
+$ make
+$ sudo make install
 ```
 
 ## Examples
 
 ```php
 <?php
-glutInit($argc, $argv);
+SDL_Init(SDL_INIT_EVERYTHING);
 
-glutInitWindowSize(800, 600);
-glutInitWindowPosition(300, 100);
-glutCreateWindow('Basic PHP-OpenGL example');
+$window = SDL_CreateWindow("Fixed pipeline example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,                
+                640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);                                                                                               
+SDL_GL_CreateContext($window);    
 
-echo glGetString(GL_VENDOR), PHP_EOL;
-echo glGetString(GL_RENDERER), PHP_EOL;
+glClearColor(0, 0, .2, 1); 
+glClear(GL_COLOR_BUFFER_BIT);
+SDL_GL_SwapWindow($window);
 
-glutDisplayFunc(function() {
-    glClearColor(0, 0, .2, 1); 
-    glClear(GL_COLOR_BUFFER_BIT);
-    glutSwapBuffers();
-});
-glutMainLoop();
+$event = new SDL_Event;
+while(true) {
+	SDL_PollEvent($event);
+	if($event->type == SDL_KEYDOWN) break;
+	SDL_Delay(50);
+}
+
+SDL_DestroyWindow($window);
 ```
 
 ## License
