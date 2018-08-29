@@ -19,6 +19,28 @@ $lastX  =  WIDTH  / 2.0;
 $lastY  =  HEIGHT / 2.0;
 $keys = array_fill_keys(range('a', 'z'), false);
 
+$mouse_callback= function($xpos, $ypos)
+{
+    global $camera;
+    $lastX = &$GLOBALS['lastX'];
+    $lastY = &$GLOBALS['lastY'];
+    static $firstMouse = true;
+    if ($firstMouse)
+    {
+        $lastX = $xpos;
+        $lastY = $ypos;
+        $firstMouse = false;
+    }
+
+    $xoffset = $xpos - $lastX;
+    $yoffset = $lastY - $ypos;  // Reversed since y-coordinates go from bottom to left
+
+    $lastX = $xpos;
+    $lastY = $ypos;
+
+    $camera->ProcessMouseMovement($xoffset, $yoffset);
+};
+
 
 // Light attributes
 $lightPos = new vec3(1.2, 1.0, 2.0);
@@ -27,16 +49,14 @@ $lightPos = new vec3(1.2, 1.0, 2.0);
 $deltaTime = 0.0;   // Time between current frame and last frame
 $lastFrame = 0.0;   // Time of last frame
 
-// The MAIN function, from here we start the application and run the game loop
-    // Init GLFW
-glutInit($argc, $argv);
-glutInitContextVersion(3, 3);
-glutInitContextProfile(GLUT_CORE_PROFILE);
-glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
+SDL_Init(SDL_INIT_EVERYTHING);
 
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-glutInitWindowSize(WIDTH, HEIGHT);
-glutCreateWindow('LearnOpengl');
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+$window = SDL_CreateWindow("Fixed pipeline example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+SDL_GL_CreateContext($window);
 
 // Define the viewport dimensions
 glViewport(0, 0, WIDTH, HEIGHT);
@@ -170,8 +190,8 @@ glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * 4, 0); // Note that we skip 
 glEnableVertexAttribArray(0);
 glBindVertexArray(0);
 
-
-$displayCallback = function() use($lightPos, $camera, $containerVAO, $lightVAO, $vertices, $indices) {
+$event = new SDL_Event;
+while(true) {
         // Calculate deltatime of current frame
     $lightingShader = &$GLOBALS['lightingShader'];
     $lampShader = &$GLOBALS['lampShader'];
@@ -241,50 +261,25 @@ $displayCallback = function() use($lightPos, $camera, $containerVAO, $lightVAO, 
 
     // Swap the screen buffers
     SDL_GL_SwapWindow($window);
+	while(SDL_PollEvent($event)) {
+	switch($event->type) {
+	case SDL_MOUSEMOTION:
+		$mouse_callback($event->motion->x, $event->motion->y);
+		break;
+	case SDL_KEYDOWN:
+		$symChar = chr($event->key->keysym->sym);
+		$keys['w'] = $symChar == 'w';
+		$keys['s'] = $symChar == 's';
+		$keys['a'] = $symChar == 'a';
+		$keys['d'] = $symChar == 'd';
+		break;
+	case SDL_KEYUP:
+		$keys = array_fill_keys(range('a', 'z'), false);
+		break;
+	}
+	}
+
 }
-
-$onKeyDownCallback= function($key, $x, $y) 
-{
-    global $keys;
-    if ($key >= 0 && $key < 1024)
-    {
-        $keys[ $key ] = true;
-    }
-};
-$onKeyUpCallback= function($key, $x, $y) 
-{
-    global $keys;
-    if ($key >= 0 && $key < 1024)
-    {
-        $keys[ $key ] = false;
-    }
-};
-
-$mouse_callback= function($xpos, $ypos)
-{
-    global $camera;
-    $lastX = &$GLOBALS['lastX'];
-    $lastY = &$GLOBALS['lastY'];
-    static $firstMouse = true;
-    if ($firstMouse)
-    {
-        $lastX = $xpos;
-        $lastY = $ypos;
-        $firstMouse = false;
-    }
-
-    $xoffset = $xpos - $lastX;
-    $yoffset = $lastY - $ypos;  // Reversed since y-coordinates go from bottom to left
-
-    $lastX = $xpos;
-    $lastY = $ypos;
-
-    $camera->ProcessMouseMovement($xoffset, $yoffset);
-};
-
-glutPassiveMotionFunc($mouse_callback);
-glutKeyboardFunc($onKeyDownCallback);
-glutKeyboardUpFunc($onKeyUpCallback);
 
 function do_movement()
 {
@@ -307,13 +302,3 @@ function do_movement()
 }
 
 
-
-/*
-
-
-// Is called whenever a key is pressed/released via GLFW
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    camera.ProcessMouseScroll(yoffset);
-}
-*/

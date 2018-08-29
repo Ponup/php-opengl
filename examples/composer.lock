@@ -1,11 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "cc71784cfd3dc45fc5305faa88f4ba88",
-    "content-hash": "2a6db2c6b55ff8e7519ff422e0602b6b",
+    "content-hash": "a8f0c2c23e5ecc10058b5db88a779476",
     "packages": [
         {
             "name": "ponup/ddd",
@@ -44,7 +43,7 @@
                 }
             ],
             "description": "A PHP framework in top of the PHP-OpenGL extension which simplifies the 3D application development",
-            "time": "2016-05-29 15:37:25"
+            "time": "2016-05-29T15:37:25+00:00"
         },
         {
             "name": "ponup/gl-loaders",
@@ -83,7 +82,7 @@
                 }
             ],
             "description": "Loaders for many file formats used in OpenGL",
-            "time": "2016-05-26 15:38:30"
+            "time": "2016-05-26T15:38:30+00:00"
         },
         {
             "name": "ponup/glm",
@@ -91,16 +90,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ponup/glm.git",
-                "reference": "966c8b76e1dbc4f453507c8acb80413e5cb1c024"
+                "reference": "055e15ac9c2b5b4b99d92092d1137ee4cf74f89a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ponup/glm/zipball/966c8b76e1dbc4f453507c8acb80413e5cb1c024",
-                "reference": "966c8b76e1dbc4f453507c8acb80413e5cb1c024",
+                "url": "https://api.github.com/repos/Ponup/glm/zipball/055e15ac9c2b5b4b99d92092d1137ee4cf74f89a",
+                "reference": "055e15ac9c2b5b4b99d92092d1137ee4cf74f89a",
                 "shasum": ""
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8"
+                "phpunit/phpunit": "^6.5"
             },
             "type": "library",
             "autoload": {
@@ -113,7 +112,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-3.0+"
+                "LGPL-3.0-or-later"
             ],
             "authors": [
                 {
@@ -122,7 +121,7 @@
                 }
             ],
             "description": "A port of the OpenGL Mathematics library (GLM) to PHP",
-            "time": "2016-05-22 08:29:03"
+            "time": "2018-01-18T21:35:33+00:00"
         }
     ],
     "packages-dev": [],

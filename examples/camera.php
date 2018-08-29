@@ -29,23 +29,6 @@ $keys = array_fill_keys(range('a', 'z'), false);
 $deltaTime = 0.0;   // Time between current frame and last frame
 $lastFrame = 0.0;   // Time of last frame
 
-$onKeyDownCallback= function($key, $x, $y) 
-{
-    global $keys;
-    if ($key >= 0 && $key < 1024)
-    {
-        $keys[ $key ] = true;
-    }
-};
-$onKeyUpCallback= function($key, $x, $y) 
-{
-    global $keys;
-    if ($key >= 0 && $key < 1024)
-    {
-        $keys[ $key ] = false;
-    }
-};
-
 function do_movement()
 {
     global $keys, $deltaTime, $cameraUp, $cameraFront;
@@ -313,12 +296,22 @@ while(true) {
     $deltaTime = $currentFrame - $lastFrame;
     $lastFrame = $currentFrame;
 
-	SDL_PollEvent($event);
-	if($event->type == SDL_KEYDOWN) {
-		$keys['w'] = $event->key->keysym->sym == 'w';
-		$keys['s'] = $event->key->keysym->sym == 's';
-		$keys['a'] = $event->key->keysym->sym == 'a';
-		$keys['d'] = $event->key->keysym->sym == 'd';
+	while(SDL_PollEvent($event)) {
+	switch($event->type) {
+	case SDL_MOUSEMOTION:
+		$motion_callback($event->motion->x, $event->motion->y);
+		break;
+	case SDL_KEYDOWN:
+		$symChar = chr($event->key->keysym->sym);
+		$keys['w'] = $symChar == 'w';
+		$keys['s'] = $symChar == 's';
+		$keys['a'] = $symChar == 'a';
+		$keys['d'] = $symChar == 'd';
+		break;
+	case SDL_KEYUP:
+		$keys = array_fill_keys(range('a', 'z'), false);
+		break;
+	}
 	}
 
     // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
@@ -374,11 +367,6 @@ while(true) {
     SDL_GL_SwapWindow($window);
 }
 
-//glutMouseWheelFunc($scroll_callback);
-//glutMouseFunc($mouse_callback);
-//glutMotionFunc($motion_callback);
-
-// Properly de-allocate all resources once they've outlived their purpose
 glDeleteVertexArrays(1, $VAO);
 glDeleteBuffers(1, $VBO);
 

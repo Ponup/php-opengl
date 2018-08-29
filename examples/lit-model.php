@@ -26,7 +26,6 @@ $lightPos = new vec3(1.2, 1.0, 2.0);
 $deltaTime = 0.0;   // Time between current frame and last frame
 $lastFrame = 0.0;   // Time of last frame
 
-// The MAIN function, from here we start the application and run the game loop
 SDL_Init(SDL_INIT_EVERYTHING);
 
 SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -124,12 +123,10 @@ glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * 4, 0); // Note that we skip 
 glEnableVertexAttribArray(0);
 glBindVertexArray(0);
 
+$event = new SDL_Event;
+
 while(true) {
         // Calculate deltatime of current frame
-    $lightingShader = &$GLOBALS['lightingShader'];
-    $lampShader = &$GLOBALS['lampShader'];
-    $lastFrame = &$GLOBALS['lastFrame'];
-    $deltaTime = &$GLOBALS['deltaTime'];
     $currentFrame = microtime(true);
     $deltaTime = $currentFrame - $lastFrame;
     $lastFrame = $currentFrame;
@@ -191,26 +188,29 @@ while(true) {
 
     // Swap the screen buffers
     SDL_GL_SwapWindow($window);
+	while(SDL_PollEvent($event)) {
+	switch($event->type) {
+	case SDL_MOUSEMOTION:
+		$motion_callback($event->motion->x, $event->motion->y);
+		break;
+	case SDL_KEYDOWN:
+		$symChar = chr($event->key->keysym->sym);
+		$keys['w'] = $symChar == 'w';
+		$keys['s'] = $symChar == 's';
+		$keys['a'] = $symChar == 'a';
+		$keys['d'] = $symChar == 'd';
+		break;
+	case SDL_KEYUP:
+		$keys = array_fill_keys(range('a', 'z'), false);
+		break;
+	}
+	}
+
+
+	SDL_Delay(10);
 }
 
-$onKeyDownCallback= function($key, $x, $y) 
-{
-    global $keys;
-    if ($key >= 0 && $key < 1024)
-    {
-        $keys[ $key ] = true;
-    }
-};
-$onKeyUpCallback= function($key, $x, $y) 
-{
-    global $keys;
-    if ($key >= 0 && $key < 1024)
-    {
-        $keys[ $key ] = false;
-    }
-};
-
-$mouse_callback= function($xpos, $ypos)
+$mouse_callback = function($xpos, $ypos)
 {
     global $camera;
     $lastX = &$GLOBALS['lastX'];
@@ -231,10 +231,6 @@ $mouse_callback= function($xpos, $ypos)
 
     $camera->ProcessMouseMovement($xoffset, $yoffset);
 };
-
-glutPassiveMotionFunc($mouse_callback);
-glutKeyboardFunc($onKeyDownCallback);
-glutKeyboardUpFunc($onKeyUpCallback);
 
 function do_movement()
 {

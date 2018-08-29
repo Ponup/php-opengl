@@ -24,3 +24,7 @@ nbproject
 vendor
 composer.phar
 configure.ac
+tests/*.diff
+tests/*.exp
+tests/*.out
+tests/*.log
