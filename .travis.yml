@@ -7,7 +7,8 @@ env:
   - REPORT_EXIT_STATUS=1
 
 before_install:
-  - sudo apt-get install -qq --force-yes mesa-utils libgl1-mesa-swx11 libgl1-mesa-swx11-dev xvfb  
+  - sudo apt-get install -qq --force-yes libgl1-mesa-dri
+  - sudo apt-get install -qq --force-yes xvfb
 
 before_script:
   - phpize
