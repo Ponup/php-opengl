@@ -127,7 +127,7 @@ $mouse_callback = function($button, $state, $xpos, $ypos)
     $lastX = $xpos;
     $lastY = $ypos;
 
-    $sensitivity = 0.05; // Change this value to your liking
+    $sensitivity = 1; // Change this value to your liking
     $xoffset *= $sensitivity;
     $yoffset *= $sensitivity;
 

@@ -135,18 +135,18 @@ void *php_array_to_c_array(zval *param, int type, int size, int *array_size) {
 
 int gl_pixel_size(GLenum format) {
     switch (format) {
-        case GL_COLOR_INDEX:
+//        case GL_COLOR_INDEX:
         case GL_RED:
         case GL_GREEN:
         case GL_BLUE:
         case GL_ALPHA:
         case GL_STENCIL_INDEX:
         case GL_DEPTH_COMPONENT:
-        case GL_LUMINANCE:
+//        case GL_LUMINANCE:
             return 1;
 
-        case GL_LUMINANCE_ALPHA:
-            return 2;
+//        case GL_LUMINANCE_ALPHA:
+  //:          return 2;
 
         case GL_RGB:
 #ifdef GL_BGR_EXT
@@ -189,8 +189,8 @@ int gl_type_size(GLenum type) {
         case GL_FLOAT:
             return sizeof (GLfloat);
 
-        case GL_BITMAP:
-            return sizeof (GLbitfield);
+//        case GL_BITMAP:
+  //          return sizeof (GLbitfield);
 
         default:
             return 1;
