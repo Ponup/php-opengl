@@ -1,75 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
-http://pear.php.net/dtd/tasks-1.0.xsd
-http://pear.php.net/dtd/package-2.0
-http://pear.php.net/dtd/package-2.0.xsd">
-	<name>opengl</name>
-	<channel>pecl.php.net</channel>
-	<summary>OpenGL (3D graphics library) for PHP</summary>
-	<description>This extension allows you to develop 3D multimedia applications with PHP using the complete OpenGL library API.</description>
-	<lead>
-		<name>Santiago Lizardo</name>
-		<user>santiagolizardo</user>
-		<email>santiagolizardo@php.net</email>
-		<active>yes</active>
-	</lead>
-	<date>2016-04-09</date>
-	<time>22:00:00</time>
-	<version>     
-		<release>0.8.2</release>
-		<api>0.8.2</api>
-	</version>
-	<stability>
-		<release>beta</release>
-		<api>beta</api>
-	</stability>
-	<license uri="http://www.php.net/license">PHP License</license>
-	<notes>
+<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packagerversion="1.9.0" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+  <name>opengl</name>
+  <channel>pecl.php.net</channel>
+  <summary>OpenGL (3D graphics library) for PHP</summary>
+  <description>This extension allows you to develop 3D multimedia applications with PHP using the complete OpenGL library API.</description>
+  <lead>
+    <name>Santiago Lizardo</name>
+    <user>santiagolizardo</user>
+    <email>santiagolizardo@php.net</email>
+    <active>yes</active>
+  </lead>
+  <date>2016-04-09</date>
+  <time>22:00:00</time>
+  <version>
+    <release>0.8.2</release>
+    <api>0.8.2</api>
+  </version>
+  <stability>
+    <release>beta</release>
+    <api>beta</api>
+  </stability>
+  <license uri="http://www.php.net/license">PHP License</license>
+  <notes>
     - PHP7 support.
     - Example scripts included in the main extension package.
 	</notes>
-	<contents>
-		<dir name="/">
-			<file role="src" name="config.m4" />
-			<file role="src" name="php_convert.c" />
-			<file role="src" name="php_convert.h" />
-			<file role="src" name="php_opengl.c" />
-			<file role="src" name="php_opengl.h" />
-			<file role="doc" name="CREDITS" />
-			<file role="doc" name="LICENSE" />
-			<file role="test" name="tests/001.phpt" />
-		</dir>
-	</contents>
-	<dependencies>
-		<required>
-			<php>
-				<min>7.0.0</min>
-			</php>
-			<pearinstaller>
-				<min>1.9</min>
-			</pearinstaller>
-		</required>
-	</dependencies>
-	<providesextension>opengl</providesextension>
-     <extsrcrelease>
-      <configureoption default="autodetect" name="with-opengl" prompt="The location of the OpenGL library" />
-     </extsrcrelease>
-	<extsrcrelease />
-	<changelog>
-   <release>
-     <version>
-       <release>0.8.0</release>
-       <api>0.8.0</api>
-     </version>
-     <stability>
-       <release>beta</release>
-       <api>beta</api>
-     </stability>
-	 <date>2014-04-20</date>
-	<license uri="http://www.php.net/license">PHP License</license>
-	<notes>
+  <contents>
+    <dir name="/">
+      <file role="src" name="config.m4"/>
+      <file role="src" name="php_convert.c"/>
+      <file role="src" name="php_convert.h"/>
+      <file role="src" name="php_opengl.c"/>
+      <file role="src" name="php_opengl.h"/>
+      <file role="doc" name="CREDITS"/>
+      <file role="doc" name="LICENSE"/>
+      <file role="test" name="tests/001.phpt"/>
+    </dir>
+  </contents>
+  <dependencies>
+    <required>
+      <php>
+        <min>7.0.0</min>
+      </php>
+      <pearinstaller>
+        <min>1.9</min>
+      </pearinstaller>
+    </required>
+  </dependencies>
+  <providesextension>opengl</providesextension>
+  <extsrcrelease>
+    <configureoption default="autodetect" name="with-opengl" prompt="The location of the OpenGL library"/>
+  </extsrcrelease>
+  <extsrcrelease/>
+  <changelog>
+    <release>
+      <version>
+        <release>0.8.0</release>
+        <api>0.8.0</api>
+      </version>
+      <stability>
+        <release>beta</release>
+        <api>beta</api>
+      </stability>
+      <date>2014-04-20</date>
+      <license uri="http://www.php.net/license">PHP License</license>
+      <notes>
 	- Initial PECL package release.
 	</notes>
-   </release>
-	</changelog>
+    </release>
+  </changelog>
 </package>
