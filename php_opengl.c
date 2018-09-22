@@ -612,23 +612,22 @@ ZEND_END_ARG_INFO()
 /* {{{ void gldrawelements(long mode, long count, long type, array indices) */
 PHP_FUNCTION(gldrawelements) {
     zend_long mode, count, type;
-    zval indices;
+    zval *indices = NULL;
     GLvoid *v_indices = NULL;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lllz!", &mode, &count, &type, &indices) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
-
-    if (!ZVAL_IS_NULL(&indices)) {
-        convert_to_array(&indices);
+    if(indices) {
+        convert_to_array(indices);
         switch (type) {
             case GL_UNSIGNED_BYTE:
-                v_indices = php_array_to_ubyte_array(&indices);
+                v_indices = php_array_to_ubyte_array(indices);
                 break;
             case GL_UNSIGNED_SHORT:
-                v_indices = php_array_to_ushort_array(&indices);
+                v_indices = php_array_to_ushort_array(indices);
                 break;
             case GL_UNSIGNED_INT:
-                v_indices = php_array_to_uint_array(&indices);
+                v_indices = php_array_to_uint_array(indices);
                 break;
         }
         v_indices = NULL;
