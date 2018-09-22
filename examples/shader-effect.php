@@ -34,7 +34,7 @@ void main()
 {
     float factor = (sin(time * 3.0) + 1.0) / 2.0;
     outColor = mix(texture(texKitten, Texcoord), texture(texPuppy, Texcoord), factor);
-        if (Texcoord.y < 0.5)
+        if (Texcoord.y < 0.6)
             outColor = texture(texKitten, Texcoord);
         else
             outColor = texture(texKitten,
@@ -144,32 +144,34 @@ SDL_GL_CreateContext($window);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	$a = 0.0;
     $fade = 0.0;
 
     $start = microtime(true);
 
 	$event = new SDL_Event;
 
-	while(true) {
+	$quit = false;
+	while(!$quit) {
         // Clear the screen to black
         glClearColor(0.0, 0.0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        static $a = 0;
-        $a += 0.0001;
+        $a += 0.05;
         $fade += 0.0001;
 
         // Draw a rectangle from the 2 triangles using 6 indices
         glUniform1f(glGetUniformLocation($shaderProgram, "fade"), $fade);
         glUniform1f(glGetUniformLocation($shaderProgram, "time"), $a);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);
 
         // Swap buffers
 		SDL_GL_SwapWindow($window);
-		SDL_PollEvent($event);
-		if($event->type == SDL_KEYDOWN) break;
+		while(SDL_PollEvent($event)) {
+			if($event->type == SDL_KEYDOWN) $quit = true;
+		}
 
-		SDL_Delay(100);
+		SDL_Delay(10);
     }
 
 
