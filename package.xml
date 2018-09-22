@@ -10,11 +10,11 @@
     <email>santiagolizardo@php.net</email>
     <active>yes</active>
   </lead>
-  <date>2016-04-09</date>
-  <time>22:00:00</time>
+  <date>2018-09-22</date>
+  <time>12:00:00</time>
   <version>
-    <release>0.8.2</release>
-    <api>0.8.2</api>
+    <release>0.9.0</release>
+    <api>0.9.0</api>
   </version>
   <stability>
     <release>beta</release>
@@ -22,7 +22,7 @@
   </stability>
   <license uri="http://www.php.net/license">PHP License</license>
   <notes>
-    - PHP7 support.
+    - Better PHP7.2 support.
     - Example scripts included in the main extension package.
 	</notes>
   <contents>
@@ -32,15 +32,20 @@
       <file role="src" name="php_convert.h"/>
       <file role="src" name="php_opengl.c"/>
       <file role="src" name="php_opengl.h"/>
+      <file role="src" name="opengl.h"/>
       <file role="doc" name="CREDITS"/>
       <file role="doc" name="LICENSE"/>
-      <file role="test" name="tests/001.phpt"/>
+    	<dir name="tests">
+			<file role="test" name="extension-loading.phpt"/>
+			<file role="test" name="glgeterror_basic.phpt"/>
+			<file role="test" name="glgetstring_basic.phpt"/>
+    	</dir>
     </dir>
   </contents>
   <dependencies>
     <required>
       <php>
-        <min>7.0.0</min>
+        <min>7.2.0</min>
       </php>
       <pearinstaller>
         <min>1.9</min>
@@ -51,22 +56,4 @@
   <extsrcrelease>
     <configureoption default="autodetect" name="with-opengl" prompt="The location of the OpenGL library"/>
   </extsrcrelease>
-  <extsrcrelease/>
-  <changelog>
-    <release>
-      <version>
-        <release>0.8.0</release>
-        <api>0.8.0</api>
-      </version>
-      <stability>
-        <release>beta</release>
-        <api>beta</api>
-      </stability>
-      <date>2014-04-20</date>
-      <license uri="http://www.php.net/license">PHP License</license>
-      <notes>
-	- Initial PECL package release.
-	</notes>
-    </release>
-  </changelog>
 </package>
