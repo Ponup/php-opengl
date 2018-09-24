@@ -6,40 +6,35 @@ require 'vendor/autoload.php';
 // Shader sources
 $vertexSource = <<<GLSL
 #version 150 core
+
 in vec2 position;
-in vec3 color;
 in vec2 texcoord;
-uniform float fade;
-out vec3 Color;
+
 out vec2 Texcoord;
-out float Fade;
-void main()
-{
-Fade = fade;
-    Color = color;
-    Texcoord = texcoord;
-    gl_Position = vec4(position, 0.0, 1.0);
+
+void main() {
+	Texcoord = texcoord;
+	gl_Position = vec4(position, 0.0, 1.0);
 }
 GLSL;
 $fragmentSource = <<<GLSL
 #version 150 core
-in vec3 Color;
+
 in vec2 Texcoord;
-out vec4 outColor;
+
 uniform sampler2D texKitten;
 uniform sampler2D texPuppy;
-in float Fade;
 uniform float time;
-void main()
-{
-    float factor = (sin(time * 3.0) + 1.0) / 2.0;
-    outColor = mix(texture(texKitten, Texcoord), texture(texPuppy, Texcoord), factor);
-        if (Texcoord.y < 0.6)
-            outColor = texture(texKitten, Texcoord);
-        else
-            outColor = texture(texKitten,
-                vec2(Texcoord.x + sin(Texcoord.y * 60.0 + time * 2.0) / 30.0, 1.0 - Texcoord.y)
-            ) * vec4(0.7, 0.7, 1.0, 1.0);
+
+out vec4 outColor;
+
+void main() {
+	float factor = (sin(time * 3.0) + 1.0) / 2.0;
+	outColor = mix(texture(texKitten, Texcoord), texture(texPuppy, Texcoord), factor);
+	if (Texcoord.y < 0.6)
+		outColor = texture(texKitten, Texcoord);
+	else
+		outColor = texture(texKitten, vec2(Texcoord.x + sin(Texcoord.y * 60.0 + time * 2.0) / 30.0, 1.0 - Texcoord.y)) * vec4(0.7, 0.7, 1.0, 1.0);
 }
 GLSL;
 
@@ -107,9 +102,6 @@ SDL_GL_CreateContext($window);
     glEnableVertexAttribArray($posAttrib);
     glVertexAttribPointer($posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * 4, 0);
 
-    $colAttrib = glGetAttribLocation($shaderProgram, "color");
-    glEnableVertexAttribArray($colAttrib);
-    glVertexAttribPointer($colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * 4, (2 * 4));
 
     $texAttrib = glGetAttribLocation($shaderProgram, "texcoord");
     glEnableVertexAttribArray($texAttrib);
@@ -145,7 +137,6 @@ SDL_GL_CreateContext($window);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	$a = 0.0;
-    $fade = 0.0;
 
     $start = microtime(true);
 
@@ -158,10 +149,8 @@ SDL_GL_CreateContext($window);
         glClear(GL_COLOR_BUFFER_BIT);
 
         $a += 0.05;
-        $fade += 0.0001;
 
         // Draw a rectangle from the 2 triangles using 6 indices
-        glUniform1f(glGetUniformLocation($shaderProgram, "fade"), $fade);
         glUniform1f(glGetUniformLocation($shaderProgram, "time"), $a);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);
 
