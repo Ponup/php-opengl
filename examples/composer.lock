@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a8f0c2c23e5ecc10058b5db88a779476",
+    "content-hash": "a9ed8343c8fb30a2607448320e0755de",
     "packages": [
         {
             "name": "ponup/ddd",
@@ -12,19 +12,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ponup/ddd.git",
-                "reference": "cc3ce62f48523beaaed4b4079eb34f35de0adbcf"
+                "reference": "78e5ca5fe0bffb4e9781374b89e643c9f02887e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ponup/ddd/zipball/cc3ce62f48523beaaed4b4079eb34f35de0adbcf",
-                "reference": "cc3ce62f48523beaaed4b4079eb34f35de0adbcf",
+                "url": "https://api.github.com/repos/Ponup/ddd/zipball/78e5ca5fe0bffb4e9781374b89e643c9f02887e8",
+                "reference": "78e5ca5fe0bffb4e9781374b89e643c9f02887e8",
                 "shasum": ""
             },
             "require": {
                 "ponup/glm": "dev-master"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.3"
+                "phpunit/phpunit": "^6.5"
             },
             "type": "library",
             "autoload": {
@@ -34,7 +34,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-3.0+"
+                "GPL-3.0-or-later"
             ],
             "authors": [
                 {
@@ -43,7 +43,7 @@
                 }
             ],
             "description": "A PHP framework in top of the PHP-OpenGL extension which simplifies the 3D application development",
-            "time": "2016-05-29T15:37:25+00:00"
+            "time": "2018-09-24T21:09:43+00:00"
         },
         {
             "name": "ponup/gl-loaders",
@@ -126,13 +126,13 @@
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
         "ponup/glm": 20,
         "ponup/gl-loaders": 20,
         "ponup/ddd": 20
     },
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": []
