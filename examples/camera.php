@@ -3,15 +3,15 @@
 require 'bootstrap.php';
 require 'vendor/autoload.php';
 
+use \glm\vec2;
 use \glm\vec3;
 use \glm\mat4;
 use \Ponup\ddd\Shader;
 
 // http://learnopengl.com/code_viewer.php?code=getting-started/camera_zoom
- 
-define('WIDTH', 800);
-define('HEIGHT', 600);
-define('NUM_CUBES', 10);
+
+const WIDTH = 1024;
+const HEIGHT = 768;
 
 // Camera
 $cameraPos   = new vec3(0.0, 0.0,  3.0);
@@ -20,8 +20,9 @@ $cameraUp    = new vec3(0.0, 1.0,  0.0);
 
 $yaw    = -90.0;    // Yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right (due to how Eular angles work) so we initially rotate a bit to the left.
 $pitch  =  0.0;
-$lastX  =  WIDTH  / 2.0;
-$lastY  =  HEIGHT / 2.0;
+
+$lastMouseCoordinates = null;
+
 $fov =  45.0;
 $keys = array_fill_keys(range('a', 'z'), false);
 
@@ -29,7 +30,7 @@ $keys = array_fill_keys(range('a', 'z'), false);
 $deltaTime = 0.0;   // Time between current frame and last frame
 $lastFrame = 0.0;   // Time of last frame
 
-function do_movement()
+function updateCameraPosition()
 {
     global $keys, $deltaTime, $cameraUp, $cameraFront;
     $cameraPos = &$GLOBALS['cameraPos'];
@@ -43,8 +44,8 @@ function do_movement()
     }
     if ($keys['a']) {
         $cameraPos = $cameraPos->substract(
-             \glm\cross($cameraFront, $cameraUp)->normalize()->scale($cameraSpeed)
-         );
+            \glm\cross($cameraFront, $cameraUp)->normalize()->scale($cameraSpeed)
+        );
     }
     if ($keys['d']) {
         $cameraPos = $cameraPos->add(
@@ -52,8 +53,7 @@ function do_movement()
         );
     }
 }
-$scroll_callback = function($wheel, $direction, $x, $y)
-{
+$scroll_callback = function ($wheel, $direction, $x, $y) {
     $fov = &$GLOBALS['fov'];
     if ($fov >= 1.0 && $fov <= 45.0)
         $fov -= $direction;
@@ -62,27 +62,19 @@ $scroll_callback = function($wheel, $direction, $x, $y)
     if ($fov >= 45.0)
         $fov = 45.0;
 };
-$motion_callback= function($xpos, $ypos)
-{
+$motion_callback = function ($xpos, $ypos) use(&$lastMouseCoordinates) {
     $yaw = &$GLOBALS['yaw'];
     $pitch = &$GLOBALS['pitch'];
-    $lastX = &$GLOBALS['lastX'];
-    $lastY  = &$GLOBALS['lastY'];
 
-    static $firstMouse = true;
-    if ($firstMouse)
-    {
-        $lastX = $xpos;
-        $lastY = $ypos;
-        $firstMouse = false;
+    if (null === $lastMouseCoordinates) {
+        $lastMouseCoordinates = new vec2($xpos-(WIDTH>>1), $ypos+(HEIGHT>>1));
     }
 
-    $xoffset = $xpos - $lastX;
-    $yoffset = $lastY - $ypos; // Reversed since y-coordinates go from bottom to left
-    $lastX = $xpos;
-    $lastY = $ypos;
+    $xoffset = $xpos - $lastMouseCoordinates->x;
+    $yoffset = $lastMouseCoordinates->y - $ypos; // Reversed since y-coordinates go from bottom to left
+    $lastMouseCoordinates = new vec2($xpos, $ypos);
 
-    $sensitivity = 1; // Change this value to your liking
+    $sensitivity = 0.1; // Change this value to your liking
     $xoffset *= $sensitivity;
     $yoffset *= $sensitivity;
 
@@ -95,65 +87,21 @@ $motion_callback= function($xpos, $ypos)
     if ($pitch < -89.0)
         $pitch = -89.0;
 
-    $front = new vec3
-    (cos(\glm\radians($yaw)) * cos(\glm\radians($pitch)),
-    sin(\glm\radians($pitch)),
-    sin(\glm\radians($yaw)) * cos(\glm\radians($pitch)));
-    $GLOBALS['cameraFront'] = \glm\normalize($front);
-};
-
-$mouse_callback = function($button, $state, $xpos, $ypos)
-{
-    if($button ==3 || $button == 4){
-        global $scroll_callback;
-        $scroll_callback($button, $button == 3 ? 1 : -1, $xpos, $ypos);
-        return;
-    }
-    $yaw = &$GLOBALS['yaw'];
-    $pitch = &$GLOBALS['pitch'];
-    $lastX = &$GLOBALS['lastX'];
-    $lastY  = &$GLOBALS['lastY'];
-
-    static $firstMouse = true;
-    if ($firstMouse)
-    {
-        $lastX = $xpos;
-        $lastY = $ypos;
-        $firstMouse = false;
-    }
-
-    $xoffset = $xpos - $lastX;
-    $yoffset = $lastY - $ypos; // Reversed since y-coordinates go from bottom to left
-    $lastX = $xpos;
-    $lastY = $ypos;
-
-    $sensitivity = 1; // Change this value to your liking
-    $xoffset *= $sensitivity;
-    $yoffset *= $sensitivity;
-
-    $yaw   += $xoffset;
-    $pitch += $yoffset;
-
-    // Make sure that when pitch is out of bounds, screen doesn't get flipped
-    if ($pitch > 89.0)
-        $pitch = 89.0;
-    if ($pitch < -89.0)
-        $pitch = -89.0;
-
-    $front = new vec3
-    (cos(\glm\radians($yaw)) * cos(\glm\radians($pitch)),
-    sin(\glm\radians($pitch)),
-    sin(\glm\radians($yaw)) * cos(\glm\radians($pitch)));
+    $front = new vec3(
+            cos(\glm\radians($yaw)) * cos(\glm\radians($pitch)),
+            sin(\glm\radians($pitch)),
+            sin(\glm\radians($yaw)) * cos(\glm\radians($pitch))
+        );
     $GLOBALS['cameraFront'] = \glm\normalize($front);
 };
 
 SDL_Init(SDL_INIT_EVERYTHING);
 
-SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-$window = SDL_CreateWindow("Fixed pipeline example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+$window = SDL_CreateWindow("Fixed pipeline example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 SDL_GL_CreateContext($window);
 
 // Define the viewport dimensions
@@ -174,16 +122,16 @@ $shaderProgram->link();
 // Set up vertex data (and buffer(s)) and attribute pointers
 $vertices = [
     -0.5, -0.5, -0.5,  0.0, 0.0,
-     0.5, -0.5, -0.5,  1.0, 0.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
+    0.5, -0.5, -0.5,  1.0, 0.0,
+    0.5,  0.5, -0.5,  1.0, 1.0,
+    0.5,  0.5, -0.5,  1.0, 1.0,
     -0.5,  0.5, -0.5,  0.0, 1.0,
     -0.5, -0.5, -0.5,  0.0, 0.0,
 
     -0.5, -0.5,  0.5,  0.0, 0.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 1.0,
-     0.5,  0.5,  0.5,  1.0, 1.0,
+    0.5, -0.5,  0.5,  1.0, 0.0,
+    0.5,  0.5,  0.5,  1.0, 1.0,
+    0.5,  0.5,  0.5,  1.0, 1.0,
     -0.5,  0.5,  0.5,  0.0, 1.0,
     -0.5, -0.5,  0.5,  0.0, 0.0,
 
@@ -194,40 +142,41 @@ $vertices = [
     -0.5, -0.5,  0.5,  0.0, 0.0,
     -0.5,  0.5,  0.5,  1.0, 0.0,
 
-     0.5,  0.5,  0.5,  1.0, 0.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-     0.5, -0.5, -0.5,  0.0, 1.0,
-     0.5, -0.5, -0.5,  0.0, 1.0,
-     0.5, -0.5,  0.5,  0.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,
+    0.5,  0.5,  0.5,  1.0, 0.0,
+    0.5,  0.5, -0.5,  1.0, 1.0,
+    0.5, -0.5, -0.5,  0.0, 1.0,
+    0.5, -0.5, -0.5,  0.0, 1.0,
+    0.5, -0.5,  0.5,  0.0, 0.0,
+    0.5,  0.5,  0.5,  1.0, 0.0,
 
     -0.5, -0.5, -0.5,  0.0, 1.0,
-     0.5, -0.5, -0.5,  1.0, 1.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,
+    0.5, -0.5, -0.5,  1.0, 1.0,
+    0.5, -0.5,  0.5,  1.0, 0.0,
+    0.5, -0.5,  0.5,  1.0, 0.0,
     -0.5, -0.5,  0.5,  0.0, 0.0,
     -0.5, -0.5, -0.5,  0.0, 1.0,
 
     -0.5,  0.5, -0.5,  0.0, 1.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,
+    0.5,  0.5, -0.5,  1.0, 1.0,
+    0.5,  0.5,  0.5,  1.0, 0.0,
+    0.5,  0.5,  0.5,  1.0, 0.0,
     -0.5,  0.5,  0.5,  0.0, 0.0,
     -0.5,  0.5, -0.5,  0.0, 1.0
-]; 
+];
 
 $cubePositions = [
-    \glm\vec3( 0.0,  0.0,  0.0),
-    \glm\vec3( 2.0,  5.0, -15.0),
+    \glm\vec3(0.0,  0.0,  0.0),
+    \glm\vec3(2.0,  5.0, -15.0),
     \glm\vec3(-1.5, -2.2, -2.5),
     \glm\vec3(-3.8, -2.0, -12.3),
-    \glm\vec3( 2.4, -0.4, -3.5),
+    \glm\vec3(2.4, -0.4, -3.5),
     \glm\vec3(-1.7,  3.0, -7.5),
-    \glm\vec3( 1.3, -2.0, -2.5),
-    \glm\vec3( 1.5,  2.0, -2.5),
-    \glm\vec3( 1.5,  0.2, -1.5),
+    \glm\vec3(1.3, -2.0, -2.5),
+    \glm\vec3(1.5,  2.0, -2.5),
+    \glm\vec3(1.5,  0.2, -1.5),
     \glm\vec3(-1.3,  1.0, -1.5)
 ];
+
 glGenVertexArrays(1, $VAOS);
 $VAO = $VAOS[0];
 glGenBuffers(1, $VBOS);
@@ -290,32 +239,34 @@ glBindTexture(GL_TEXTURE_2D, 0);
 $event = new SDL_Event;
 
 // Game loop
-while(true) {
+while (true) {
     // Calculate deltatime of current frame
     $currentFrame = microtime(true);
     $deltaTime = $currentFrame - $lastFrame;
     $lastFrame = $currentFrame;
 
-	while(SDL_PollEvent($event)) {
-	switch($event->type) {
-	case SDL_MOUSEMOTION:
-		$motion_callback($event->motion->x, $event->motion->y);
-		break;
-	case SDL_KEYDOWN:
-		$symChar = chr($event->key->keysym->sym);
-		$keys['w'] = $symChar == 'w';
-		$keys['s'] = $symChar == 's';
-		$keys['a'] = $symChar == 'a';
-		$keys['d'] = $symChar == 'd';
-		break;
-	case SDL_KEYUP:
-		$keys = array_fill_keys(range('a', 'z'), false);
-		break;
-	}
-	}
+    while (SDL_PollEvent($event)) {
+        switch ($event->type) {
+            case SDL_MOUSEMOTION:
+                $motion_callback($event->motion->x, $event->motion->y);
+                break;
+            case SDL_KEYDOWN:
+				var_dump($event);
+                $symChar = chr($event->key->keysym->sym);
+                $keys['w'] = $symChar == 'w';
+                $keys['s'] = $symChar == 's';
+                $keys['a'] = $symChar == 'a';
+                $keys['d'] = $symChar == 'd';
+                break;
+            case SDL_KEYUP:
+				echo 'keyup',PHP_EOL;
+                $keys = array_fill_keys(range('a', 'z'), false);
+                break;
+        }
+    }
 
     // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
-    do_movement();
+    updateCameraPosition();
 
     // Render
     // Clear the colorbuffer
@@ -334,7 +285,7 @@ while(true) {
     $shaderProgram->Use();
 
     // Projection 
-    $projection = \glm\perspective($fov, (float)WIDTH/(float)HEIGHT, 0.1, 100.0);  
+    $projection = \glm\perspective($fov, (float)WIDTH / (float)HEIGHT, 0.1, 100.0);
     // Get the uniform locations
 
     // Camera/View transformation
@@ -347,16 +298,13 @@ while(true) {
     glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
     glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($projection));
 
-    static $sizes = array();
-
     glBindVertexArray($VAO);
-    for ($i = 0; $i < NUM_CUBES; $i++)
-    {
+    for ($i = 0; $i < count($cubePositions); $i++) {
         // Calculate the model matrix for each object and pass it to shader before drawing
         $model = new mat4;
         $model = \glm\translate($model, $cubePositions[$i]);
         $angle = 20.0 * $i;
-        $model = \glm\rotate($model, ($angle), new vec3(1.0, 0.3, 0.5));
+        $model = \glm\rotate($model, $angle, new vec3(1.0, 0.3, 0.5));
         glUniformMatrix4fv($modelLoc, 1, GL_FALSE, \glm\value_ptr($model));
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -369,5 +317,3 @@ while(true) {
 
 glDeleteVertexArrays(1, $VAO);
 glDeleteBuffers(1, $VBO);
-
-
