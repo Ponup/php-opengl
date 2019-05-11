@@ -47,121 +47,121 @@ SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 $window = SDL_CreateWindow("Shader effect", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 SDL_GL_CreateContext($window);
 
-    // Create Vertex Array Object
-    glGenVertexArrays(1, $vaos);
-    $vao = $vaos[0];
-    glBindVertexArray($vao);
+// Create Vertex Array Object
+glGenVertexArrays(1, $vaos);
+$vao = $vaos[0];
+glBindVertexArray($vao);
 
-    // Create a Vertex Buffer Object and copy the vertex data to it
-    glGenBuffers(1, $vbos);
-    $vbo = $vbos[0];
+// Create a Vertex Buffer Object and copy the vertex data to it
+glGenBuffers(1, $vbos);
+$vbo = $vbos[0];
 
-    $vertices = [
+$vertices = [
     //  Position      Color             Texcoords
-        -0.5,  0.5, 1.0, 0.0, 0.0, 0.0, 0.0, // Top-left
-         0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 0.0, // Top-right
-         0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 1.0, // Bottom-right
-        -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0  // Bottom-left
-    ];
+    -0.5,  0.5, 1.0, 0.0, 0.0, 0.0, 0.0, // Top-left
+    0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 0.0, // Top-right
+    0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 1.0, // Bottom-right
+    -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0  // Bottom-left
+];
 
-    glBindBuffer(GL_ARRAY_BUFFER, $vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof($vertices) * 4, $vertices, GL_STATIC_DRAW);
+glBindBuffer(GL_ARRAY_BUFFER, $vbo);
+glBufferData(GL_ARRAY_BUFFER, sizeof($vertices) * 4, $vertices, GL_STATIC_DRAW);
 
-    // Create an element array
-    glGenBuffers(1, $ebos);
-    $ebo = $ebos[0];
+// Create an element array
+glGenBuffers(1, $ebos);
+$ebo = $ebos[0];
 
-    $elements = [
-        0, 1, 2,
-        2, 3, 0
-    ];
+$elements = [
+    0, 1, 2,
+    2, 3, 0
+];
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, $ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof($elements) * 4, $elements, GL_STATIC_DRAW);
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, $ebo);
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof($elements) * 4, $elements, GL_STATIC_DRAW);
 
-    // Create and compile the vertex shader
-    $vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource($vertexShader, 1, $vertexSource, NULL);
-    glCompileShader($vertexShader);
+// Create and compile the vertex shader
+$vertexShader = glCreateShader(GL_VERTEX_SHADER);
+glShaderSource($vertexShader, 1, $vertexSource, NULL);
+glCompileShader($vertexShader);
 
-    // Create and compile the fragment shader
-    $fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource($fragmentShader, 1, $fragmentSource, NULL);
-    glCompileShader($fragmentShader);
+// Create and compile the fragment shader
+$fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+glShaderSource($fragmentShader, 1, $fragmentSource, NULL);
+glCompileShader($fragmentShader);
 
-    // Link the vertex and fragment shader into a shader program
-    $shaderProgram = glCreateProgram();
-    glAttachShader($shaderProgram, $vertexShader);
-    glAttachShader($shaderProgram, $fragmentShader);
-    glBindFragDataLocation($shaderProgram, 0, "outColor");
-    glLinkProgram($shaderProgram);
-    glUseProgram($shaderProgram);
+// Link the vertex and fragment shader into a shader program
+$shaderProgram = glCreateProgram();
+glAttachShader($shaderProgram, $vertexShader);
+glAttachShader($shaderProgram, $fragmentShader);
+glBindFragDataLocation($shaderProgram, 0, "outColor");
+glLinkProgram($shaderProgram);
+glUseProgram($shaderProgram);
 
-    // Specify the layout of the vertex data
-    $posAttrib = glGetAttribLocation($shaderProgram, "position");
-    glEnableVertexAttribArray($posAttrib);
-    glVertexAttribPointer($posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * 4, 0);
+// Specify the layout of the vertex data
+$posAttrib = glGetAttribLocation($shaderProgram, "position");
+glEnableVertexAttribArray($posAttrib);
+glVertexAttribPointer($posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * 4, 0);
 
 
-    $texAttrib = glGetAttribLocation($shaderProgram, "texcoord");
-    glEnableVertexAttribArray($texAttrib);
-    glVertexAttribPointer($texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * 4, (5 * 4));
+$texAttrib = glGetAttribLocation($shaderProgram, "texcoord");
+glEnableVertexAttribArray($texAttrib);
+glVertexAttribPointer($texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * 4, (5 * 4));
 
-    $imageLoader = new \Ponup\GlLoaders\ImageLoader;
+$imageLoader = new \Ponup\GlLoaders\ImageLoader;
 
-    // Load textures
-    $textures = [];
-    glGenTextures(2, $textures);
+// Load textures
+$textures = [];
+glGenTextures(2, $textures);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, $textures[0]);
-    $image = $imageLoader->load("textures/sample.png", $width, $height);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, $width, $height, 0, GL_RGBA, GL_UNSIGNED_BYTE, $image);
-    glUniform1i(glGetUniformLocation($shaderProgram, "texKitten"), 0);
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, $textures[0]);
+$image = $imageLoader->load("textures/sample.png", $width, $height);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, $width, $height, 0, GL_RGBA, GL_UNSIGNED_BYTE, $image);
+glUniform1i(glGetUniformLocation($shaderProgram, "texKitten"), 0);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-   
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, $textures[1]);
-    $image = $imageLoader->load("textures/sample2.png", $width, $height);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, $width, $height, 0, GL_RGBA, GL_UNSIGNED_BYTE, $image);
-    glUniform1i(glGetUniformLocation($shaderProgram, "texPuppy"), 1);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+glActiveTexture(GL_TEXTURE1);
+glBindTexture(GL_TEXTURE_2D, $textures[1]);
+$image = $imageLoader->load("textures/sample2.png", $width, $height);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, $width, $height, 0, GL_RGBA, GL_UNSIGNED_BYTE, $image);
+glUniform1i(glGetUniformLocation($shaderProgram, "texPuppy"), 1);
 
-	$a = 0.0;
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    $start = microtime(true);
+$a = 0.0;
 
-	$event = new SDL_Event;
+$start = microtime(true);
 
-	$quit = false;
-	while(!$quit) {
-        // Clear the screen to black
-        glClearColor(0.0, 0.0, 0.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
+$event = new SDL_Event;
 
-        $a += 0.05;
+$quit = false;
+while (!$quit) {
+    // Clear the screen to black
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
 
-        // Draw a rectangle from the 2 triangles using 6 indices
-        glUniform1f(glGetUniformLocation($shaderProgram, "time"), $a);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);
+    $a += 0.05;
 
-        // Swap buffers
-		SDL_GL_SwapWindow($window);
-		while(SDL_PollEvent($event)) {
-			if($event->type == SDL_KEYDOWN) $quit = true;
-		}
+    // Draw a rectangle from the 2 triangles using 6 indices
+    glUniform1f(glGetUniformLocation($shaderProgram, "time"), $a);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);
 
-		SDL_Delay(10);
+    // Swap buffers
+    SDL_GL_SwapWindow($window);
+    while (SDL_PollEvent($event)) {
+        if ($event->type == SDL_KEYDOWN) $quit = true;
     }
+
+    SDL_Delay(10);
+}
 
 
 glDeleteTextures(2, $textures);
@@ -174,4 +174,3 @@ glDeleteBuffers(1, $ebo);
 glDeleteBuffers(1, $vbo);
 
 glDeleteVertexArrays(1, $vao);
-
