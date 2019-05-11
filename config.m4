@@ -1,4 +1,4 @@
-idnl config.m4 for extension opengl
+dnl config.m4 for extension opengl
 
 PHP_ARG_WITH(opengl, for opengl support,
 [  --with-opengl=DIR       Include OpenGL support])
