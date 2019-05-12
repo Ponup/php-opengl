@@ -30,3 +30,4 @@ tests/*.out
 tests/*.log
 tests/*.sh
 tests/*.php
+.DS_Store
