@@ -251,7 +251,6 @@ while (true) {
                 $motion_callback($event->motion->x, $event->motion->y);
                 break;
             case SDL_KEYDOWN:
-				var_dump($event);
                 $symChar = chr($event->key->keysym->sym);
                 $keys['w'] = $symChar == 'w';
                 $keys['s'] = $symChar == 's';
@@ -259,7 +258,6 @@ while (true) {
                 $keys['d'] = $symChar == 'd';
                 break;
             case SDL_KEYUP:
-				echo 'keyup',PHP_EOL;
                 $keys = array_fill_keys(range('a', 'z'), false);
                 break;
         }
