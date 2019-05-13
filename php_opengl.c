@@ -235,7 +235,7 @@ PHP_FUNCTION(glcompileshader) {
         memset(error_msg, 0, sizeof (GLchar) * maxLength);
         glGetShaderInfoLog((GLuint) shader, maxLength, &maxLength, error_msg);
 
-        zend_error(E_ERROR, error_msg);
+        zend_error(E_ERROR, "%s", error_msg);
 
         efree(error_msg);
 
@@ -297,7 +297,7 @@ PHP_FUNCTION(gllinkprogram) {
         if (maxLength > 0) {
             char *pLinkInfoLog = (char*) emalloc(sizeof (char)*maxLength);
             glGetProgramInfoLog(program, maxLength, &maxLength, pLinkInfoLog);
-            zend_error(E_ERROR, pLinkInfoLog);
+            zend_error(E_ERROR, "%s", pLinkInfoLog);
         }
     }
 }
