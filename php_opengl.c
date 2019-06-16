@@ -355,6 +355,21 @@ PHP_FUNCTION(glenablevertexattribarray) {
     glEnableVertexAttribArray((GLuint) index);
 }
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_gldisablevertexattribarray, 0, 0, 1)
+ZEND_ARG_INFO(0, index)
+ZEND_END_ARG_INFO()
+
+PHP_FUNCTION(gldisablevertexattribarray) {
+    zend_long index;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
+        WRONG_PARAM_COUNT;
+    }
+
+    glDisableVertexAttribArray((GLuint) index);
+}
+
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glvertexattribpointer, 0, 0, 6)
 ZEND_ARG_INFO(0, index)
 ZEND_ARG_INFO(0, size)
@@ -1227,6 +1242,7 @@ const zend_function_entry opengl_functions[] = {
     ZEND_FE(glcreateprogram, arginfo_glcreateprogram)
     ZEND_FE(glgetattriblocation, arginfo_glgetattriblocation)
     ZEND_FE(glenablevertexattribarray, arginfo_glenablevertexattribarray)
+    ZEND_FE(gldisablevertexattribarray, arginfo_gldisablevertexattribarray)
     ZEND_FE(glvertexattribpointer, arginfo_glvertexattribpointer)
     ZEND_FE(glGetUniformLocation, arginfo_glGetUniformLocation)
     ZEND_FE(glUniform1f, arginfo_glUniform1f)
@@ -1389,6 +1405,8 @@ PHP_MINIT_FUNCTION(opengl) {
     REGISTER_LONG_CONSTANT("GL_TEXTURE_HEIGHT", GL_TEXTURE_HEIGHT, CONST_CS | CONST_PERSISTENT);
     REGISTER_LONG_CONSTANT("GL_TEXTURE_INTERNAL_FORMAT", GL_TEXTURE_INTERNAL_FORMAT, CONST_CS | CONST_PERSISTENT);
     REGISTER_LONG_CONSTANT("GL_TEXTURE_BORDER_COLOR", GL_TEXTURE_BORDER_COLOR, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GL_TEXTURE_CUBE_MAP_POSITIVE_X", GL_TEXTURE_CUBE_MAP_POSITIVE_X, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GL_TEXTURE_WRAP_R", GL_TEXTURE_WRAP_R, CONST_CS | CONST_PERSISTENT);
     REGISTER_LONG_CONSTANT("GL_DONT_CARE", GL_DONT_CARE, CONST_CS | CONST_PERSISTENT);
     REGISTER_LONG_CONSTANT("GL_FASTEST", GL_FASTEST, CONST_CS | CONST_PERSISTENT);
     REGISTER_LONG_CONSTANT("GL_NICEST", GL_NICEST, CONST_CS | CONST_PERSISTENT);

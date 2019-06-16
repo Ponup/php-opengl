@@ -113,6 +113,7 @@ PHP_FUNCTION(gluseprogram);
 PHP_FUNCTION(glcreateprogram);
 PHP_FUNCTION(glgetattriblocation);
 PHP_FUNCTION(glenablevertexattribarray);
+PHP_FUNCTION(gldisablevertexattribarray);
 PHP_FUNCTION(glvertexattribpointer);
 PHP_FUNCTION(glGetUniformLocation);
 PHP_FUNCTION(glActiveTexture);
