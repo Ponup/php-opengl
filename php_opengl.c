@@ -53,7 +53,7 @@ PHP_FUNCTION(glGenVertexArrays) {
     zend_long n;
     GLuint* arrays = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz/", &n, &z_arrays) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lz/", &n, &z_arrays) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -78,7 +78,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glBindVertexArray) {
     zend_long array;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &array) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &array) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -95,7 +95,7 @@ PHP_FUNCTION(glGenBuffers) {
     zend_long n;
     GLuint *buffers = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz/", &n, &z_buffers) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lz/", &n, &z_buffers) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -121,7 +121,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glBindBuffer) {
     zend_long target, buffer;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &target, &buffer) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &target, &buffer) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -142,7 +142,7 @@ PHP_FUNCTION(glbufferdata) {
     void* data;
     zend_array *param_ht;
     int tmp_size;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llal", &target, &size, &z_data, &usage) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "llal", &target, &size, &z_data, &usage) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -203,7 +203,7 @@ PHP_FUNCTION(glshadersource) {
     char* string;
     size_t string_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llsl", &shader, &count, &string, &string_len, &length) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "llsl", &shader, &count, &string, &string_len, &length) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -220,7 +220,7 @@ PHP_FUNCTION(glcompileshader) {
     GLint maxLength = 0;
     GLchar* error_msg = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &shader) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &shader) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -251,7 +251,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glattachshader) {
     zend_long program, shader;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &program, &shader) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &program, &shader) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -269,7 +269,7 @@ PHP_FUNCTION(glbindfragdatalocation) {
     char *name;
     size_t name_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lls", &program, &program_number, &name, &name_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lls", &program, &program_number, &name, &name_len) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -284,7 +284,7 @@ PHP_FUNCTION(gllinkprogram) {
     zend_long program;
     GLint IsLinked;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &program) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &program) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -309,7 +309,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(gluseprogram) {
     zend_long program;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &program) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &program) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -334,7 +334,7 @@ PHP_FUNCTION(glgetattriblocation) {
     char *name;
     size_t name_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &program, &name, &name_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ls", &program, &name, &name_len) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -348,7 +348,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glenablevertexattribarray) {
     zend_long index;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &index) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -362,7 +362,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(gldisablevertexattribarray) {
     zend_long index;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &index) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -382,7 +382,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glvertexattribpointer) {
     zend_long index, size, type, normalized, stride, pointer;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llllll", &index, &size, &type, &normalized, &stride, &pointer) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "llllll", &index, &size, &type, &normalized, &stride, &pointer) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -396,7 +396,7 @@ ZEND_END_ARG_INFO()
 
 PHP_FUNCTION(glbindtexture) {
     zend_long target, texture;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &target, &texture) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &target, &texture) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glBindTexture((GLenum) target, (GLuint) texture);
@@ -411,7 +411,7 @@ ZEND_END_ARG_INFO()
 
 PHP_FUNCTION(glblendfunc) {
     long sfactor, dfactor;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &sfactor, &dfactor) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &sfactor, &dfactor) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glBlendFunc((int) sfactor, (int) dfactor);
@@ -423,7 +423,7 @@ ZEND_END_ARG_INFO()
 
 PHP_FUNCTION(glclear) {
     zend_long mask;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &mask) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glClear((GLbitfield) mask);
@@ -441,7 +441,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glclearcolor) {
     double red, green, blue, alpha;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "dddd", &red, &green, &blue, &alpha) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "dddd", &red, &green, &blue, &alpha) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -456,7 +456,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glcleardepth(double depth) */
 PHP_FUNCTION(glcleardepth) {
     double depth;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &depth) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &depth) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glClearDepth(depth);
@@ -470,7 +470,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glclearstencil(long s) */
 PHP_FUNCTION(glclearstencil) {
     zend_long s;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &s) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &s) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glClearStencil((int) s);
@@ -489,7 +489,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glcopytexsubimage1d(long target, long level, long xoffset, long x, long y, long width) */
 PHP_FUNCTION(glcopytexsubimage1d) {
     zend_long target, level, xoffset, x, y, width;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llllll", &target, &level, &xoffset, &x, &y, &width) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "llllll", &target, &level, &xoffset, &x, &y, &width) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glCopyTexSubImage1D((int) target, (int) level, (int) xoffset, (int) x, (int) y, (int) width);
@@ -503,7 +503,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glcullface(long mode) */
 PHP_FUNCTION(glcullface) {
     long mode;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glCullFace((int) mode);
@@ -519,7 +519,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(gldeletetextures) {
     zend_long n;
     zval *textures;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &n, &textures) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lz", &n, &textures) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -536,7 +536,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void gldepthfunc(long func) */
 PHP_FUNCTION(gldepthfunc) {
     zend_long func;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &func) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &func) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glDepthFunc((int) func);
@@ -550,7 +550,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void gldepthmask(boolean flag) */
 PHP_FUNCTION(gldepthmask) {
     zend_bool flag;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "b", &flag) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "b", &flag) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glDepthMask(flag);
@@ -565,7 +565,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void gldepthrange(double zNear, double zFar) */
 PHP_FUNCTION(gldepthrange) {
     double zNear, zFar;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "dd", &zNear, &zFar) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "dd", &zNear, &zFar) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glDepthRange(zNear, zFar);
@@ -579,7 +579,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void gldisable(long cap) */
 PHP_FUNCTION(gldisable) {
     zend_long cap;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &cap) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &cap) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glDisable((GLenum) cap);
@@ -595,7 +595,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void gldrawarrays(long mode, long first, long count) */
 PHP_FUNCTION(gldrawarrays) {
     zend_long mode, first, count;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lll", &mode, &first, &count) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lll", &mode, &first, &count) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glDrawArrays((GLenum) mode, (GLint) first, (GLsizei) count);
@@ -609,7 +609,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void gldrawbuffer(long mode) */
 PHP_FUNCTION(gldrawbuffer) {
     zend_long mode;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glDrawBuffer((int) mode);
@@ -629,7 +629,7 @@ PHP_FUNCTION(gldrawelements) {
     zend_long mode, count, type;
     zval *indices = NULL;
     GLvoid *v_indices = NULL;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lllz!", &mode, &count, &type, &indices) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lllz!", &mode, &count, &type, &indices) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     if(indices) {
@@ -658,7 +658,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glenable(long cap) */
 PHP_FUNCTION(glenable) {
     zend_long cap;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &cap) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &cap) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glEnable((GLenum) cap);
@@ -696,7 +696,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glfrontface(long mode) */
 PHP_FUNCTION(glfrontface) {
     long mode;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glFrontFace((int) mode);
@@ -713,7 +713,7 @@ PHP_FUNCTION(glgentextures) {
     zend_long n;
     zval *textures;
     GLuint *v_textures;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &n, &textures) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lz", &n, &textures) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -746,7 +746,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glGetString) {
     zend_long name;
     const GLubyte *string;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &name) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &name) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     string = glGetString((GLenum)name);
@@ -770,7 +770,7 @@ PHP_FUNCTION(glgetteximage) {
     zend_long target, level, format, type;
     zval *pixels;
     GLvoid *v_pixels;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llllz", &target, &level, &format, &type, &pixels) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "llllz", &target, &level, &format, &type, &pixels) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     convert_to_array(pixels);
@@ -787,7 +787,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glhint(long target, long mode) */
 PHP_FUNCTION(glhint) {
     zend_long target, mode;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &target, &mode) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &target, &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -803,7 +803,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glisenabled) {
     long cap;
     int return_int;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &cap) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &cap) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     return_int = glIsEnabled((int) cap);
@@ -819,7 +819,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glistexture) {
     long texture;
     int return_int;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &texture) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &texture) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     return_int = glIsTexture((unsigned int) texture);
@@ -834,7 +834,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void gllinewidth(double width) */
 PHP_FUNCTION(gllinewidth) {
     double width;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &width) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &width) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glLineWidth((float) width);
@@ -848,7 +848,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void gllogicop(long opcode) */
 PHP_FUNCTION(gllogicop) {
     zend_long opcode;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &opcode) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &opcode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glLogicOp((int) opcode);
@@ -864,7 +864,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glpixelstoref) {
     zend_long pname;
     double param;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ld", &pname, &param) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ld", &pname, &param) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glPixelStoref((int) (pname), (float) (param));
@@ -879,7 +879,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glpixelstorei(long pname, long param) */
 PHP_FUNCTION(glpixelstorei) {
     zend_long pname, param;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &pname, &param) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &pname, &param) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glPixelStorei((int) (pname), (int) (param));
@@ -893,7 +893,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glpointsize(double size) */
 PHP_FUNCTION(glpointsize) {
     double size;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &size) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &size) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glPointSize((float) size);
@@ -908,7 +908,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glpolygonmode(long face, long mode) */
 PHP_FUNCTION(glpolygonmode) {
     zend_long face, mode;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &face, &mode) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &face, &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -924,7 +924,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glpolygonoffset(double factor, double units) */
 PHP_FUNCTION(glpolygonoffset) {
     double factor, units;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "dd", &factor, &units) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "dd", &factor, &units) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -939,7 +939,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glreadbuffer(long mode) */
 PHP_FUNCTION(glreadbuffer) {
     zend_long mode;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mode) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glReadBuffer((int) mode);
@@ -953,7 +953,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void glstencilmask(long mask) */
 PHP_FUNCTION(glstencilmask) {
     zend_long mask;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &mask) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &mask) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glStencilMask((unsigned int) mask);
@@ -977,7 +977,7 @@ PHP_FUNCTION(glteximage2d) {
     zend_long target, level, internal_format, width, height, border, format, type;
     zval *pixels;
     GLvoid *v_pixels;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llllllllz", &target, &level, &internal_format, &width, &height, &border, &format, &type, &pixels) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "llllllllz", &target, &level, &internal_format, &width, &height, &border, &format, &type, &pixels) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     convert_to_array(pixels);
@@ -995,7 +995,7 @@ ZEND_END_ARG_INFO()
 /* {{{ void gltexparameteri(long target, long pname, long param) */
 PHP_FUNCTION(gltexparameteri) {
     zend_long target, pname, param;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lll", &target, &pname, &param) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lll", &target, &pname, &param) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
     glTexParameteri((GLenum) target, (GLenum) pname, (GLint) param);
@@ -1039,7 +1039,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glviewport) {
     zend_long x, y, width, height;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llll", &x, &y, &width, &height) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "llll", &x, &y, &width, &height) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -1055,7 +1055,7 @@ PHP_FUNCTION(glCreateShader) {
     GLuint return_code;
     zend_long shader_type;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &shader_type) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &shader_type) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -1075,7 +1075,7 @@ PHP_FUNCTION(glGetUniformLocation) {
     char* name;
     size_t name_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &program, &name, &name_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ls", &program, &name, &name_len) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -1091,7 +1091,7 @@ PHP_FUNCTION(glUniform1f) {
     zend_long location;
     double v0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ld", &location, &v0) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ld", &location, &v0) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -1109,7 +1109,7 @@ PHP_FUNCTION(glUniform3f) {
     zend_long location;
     double v0, v1, v2;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lddd", &location, &v0, &v1, &v2) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lddd", &location, &v0, &v1, &v2) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -1129,7 +1129,7 @@ PHP_FUNCTION(glUniformMatrix4fv) {
     zval* z_value;
     GLfloat* value;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llba", &location, &count, &transpose, &z_value) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "llba", &location, &count, &transpose, &z_value) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -1146,7 +1146,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glGenerateMipmap) {
     zend_long target;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &target) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &target) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -1161,7 +1161,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glUniform1i) {
     zend_long location, v0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &location, &v0) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &location, &v0) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
@@ -1175,7 +1175,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glActiveTexture) {
     zend_long texture;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &texture) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &texture) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
 
