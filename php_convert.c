@@ -68,7 +68,6 @@ void *php_array_to_c_array(zval *param, int type, int size, int *array_size) {
     void *params;
     int i, tmp_size = zend_hash_num_elements(param_ht);
 
-    zend_hash_internal_pointer_reset(param_ht);
     params = (void *) emalloc(size * tmp_size);
 
     i = 0;
@@ -124,7 +123,6 @@ void *php_array_to_c_array(zval *param, int type, int size, int *array_size) {
                     ((char **) params)[i] = estrdup(Z_STRVAL_P(cur));
             }
         }
-        zend_hash_move_forward(param_ht);
         i++;
     }
     ZEND_HASH_FOREACH_END();
