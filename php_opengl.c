@@ -410,7 +410,7 @@ ZEND_ARG_INFO(0, dfactor)
 ZEND_END_ARG_INFO()
 
 PHP_FUNCTION(glblendfunc) {
-    long sfactor, dfactor;
+    zend_long sfactor, dfactor;
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &sfactor, &dfactor) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -502,7 +502,7 @@ ZEND_END_ARG_INFO()
 
 /* {{{ void glcullface(long mode) */
 PHP_FUNCTION(glcullface) {
-    long mode;
+    zend_long mode;
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -695,7 +695,7 @@ ZEND_END_ARG_INFO()
 
 /* {{{ void glfrontface(long mode) */
 PHP_FUNCTION(glfrontface) {
-    long mode;
+    zend_long mode;
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &mode) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
@@ -801,7 +801,7 @@ ZEND_END_ARG_INFO()
 
 /* {{{ bool glisenabled(long cap) */
 PHP_FUNCTION(glisenabled) {
-    long cap;
+    zend_long cap;
     int return_int;
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &cap) == FAILURE) {
         WRONG_PARAM_COUNT;
@@ -817,7 +817,7 @@ ZEND_END_ARG_INFO()
 
 /* {{{ bool glistexture(long texture) */
 PHP_FUNCTION(glistexture) {
-    long texture;
+    zend_long texture;
     int return_int;
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &texture) == FAILURE) {
         WRONG_PARAM_COUNT;
