@@ -139,7 +139,7 @@ while(true) {
     
     // Draw container
     glBindVertexArray($VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);
     glBindVertexArray(0);
 
     // Swap the screen buffers

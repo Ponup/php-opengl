@@ -238,8 +238,10 @@ glBindTexture(GL_TEXTURE_2D, 0);
 
 $event = new SDL_Event;
 
+$quit = false;
+
 // Game loop
-while (true) {
+while (!$quit) {
     // Calculate deltatime of current frame
     $currentFrame = microtime(true);
     $deltaTime = $currentFrame - $lastFrame;
@@ -259,6 +261,9 @@ while (true) {
                 break;
             case SDL_KEYUP:
                 $keys = array_fill_keys(range('a', 'z'), false);
+                break;
+            case SDL_QUIT:
+                $quit = true;
                 break;
         }
     }

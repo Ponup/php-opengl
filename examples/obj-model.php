@@ -173,7 +173,7 @@ while(true) {
 
     glBindVertexArray($vao);
         $numFaces = count($indices);
-        glDrawElements(GL_TRIANGLES, $numFaces, GL_UNSIGNED_INT, 0);  
+        glDrawElements(GL_TRIANGLES, $numFaces, GL_UNSIGNED_INT, null);
     glBindVertexArray(0);
 
         $lampShader->Use();

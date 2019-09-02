@@ -79,7 +79,7 @@ while(true) {
 
     glUseProgram($shaderProgram);
     glBindVertexArray($vao);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);  
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);
     glBindVertexArray(0);
 	SDL_GL_SwapWindow($window);
 

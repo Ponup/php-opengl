@@ -101,7 +101,7 @@ while(true) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Draw a rectangle from the 2 triangles using 6 indices
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);
 
 	SDL_GL_SwapWindow($window);
 

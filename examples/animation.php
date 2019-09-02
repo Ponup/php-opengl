@@ -163,7 +163,7 @@ while(true) {
     // Clear the screen to black
     glClearColor(0.1, 0.3, 0.3, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
-
+    
     // Calculate transformation
     $t_now = microtime(true); 
     $time = $t_now - $t_start;
@@ -177,7 +177,7 @@ while(true) {
     glUniformMatrix4fv($uniModel, 1, GL_FALSE, \glm\value_ptr($model));
 
     // Draw a rectangle from the 2 triangles using 6 indices
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);
 
     // Swap buffers
     SDL_GL_SwapWindow($window);

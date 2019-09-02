@@ -238,7 +238,7 @@ while(true) {
     $model = \glm\rotate($model, deg2rad(90), new vec3(1, 1, 1));
     glUniformMatrix4fv($modelLoc, 1, GL_FALSE, \glm\value_ptr($model));
     $a = count($indices);
-    glDrawElements(GL_TRIANGLES, $a, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, $a, GL_UNSIGNED_INT, null);
     glBindVertexArray(0);
 
     // Also draw the lamp object, again binding the appropriate shader
