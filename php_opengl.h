@@ -19,7 +19,7 @@
 #ifndef PHP_OPENGL_H
 #define PHP_OPENGL_H
 
-#define PHP_OPENGL_VERSION "0.9.0"
+#define PHP_OPENGL_VERSION "0.9.10"
 
 #include "php.h"
 #include "ext/standard/info.h"
