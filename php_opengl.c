@@ -156,6 +156,8 @@ PHP_FUNCTION(glbufferdata) {
         data = php_array_to_c_array(z_data, array_type, tmp_size, NULL);
 
         glBufferData((GLenum) target, (GLsizeiptr) size, data, (GLenum) usage);
+
+        efree(data);
     } else {
         zend_error(E_WARNING, "glBufferData received an empty array");
     }
@@ -208,6 +210,8 @@ PHP_FUNCTION(glshadersource) {
     }
 
     glShaderSource((GLuint)shader, (GLsizei)count, (const GLchar **)&string, (const GLint*)(length == 0 ? NULL : &length));
+
+    RETURN_NULL();
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glcompileshader, 0, 0, 1)
@@ -217,7 +221,8 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(glcompileshader) {
     zend_long shader;
     GLint isCompiled = 0;
-    GLint maxLength = 0;
+    GLsizei maxLength = 0;
+    GLsizei error_msg_len = 0;
     GLchar* error_msg = NULL;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &shader) == FAILURE) {
@@ -228,16 +233,19 @@ PHP_FUNCTION(glcompileshader) {
 
     glGetShaderiv((GLuint) shader, GL_COMPILE_STATUS, &isCompiled);
     if (isCompiled == GL_FALSE) {
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+        glGetShaderiv((GLuint)shader, GL_INFO_LOG_LENGTH, &maxLength);
+        if(maxLength > 0) {
+            // The maxLength includes the NULL character
+            error_msg = (GLchar*) emalloc(sizeof (GLchar) * maxLength);
+            memset(error_msg, 0, sizeof (GLchar) * maxLength);
+            glGetShaderInfoLog((GLuint) shader, maxLength, &error_msg_len, error_msg);
 
-        // The maxLength includes the NULL character
-        error_msg = (char*) emalloc(sizeof (GLchar) * maxLength);
-        memset(error_msg, 0, sizeof (GLchar) * maxLength);
-        glGetShaderInfoLog((GLuint) shader, maxLength, &maxLength, error_msg);
+            zend_error(E_ERROR, "%s", error_msg);
 
-        zend_error(E_ERROR, "%s", error_msg);
-
-        efree(error_msg);
+            efree(error_msg);
+        } else {
+            php_error_docref(NULL, E_WARNING, "Invalid shader source");
+        }
 
         glDeleteShader(shader); // Don't leak the shader.
     }
@@ -526,6 +534,7 @@ PHP_FUNCTION(gldeletetextures) {
     GLuint *v_textures;
     v_textures = php_array_to_uint_array(textures);
     glDeleteTextures((int) (n), v_textures);
+    efree(v_textures);
 }
 /* }}} */
 
@@ -621,33 +630,36 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_glDrawElements, 0, 0, 4)
 ZEND_ARG_INFO(0, mode)
 ZEND_ARG_INFO(0, count)
 ZEND_ARG_INFO(0, type)
-ZEND_ARG_INFO(0, indices)
+ZEND_ARG_ARRAY_INFO(0, indices, 1)
 ZEND_END_ARG_INFO()
 
 /* {{{ void gldrawelements(long mode, long count, long type, array indices) */
 PHP_FUNCTION(gldrawelements) {
     zend_long mode, count, type;
-    zval *indices = NULL;
-    GLvoid *v_indices = NULL;
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lllz!", &mode, &count, &type, &indices) == FAILURE) {
+    zval *zindices = NULL;
+    GLvoid *indices = NULL;
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lllz!", &mode, &count, &type, &zindices) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
-    if(indices) {
-        convert_to_array(indices);
+    if(zindices) {
+        convert_to_array(zindices);
         switch (type) {
             case GL_UNSIGNED_BYTE:
-                v_indices = php_array_to_ubyte_array(indices);
+                indices = php_array_to_ubyte_array(zindices);
                 break;
             case GL_UNSIGNED_SHORT:
-                v_indices = php_array_to_ushort_array(indices);
+                indices = php_array_to_ushort_array(zindices);
                 break;
             case GL_UNSIGNED_INT:
-                v_indices = php_array_to_uint_array(indices);
+                indices = php_array_to_uint_array(zindices);
                 break;
         }
-        v_indices = NULL;
     }
-    glDrawElements((GLenum) mode, (GLsizei) count, (GLenum) type, v_indices);
+    glDrawElements((GLenum) mode, (GLsizei) count, (GLenum) type, indices);
+    if(indices) {
+        efree(indices);
+        indices = NULL;
+    }
 }
 /* }}} */
 
@@ -705,21 +717,21 @@ PHP_FUNCTION(glfrontface) {
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glGenTextures, 0, 0, 2)
 ZEND_ARG_INFO(0, n)
-ZEND_ARG_INFO(0, textures)
+ZEND_ARG_ARRAY_INFO(1, textures, 0)
 ZEND_END_ARG_INFO()
 
 /* {{{ void glgentextures(long n, array textures) */
 PHP_FUNCTION(glgentextures) {
     zend_long n;
-    zval *textures;
+    zval *ztextures;
     GLuint *v_textures;
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lz", &n, &textures) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "la", &n, &ztextures) == FAILURE) {
         WRONG_PARAM_COUNT;
     }
-
+    SEPARATE_ZVAL_NOREF(ztextures);
     v_textures = (GLuint *) emalloc(sizeof (GLuint) * (n));
     glGenTextures((int) (n), v_textures);
-    uint_array_to_php_array(v_textures, (n), textures);
+    uint_array_to_php_array(v_textures, (n), ztextures);
     efree(v_textures);
 }
 /* }}} */
@@ -776,6 +788,7 @@ PHP_FUNCTION(glgetteximage) {
     convert_to_array(pixels);
     v_pixels = php_array_to_long_array(pixels);
     glGetTexImage((int) target, (int) level, (int) format, (int) type, v_pixels);
+    efree(v_pixels);
 }
 /* }}} */
 
@@ -983,6 +996,7 @@ PHP_FUNCTION(glteximage2d) {
     convert_to_array(pixels);
     v_pixels = php_array_to_int_array(pixels);
     glTexImage2D((GLenum) target, (GLint) level, (GLint) internal_format, (GLsizei) width, (GLsizei) height, (GLint) border, (GLenum) format, (GLenum) type, v_pixels);
+    efree(v_pixels);
 }
 /* }}} */
 
@@ -1025,6 +1039,7 @@ PHP_FUNCTION(gltexsubimage2d) {
     convert_to_array(pixels);
     v_pixels = php_array_to_long_array(pixels);
     glTexSubImage2D((int) (target), (int) (level), (int) (xoffset), (int) (yoffset), (int) (width), (int) (height), (int) (format), (int) (type), v_pixels);
+    efree(v_pixels);
 }
 /* }}} */
 
@@ -1137,6 +1152,7 @@ PHP_FUNCTION(glUniformMatrix4fv) {
     value = php_array_to_float_array(z_value);
 
     glUniformMatrix4fv((GLint) location, (GLsizei) count, (GLboolean) transpose, value);
+    efree(value);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_glGenerateMipmap, 0, 0, 1)
