@@ -26,11 +26,8 @@
 
 void c_array_to_php_array(void *c_array, int num, zval *php_array, int type) {
     zval val;
-    HashTable *ht;
     int i;
-
-    convert_to_array(php_array);
-    ht = Z_ARRVAL_P(php_array);
+    
     for (i = 0; i < num; i++) {
         switch (type) {
             case C_INT_TO_PHP_LONG:
@@ -58,7 +55,7 @@ void c_array_to_php_array(void *c_array, int num, zval *php_array, int type) {
                 ZVAL_LONG(&val, (unsigned short) ((unsigned short*) c_array)[i]);
                 break;
         }
-        zend_hash_next_index_insert(ht, &val);
+        zend_hash_next_index_insert(Z_ARRVAL_P(php_array), &val);
     }
 }
 
