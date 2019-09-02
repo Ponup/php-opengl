@@ -3,6 +3,9 @@ dnl config.m4 for extension opengl
 PHP_ARG_WITH(opengl, for opengl support,
 [  --with-opengl=DIR       Include OpenGL support])
 
+PHP_ARG_ENABLE(opengl-debug, whether to enable PHP-OpenGL debug support,
+[  --enable-opengl-debug     Enable OpenGL debug support], no, no)
+
 CFLAGS="$CFLAGS -Wall -Wfatal-errors"
 
 if test "$PHP_OPENGL" != "no"; then
@@ -37,8 +40,14 @@ if test "$PHP_OPENGL" != "no"; then
       AC_MSG_RESULT(with additional library $additional_libs)
     fi
     AC_MSG_CHECKING(if  OpenGL links properly)
-    dnl LIBS="$saved_LIBS -lGL $additional_libs"
+    case $build_os in
+    darwin*)
     LIBS="$saved_LIBS -Framework GL $additional_libs"
+    ;;
+    *)
+    LIBS="$saved_LIBS -lGL $additional_libs"
+    ;;
+    esac
     AC_TRY_LINK( ,[char glBegin(); glBegin(); ], have_GL=yes, have_GL=no)
     AC_MSG_RESULT($have_GL)
 
@@ -81,14 +90,27 @@ if test "$PHP_OPENGL" != "no"; then
   fi
   unset additional_libs
 
-  dnl PHP_ADD_LIBRARY_WITH_PATH(GL, /usr/lib, OPENGL_SHARED_LIBADD)
-  PHP_ADD_FRAMEWORK(GL)
+  dnl {{{ --enable-opengl-debug
+  if test "$PHP_OPENGL_DEBUG" != "no"; then
+    CFLAGS="$CFLAGS -Wall -Wpedantic -g -ggdb -O0"
+  fi
+  dnl }}}
+
+    case $build_os in
+    darwin*)
+	PHP_ADD_FRAMEWORK(GL)
+	PHP_ADD_INCLUDE(/System/Library/Frameworks/OpenGL.framework/Headers)
+    ;;
+    *)
+	PHP_ADD_LIBRARY_WITH_PATH(GL, /usr/lib, OPENGL_SHARED_LIBADD)
+    ;;
+    esac
 
   PHP_ADD_INCLUDE($OPENGL_DIR/include)
-  PHP_ADD_INCLUDE(/System/Library/Frameworks/OpenGL.framework/Headers)
 
-  PHP_SUBST(OPENGL_SHARED_LIBADD)
-  PHP_ADD_EXTENSION_DEP(opengl, ppp)
   PHP_NEW_EXTENSION(opengl, php_convert.c php_opengl.c, $ext_shared)
+  PHP_SUBST(OPENGL_SHARED_LIBADD)
+  PHP_ADD_EXTENSION_DEP(opengl, sdl)
+  
 fi
 
