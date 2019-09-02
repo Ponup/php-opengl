@@ -102,7 +102,7 @@ if test "$PHP_OPENGL" != "no"; then
 	PHP_ADD_INCLUDE(/System/Library/Frameworks/OpenGL.framework/Headers)
     ;;
     *)
-	PHP_ADD_LIBRARY_WITH_PATH(GL, /usr/lib, OPENGL_SHARED_LIBADD)
+	PHP_ADD_LIBRARY_WITH_PATH(GL, /usr/$PHP_LIBDIR, OPENGL_SHARED_LIBADD)
     ;;
     esac
 
