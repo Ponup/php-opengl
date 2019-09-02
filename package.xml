@@ -50,6 +50,9 @@
       <pearinstaller>
         <min>1.9</min>
       </pearinstaller>
+      <extension>
+        <name>sdl</name>
+      </extension>
     </required>
   </dependencies>
   <providesextension>opengl</providesextension>
