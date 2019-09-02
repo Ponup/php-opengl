@@ -53,6 +53,28 @@ $lampShader->add(new Shader\Fragment("shaders/lamp.frag"));
 $lampShader->compile();
 $lampShader->link();
 
+$mouse_callback = function($xpos, $ypos)
+{
+    global $camera;
+    $lastX = &$GLOBALS['lastX'];
+    $lastY = &$GLOBALS['lastY'];
+    static $firstMouse = true;
+    if ($firstMouse)
+    {
+        $lastX = $xpos;
+        $lastY = $ypos;
+        $firstMouse = false;
+    }
+
+    $xoffset = $xpos - $lastX;
+    $yoffset = $lastY - $ypos;  // Reversed since y-coordinates go from bottom to left
+
+    $lastX = $xpos;
+    $lastY = $ypos;
+
+    $camera->ProcessMouseMovement($xoffset, $yoffset);
+};
+
 // Set up vertex data (and buffer(s)) and attribute pointers
 $vertices = [
     -0.5, -0.5, -0.5,  0.0,  0.0, -1.0,
@@ -191,7 +213,7 @@ while(true) {
 	while(SDL_PollEvent($event)) {
 	switch($event->type) {
 	case SDL_MOUSEMOTION:
-		$motion_callback($event->motion->x, $event->motion->y);
+		$mouse_callback($event->motion->x, $event->motion->y);
 		break;
 	case SDL_KEYDOWN:
 		$symChar = chr($event->key->keysym->sym);
@@ -209,28 +231,6 @@ while(true) {
 
 	SDL_Delay(10);
 }
-
-$mouse_callback = function($xpos, $ypos)
-{
-    global $camera;
-    $lastX = &$GLOBALS['lastX'];
-    $lastY = &$GLOBALS['lastY'];
-    static $firstMouse = true;
-    if ($firstMouse)
-    {
-        $lastX = $xpos;
-        $lastY = $ypos;
-        $firstMouse = false;
-    }
-
-    $xoffset = $xpos - $lastX;
-    $yoffset = $lastY - $ypos;  // Reversed since y-coordinates go from bottom to left
-
-    $lastX = $xpos;
-    $lastY = $ypos;
-
-    $camera->ProcessMouseMovement($xoffset, $yoffset);
-};
 
 function do_movement()
 {
