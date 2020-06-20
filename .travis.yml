@@ -7,7 +7,7 @@ env:
   - REPORT_EXIT_STATUS=1
 
 before_install:
-  - sudo apt-get install -qq --force-yes libgl1-mesa-dri mesa-utils
+  - sudo apt-get install -qq --force-yes libgl1-mesa-dri mesa-utils mesa-common-dev
   - sudo apt-get install -qq --force-yes xvfb
 
 before_script:
