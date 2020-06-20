@@ -13,6 +13,7 @@ Not all of the previously mentioned API is available on this extension. In order
 - [SDL extension for PHP](https://github.com/Ponup/phpsdl)
 - OpenGL library/framework
 - Linux/MacOS (Windows support coming soon)
+- The PHP GD extension is required to run some of the examples.
 
 ## Installation
 
