@@ -1,25 +1,11 @@
 language: php
 
-php:
-  - 7.2
-
-env:
-  - REPORT_EXIT_STATUS=1
+services:
+  - docker
 
 before_install:
-  - sudo apt-get install -qq --force-yes libgl1-mesa-dri mesa-utils mesa-common-dev
-  - sudo apt-get install -qq --force-yes xvfb
-
-before_script:
-  - phpize
-  - ./configure --quiet
-  - make all install
-  - echo "extension=opengl.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
-  - export LIBGL_ALWAYS_SOFTWARE=1
-  - export DISPLAY=:99
-  - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1400x900x24 -ac +extension GLX +render
-  - glxinfo
+  - docker build -t ponup/php-opengl .
 
 script:
-  - DISPLAY=:99 TEST_PHP_EXECUTABLE=$(which php) make test
+  - docker run --rm ponup/php-opengl
 
