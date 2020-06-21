@@ -3,10 +3,12 @@
 require 'bootstrap.php';
 require 'vendor/autoload.php';
 
-use \glm\vec2;
-use \glm\vec3;
-use \glm\mat4;
-use \Ponup\ddd\Shader;
+use Mammoth\Graphic\ImageLoader;
+use \Mammoth\Graphic\Shader;
+use Mammoth\Math\Angle;
+use Mammoth\Math\Matrix;
+use Mammoth\Math\Transform;
+use Mammoth\Math\Vector;
 
 // http://learnopengl.com/code_viewer.php?code=getting-started/camera_zoom
 
@@ -14,9 +16,9 @@ const WIDTH = 1024;
 const HEIGHT = 768;
 
 // Camera
-$cameraPos   = new vec3(0.0, 0.0,  3.0);
-$cameraFront = new vec3(0.0, 0.0, -1.0);
-$cameraUp    = new vec3(0.0, 1.0,  0.0);
+$cameraPos   = new Vector(0.0, 0.0,  3.0);
+$cameraFront = new Vector(0.0, 0.0, -1.0);
+$cameraUp    = new Vector(0.0, 1.0,  0.0);
 
 $yaw    = -90.0;    // Yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right (due to how Eular angles work) so we initially rotate a bit to the left.
 $pitch  =  0.0;
@@ -44,12 +46,12 @@ function updateCameraPosition()
     }
     if ($keys['a']) {
         $cameraPos = $cameraPos->substract(
-            \glm\cross($cameraFront, $cameraUp)->normalize()->scale($cameraSpeed)
+            $cameraFront->cross($cameraUp)->normalize()->scale($cameraSpeed)
         );
     }
     if ($keys['d']) {
         $cameraPos = $cameraPos->add(
-            \glm\cross($cameraFront, $cameraUp)->normalize()->scale($cameraSpeed)
+            $cameraFront->cross($cameraUp)->normalize()->scale($cameraSpeed)
         );
     }
 }
@@ -67,12 +69,12 @@ $motion_callback = function ($xpos, $ypos) use(&$lastMouseCoordinates) {
     $pitch = &$GLOBALS['pitch'];
 
     if (null === $lastMouseCoordinates) {
-        $lastMouseCoordinates = new vec2($xpos-(WIDTH>>1), $ypos+(HEIGHT>>1));
+        $lastMouseCoordinates = new Vector($xpos-(WIDTH>>1), $ypos+(HEIGHT>>1));
     }
 
     $xoffset = $xpos - $lastMouseCoordinates->x;
     $yoffset = $lastMouseCoordinates->y - $ypos; // Reversed since y-coordinates go from bottom to left
-    $lastMouseCoordinates = new vec2($xpos, $ypos);
+    $lastMouseCoordinates = new Vector($xpos, $ypos);
 
     $sensitivity = 0.1; // Change this value to your liking
     $xoffset *= $sensitivity;
@@ -87,12 +89,12 @@ $motion_callback = function ($xpos, $ypos) use(&$lastMouseCoordinates) {
     if ($pitch < -89.0)
         $pitch = -89.0;
 
-    $front = new vec3(
-            cos(\glm\radians($yaw)) * cos(\glm\radians($pitch)),
-            sin(\glm\radians($pitch)),
-            sin(\glm\radians($yaw)) * cos(\glm\radians($pitch))
+    $front = new Vector(
+            cos(Angle::toRadians($yaw)) * cos(Angle::toRadians($pitch)),
+            sin(Angle::toRadians($pitch)),
+            sin(Angle::toRadians($yaw)) * cos(Angle::toRadians($pitch))
         );
-    $GLOBALS['cameraFront'] = \glm\normalize($front);
+    $GLOBALS['cameraFront'] = $front->normalize();
 };
 
 SDL_Init(SDL_INIT_EVERYTHING);
@@ -165,16 +167,16 @@ $vertices = [
 ];
 
 $cubePositions = [
-    \glm\vec3(0.0,  0.0,  0.0),
-    \glm\vec3(2.0,  5.0, -15.0),
-    \glm\vec3(-1.5, -2.2, -2.5),
-    \glm\vec3(-3.8, -2.0, -12.3),
-    \glm\vec3(2.4, -0.4, -3.5),
-    \glm\vec3(-1.7,  3.0, -7.5),
-    \glm\vec3(1.3, -2.0, -2.5),
-    \glm\vec3(1.5,  2.0, -2.5),
-    \glm\vec3(1.5,  0.2, -1.5),
-    \glm\vec3(-1.3,  1.0, -1.5)
+    new Vector(0.0,  0.0,  0.0),
+    new Vector(2.0,  5.0, -15.0),
+    new Vector(-1.5, -2.2, -2.5),
+    new Vector(-3.8, -2.0, -12.3),
+    new Vector(2.4, -0.4, -3.5),
+    new Vector(-1.7,  3.0, -7.5),
+    new Vector(1.3, -2.0, -2.5),
+    new Vector(1.5,  2.0, -2.5),
+    new Vector(1.5,  0.2, -1.5),
+    new Vector(-1.3,  1.0, -1.5)
 ];
 
 glGenVertexArrays(1, $VAOS);
@@ -196,7 +198,7 @@ glEnableVertexAttribArray(2);
 
 glBindVertexArray(0); // Unbind VAO
 
-$imageLoader = new \Ponup\GlLoaders\ImageLoader;
+$imageLoader = new ImageLoader;
 
 // Load and create a texture 
 $textures = [];
@@ -288,27 +290,27 @@ while (!$quit) {
     $shaderProgram->Use();
 
     // Projection 
-    $projection = \glm\perspective($fov, (float)WIDTH / (float)HEIGHT, 0.1, 100.0);
+    $projection = Transform::perspective($fov, (float)WIDTH / (float)HEIGHT, 0.1, 100.0);
     // Get the uniform locations
 
     // Camera/View transformation
-    $view = \glm\lookAt($cameraPos, $cameraPos->add($cameraFront), $cameraUp);
+    $view = Transform::lookAt($cameraPos, $cameraPos->add($cameraFront), $cameraUp);
 
     $modelLoc = glGetUniformLocation($shaderProgram->getId(), "model");
     $viewLoc = glGetUniformLocation($shaderProgram->getId(), "view");
     $projLoc = glGetUniformLocation($shaderProgram->getId(), "projection");
     // Pass the matrices to the shader
-    glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
-    glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($projection));
+    glUniformMatrix4fv($viewLoc, 1, GL_FALSE, $view->toRowVector());
+    glUniformMatrix4fv($projLoc, 1, GL_FALSE, $projection->toRowVector());
 
     glBindVertexArray($VAO);
     for ($i = 0; $i < count($cubePositions); $i++) {
         // Calculate the model matrix for each object and pass it to shader before drawing
-        $model = new mat4;
-        $model = \glm\translate($model, $cubePositions[$i]);
+        $model = new Matrix();
+        $model = Transform::translate($model, $cubePositions[$i]);
         $angle = 20.0 * $i;
-        $model = \glm\rotate($model, $angle, new vec3(1.0, 0.3, 0.5));
-        glUniformMatrix4fv($modelLoc, 1, GL_FALSE, \glm\value_ptr($model));
+        $model = Transform::rotate($model, $angle, new Vector(1.0, 0.3, 0.5));
+        glUniformMatrix4fv($modelLoc, 1, GL_FALSE, $model->toRowVector());
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }

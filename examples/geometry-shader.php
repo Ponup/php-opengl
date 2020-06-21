@@ -3,7 +3,7 @@
 require 'bootstrap.php';
 require 'vendor/autoload.php';
 
-use \Ponup\ddd\Shader;
+use \Mammoth\Graphic\Shader;
 
 const WindowWidth = 1280;
 const WindowHeight = 720;

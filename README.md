@@ -2,15 +2,15 @@
 
 # PHP-OpenGL
 
-PHP bindings of the OpenGL library.
+PHP bindings of the OpenGL library. This library allows you to create inmersive 3D applications and games for the desktop with the comfort of the PHP language.
 
-Not all of the previously mentioned API is available on this extension. In order to keep the code small, maintainable and hopefully less buggy, it was decided to support only these subsets:
+The extension only supports modern OpenGL and the core profile. The OpenGL compatibility profile (which provides functions such as glRotate, glBegin, glLight, etc...) is not supported.
 
-- OpenGL: All but the functions that are part of the compatibility profile. (glRotate, glBegin, glLight, ...). Compatibility profile usage is discouraged in other platforms and this extension only let you use the modern (core) GL profile. 
+[<img src="opengl-camera-demo.gif" width="250" />](opengl-camera-demo.gif)
 
 ## Requirements
 
-- PHP7.2
+- PHP7.3
 - [SDL extension for PHP](https://github.com/Ponup/phpsdl)
 - OpenGL library/framework
 - Linux/MacOS (Windows support coming soon)
@@ -21,7 +21,7 @@ Not all of the previously mentioned API is available on this extension. In order
 ### Linux
 
 ```bash
-pecl install phpopengl
+pecl install opengl-devel
 ```
 
 Or
@@ -58,6 +58,8 @@ while(true) {
 
 SDL_DestroyWindow($window);
 ```
+
+Complete examples can be found in the [examples](examples) folder.
 
 ## License
 

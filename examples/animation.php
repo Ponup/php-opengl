@@ -7,6 +7,13 @@ require 'bootstrap.php';
 require 'vendor/autoload.php';
 use \glm\vec3;
 use \glm\mat4;
+use Mammoth\Graphic\ImageLoader;
+use Mammoth\Math\Angle;
+use Mammoth\Math\Matrix;
+use Mammoth\Math\Transform;
+use Mammoth\Math\Vector;
+
+use function Mammoth\Math\Vector;
 
 // Shader sources
 $vertexSource = <<<GLSL
@@ -114,7 +121,7 @@ $texAttrib = glGetAttribLocation($shaderProgram, "texcoord");
 glEnableVertexAttribArray($texAttrib);
 glVertexAttribPointer($texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * 4, (5 * 4));
 
-$imageLoader = new \Ponup\GlLoaders\ImageLoader;
+$imageLoader = new ImageLoader;
 
 // Load textures
 $textures = [];
@@ -145,17 +152,17 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 $uniModel = glGetUniformLocation($shaderProgram, "model");
 
 // Set up projection
-$view = \glm\lookAt(
-    \glm\vec3(1.2, 1.2, 1.2),
-    \glm\vec3(0.0, 0.0, 0.0),
-    \glm\vec3(0.0, 0.0, 1.0)
+$view = Transform::lookAt(
+    new Vector(1.2, 1.2, 1.2),
+    new Vector(0.0, 0.0, 0.0),
+    new Vector(0.0, 0.0, 1.0)
 );
 $uniView = glGetUniformLocation($shaderProgram, "view");
-glUniformMatrix4fv($uniView, 1, GL_FALSE, \glm\value_ptr($view));
+glUniformMatrix4fv($uniView, 1, GL_FALSE, $view->toRowVector());
 
-$proj = \glm\perspective((45.0), 800.0 / 600.0, 1.0, 10.0);
+$proj = Transform::perspective((45.0), 800.0 / 600.0, 1.0, 10.0);
 $uniProj = glGetUniformLocation($shaderProgram, "proj");
-glUniformMatrix4fv($uniProj, 1, GL_FALSE, \glm\value_ptr($proj));
+glUniformMatrix4fv($uniProj, 1, GL_FALSE, $proj->toRowVector());
 
 $event = new SDL_Event;
 
@@ -168,13 +175,13 @@ while(true) {
     $t_now = microtime(true); 
     $time = $t_now - $t_start;
     
-    $model = new mat4;
-    $model = \glm\rotate(
+    $model = new Matrix();
+    $model = Transform::rotate(
         $model,
-        $time * \glm\radians(180.0),
-        new vec3(0.0, 0.0, 1.0)
+        $time * Angle::toRadians(180.0),
+        new Vector(0.0, 0.0, 1.0)
     );
-    glUniformMatrix4fv($uniModel, 1, GL_FALSE, \glm\value_ptr($model));
+    glUniformMatrix4fv($uniModel, 1, GL_FALSE, $model->toRowVector());
 
     // Draw a rectangle from the 2 triangles using 6 indices
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, null);

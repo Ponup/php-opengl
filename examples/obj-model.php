@@ -4,9 +4,11 @@ require 'bootstrap.php';
 
 require 'vendor/autoload.php';
 
-use \glm\vec3;
-use \glm\mat4;
-use \Ponup\ddd\Shader;
+use \Mammoth\Graphic\Shader;
+use Mammoth\Graphic\WavefrontObjLoader;
+use Mammoth\Math\Matrix;
+use Mammoth\Math\Transform;
+use Mammoth\Math\Vector;
 
 ini_set('memory_limit', '3096M');
 
@@ -23,7 +25,7 @@ $line = false;
 
 $modelName = $argc === 2 ? $argv[1] : 'models/suzanne.obj';
 
-$objLoader = new \Ponup\GlLoaders\ObjLoader;
+$objLoader = new WavefrontObjLoader;
 $obj = $objLoader->load($modelName);
 echo $obj, PHP_EOL;
 
@@ -41,7 +43,7 @@ $indices = array_map(function($index) { return $index - 1; }, $indices);
 $normalObjects = $obj->getVertexNormals();
 $normals = [];
 foreach($normalObjects as $index => $normalObject) {
-    if(!($normalObject instanceof \glm\vec3)) {
+    if(!($normalObject instanceof Vector)) {
         echo "INDEX: $index\n";
         var_dump($normalObject);
     }
@@ -73,12 +75,12 @@ $viewLoc = glGetUniformLocation($shaderProgram, "view");
 $modelLoc = glGetUniformLocation($shaderProgram, "model");
 $projLoc = glGetUniformLocation($shaderProgram, "projection");
 
-$position = new vec3(0, 0, 10);
+$position = new Vector(0, 0, 10);
 $lampShader = null;
 $lightVAO = null;
 $lightPos = null;
 
-$lightPos = new vec3(0, 10, 10.0);
+$lightPos = new Vector(0, 10, 10.0);
 $objectColorLoc = glGetUniformLocation($shaderProgram, "objectColor");
 $lightColorLoc  = glGetUniformLocation($shaderProgram, "lightColor");
 $lightPosLoc    = glGetUniformLocation($shaderProgram, "lightPos");
@@ -88,14 +90,14 @@ glUniform3f($lightColorLoc,  1.0, 1.0, 1.0);
 glUniform3f($lightPosLoc, $lightPos->x, $lightPos->y, $lightPos->z);
 glUniform3f($viewPosLoc, $position->x, $position->y, $position->z);
 
-$view = \glm\lookAt($position, new vec3(0, 0, 0), new vec3(0,1,0));
-$proj = \glm\perspective(45, (float)800/(float)600, 0.1, 100);
+$view = Transform::lookAt($position, new Vector(0, 0, 0), new Vector(0,1,0));
+$proj = Transform::perspective(45, (float)800/(float)600, 0.1, 100);
 
-$model = new mat4;
-//$model = \glm\rotate($model, 40, new vec3(1, 0, 0));
-glUniformMatrix4fv($modelLoc, 1, GL_FALSE, \glm\value_ptr($model));
-glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
-glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($proj));
+$model = new Matrix();
+//$model = \glm\rotate($model, 40, new Vector(1, 0, 0));
+glUniformMatrix4fv($modelLoc, 1, GL_FALSE, $model->toRowVector());
+glUniformMatrix4fv($viewLoc, 1, GL_FALSE, $view->toRowVector());
+glUniformMatrix4fv($projLoc, 1, GL_FALSE, $proj->toRowVector());
 
 glGenVertexArrays(1, $vaos);
 $vao = $vaos[0];
@@ -139,14 +141,14 @@ glGenVertexArrays(1, $lightVAOS); $lightVAO = $lightVAOS[0];
 glBindVertexArray($lightVAO);
 // We only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need.
 $lightVertices2 = [ 
-  (new vec3(-0.1, -0.1, -0.1, 0.0)),
-  (new vec3( 0.1, -0.1, -0.1, 0.0)),
-  (new vec3( 0.1,  0.1, -0.1, 0.0)),
-  (new vec3(-0.1,  0.1, -0.1, 0.0)),
-  (new vec3(-0.1, -0.1,  0.1, 0.0)),
-  (new vec3( 0.1, -0.1,  0.1, 0.0)),
-  (new vec3( 0.1,  0.1,  0.1, 0.0)),
-  (new vec3(-0.1,  0.1,  0.1, 0.0)),
+  (new Vector(-0.1, -0.1, -0.1, 0.0)),
+  (new Vector( 0.1, -0.1, -0.1, 0.0)),
+  (new Vector( 0.1,  0.1, -0.1, 0.0)),
+  (new Vector(-0.1,  0.1, -0.1, 0.0)),
+  (new Vector(-0.1, -0.1,  0.1, 0.0)),
+  (new Vector( 0.1, -0.1,  0.1, 0.0)),
+  (new Vector( 0.1,  0.1,  0.1, 0.0)),
+  (new Vector(-0.1,  0.1,  0.1, 0.0)),
 ];
 $lightVertices = [];
 foreach($lightVertices2 as $l) {
@@ -182,11 +184,11 @@ while(true) {
         $viewLoc  = glGetUniformLocation($lampShader->getId(), "view");
         $projLoc  = glGetUniformLocation($lampShader->getId(), "projection");
         // Set matrices
-        glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
-        glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($proj));
-        $model = new mat4();
-        $model = \glm\translate($model, $lightPos);
-        glUniformMatrix4fv($modelLoc, 1, GL_FALSE, \glm\value_ptr($model));
+        glUniformMatrix4fv($viewLoc, 1, GL_FALSE, $view->toRowVector());
+        glUniformMatrix4fv($projLoc, 1, GL_FALSE, $proj->toRowVector());
+        $model = new Matrix();
+        $model = Transform::translate($model, $lightPos);
+        glUniformMatrix4fv($modelLoc, 1, GL_FALSE, $model->toRowVector());
     // Draw the light object (using light's vertex attributes)
     glBindVertexArray($lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36); //8*4

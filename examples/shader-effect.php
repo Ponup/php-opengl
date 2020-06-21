@@ -1,5 +1,7 @@
 <?php
 
+use Mammoth\Graphic\ImageLoader;
+
 require 'bootstrap.php';
 require 'vendor/autoload.php';
 
@@ -107,7 +109,7 @@ $texAttrib = glGetAttribLocation($shaderProgram, "texcoord");
 glEnableVertexAttribArray($texAttrib);
 glVertexAttribPointer($texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * 4, (5 * 4));
 
-$imageLoader = new \Ponup\GlLoaders\ImageLoader;
+$imageLoader = new ImageLoader;
 
 // Load textures
 $textures = [];

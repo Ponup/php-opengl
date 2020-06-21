@@ -4,136 +4,48 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a9ed8343c8fb30a2607448320e0755de",
+    "content-hash": "16bc4c38c63c2d2779948edfe915decc",
     "packages": [
         {
-            "name": "ponup/ddd",
+            "name": "ponup/mammoth",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Ponup/ddd.git",
-                "reference": "78e5ca5fe0bffb4e9781374b89e643c9f02887e8"
+                "url": "https://github.com/Ponup/mammoth-framework.git",
+                "reference": "ece52f5c172d462be1fd7a3f147d07a46396e7dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ponup/ddd/zipball/78e5ca5fe0bffb4e9781374b89e643c9f02887e8",
-                "reference": "78e5ca5fe0bffb4e9781374b89e643c9f02887e8",
+                "url": "https://api.github.com/repos/Ponup/mammoth-framework/zipball/ece52f5c172d462be1fd7a3f147d07a46396e7dd",
+                "reference": "ece52f5c172d462be1fd7a3f147d07a46396e7dd",
                 "shasum": ""
             },
             "require": {
-                "ponup/glm": "dev-master"
+                "php": "^7.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.5"
+                "phpunit/phpunit": "^9.2"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Ponup\\ddd\\": "src/"
+                    "Mammoth\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Santiago Lizardo",
-                    "email": "santiago.lizardo@gmail.com"
-                }
-            ],
-            "description": "A PHP framework in top of the PHP-OpenGL extension which simplifies the 3D application development",
-            "time": "2018-09-24T21:09:43+00:00"
-        },
-        {
-            "name": "ponup/gl-loaders",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Ponup/gl-loaders.git",
-                "reference": "1795e59197b73859597b15bb14ac2a6766fd667f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Ponup/gl-loaders/zipball/1795e59197b73859597b15bb14ac2a6766fd667f",
-                "reference": "1795e59197b73859597b15bb14ac2a6766fd667f",
-                "shasum": ""
-            },
-            "require": {
-                "ponup/glm": "dev-master"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Ponup\\GlLoaders\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0+"
-            ],
-            "authors": [
-                {
-                    "name": "Santiago Lizardo",
-                    "email": "santiago.lizardo@gmail.com"
-                }
-            ],
-            "description": "Loaders for many file formats used in OpenGL",
-            "time": "2019-05-10T23:17:01+00:00"
-        },
-        {
-            "name": "ponup/glm",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Ponup/glm.git",
-                "reference": "e3b09017e65736dbf0dc60a95eabf952466bf1bd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Ponup/glm/zipball/e3b09017e65736dbf0dc60a95eabf952466bf1bd",
-                "reference": "e3b09017e65736dbf0dc60a95eabf952466bf1bd",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "glm\\": "src/"
-                },
-                "files": [
-                    "src/globals.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Santiago Lizardo",
-                    "email": "santiago.lizardo@gmail.com"
-                }
-            ],
-            "description": "A port of the OpenGL Mathematics library (GLM) to PHP",
-            "time": "2019-05-11T10:21:25+00:00"
+            "description": "Mammoth framework - Multimedia with PHP",
+            "time": "2020-06-20T14:18:28+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "ponup/glm": 20,
-        "ponup/gl-loaders": 20,
-        "ponup/ddd": 20
+        "ponup/mammoth": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

@@ -1,8 +1,6 @@
 {
-    "require": {
-        "ponup/glm": "dev-master",
-        "ponup/gl-loaders": "dev-master",
-        "ponup/ddd": "dev-master"
+	"require": {
+    	"ponup/mammoth": "dev-master"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

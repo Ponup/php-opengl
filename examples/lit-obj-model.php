@@ -5,16 +5,19 @@ require 'vendor/autoload.php';
 
 ini_set('memory_limit', '2048M');
 
-use \glm\vec3;
-use \glm\mat4;
-use \Ponup\ddd\Camera;
-use \Ponup\ddd\Shader;
+use \Mammoth\Graphic\Camera;
+use \Mammoth\Graphic\Shader;
+use Mammoth\Graphic\WavefrontObjLoader;
+use Mammoth\Math\Angle;
+use Mammoth\Math\Matrix;
+use Mammoth\Math\Transform;
+use Mammoth\Math\Vector;
 
 // Window dimensions
 define('WIDTH', 800);
 define('HEIGHT', 600);
 
-$camera = new Camera(new vec3(0, 0, 3));
+$camera = new Camera(new Vector(0, 0, 3));
 $lastX  =  WIDTH  / 2.0;
 $lastY  =  HEIGHT / 2.0;
 $keys = array_fill_keys(range('a', 'z'), false);
@@ -43,7 +46,7 @@ $mouse_callback= function($xpos, $ypos)
 
 
 // Light attributes
-$lightPos = new vec3(1.2, 1.0, 2.0);
+$lightPos = new Vector(1.2, 1.0, 2.0);
 
 // Deltatime
 $deltaTime = 0.0;   // Time between current frame and last frame
@@ -120,7 +123,7 @@ $lightvertices = [
     -0.5,  0.5, -0.5,  0.0,  1.0,  0.0
 ];
 
-$loader = new \Ponup\GlLoaders\ObjLoader;
+$loader = new WavefrontObjLoader;
 $obj = $loader->load($argc === 2 ? $argv[1] : 'models/pumpkin.obj');
 
 // Set up vertex data (and buffer(s)) and attribute pointers
@@ -137,7 +140,7 @@ $indices = array_map(function($index) { return $index - 1; }, $indices);
 $normalObjects = $obj->getVertexNormals();
 $normals = [];
 foreach($normalObjects as $index => $normalObject) {
-    if(!($normalObject instanceof \glm\vec3)) {
+    if(!($normalObject instanceof Vector)) {
         echo "INDEX: $index\n";
         var_dump($normalObject);
         die;
@@ -220,23 +223,23 @@ while(true) {
     glUniform3f($viewPosLoc,     $camera->position->x, $camera->position->y, $camera->position->z);
 
     // Create camera transformations
-    $view = new mat4;
+    $view = new Matrix();
     $view = $camera->GetViewMatrix();
-    $projection = \glm\perspective($camera->zoom, floatval(WIDTH / HEIGHT), 0.1, 100.0);
+    $projection = Transform::perspective($camera->zoom, floatval(WIDTH / HEIGHT), 0.1, 100.0);
     // Get the uniform locations
     $modelLoc = glGetUniformLocation($lightingShader->getId(), "model");
     $viewLoc  = glGetUniformLocation($lightingShader->getId(),  "view");
     $projLoc  = glGetUniformLocation($lightingShader->getId(),  "projection");
     // Pass the matrices to the shader
-    glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
-    glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($projection));
+    glUniformMatrix4fv($viewLoc, 1, GL_FALSE, $view->toRowVector());
+    glUniformMatrix4fv($projLoc, 1, GL_FALSE, $projection->toRowVector());
 
     // Draw the container (using container's vertex attributes)
     glBindVertexArray($containerVAO);
-    $model = new mat4;
+    $model = new Matrix;
     $model = $model->scale(0.3);
-    $model = \glm\rotate($model, deg2rad(90), new vec3(1, 1, 1));
-    glUniformMatrix4fv($modelLoc, 1, GL_FALSE, \glm\value_ptr($model));
+    $model = Transform::rotate($model, deg2rad(90), new Vector(1, 1, 1));
+    glUniformMatrix4fv($modelLoc, 1, GL_FALSE, $model->toRowVector());
     $a = count($indices);
     glDrawElements(GL_TRIANGLES, $a, GL_UNSIGNED_INT, null);
     glBindVertexArray(0);
@@ -248,12 +251,12 @@ while(true) {
     $viewLoc  = glGetUniformLocation($lampShader->getId(), "view");
     $projLoc  = glGetUniformLocation($lampShader->getId(), "projection");
     // Set matrices
-    glUniformMatrix4fv($viewLoc, 1, GL_FALSE, \glm\value_ptr($view));
-    glUniformMatrix4fv($projLoc, 1, GL_FALSE, \glm\value_ptr($projection));
-    $model = new mat4;
-    $model = \glm\translate($model, $lightPos);
+    glUniformMatrix4fv($viewLoc, 1, GL_FALSE, $view->toRowVector());
+    glUniformMatrix4fv($projLoc, 1, GL_FALSE, $projection->toRowVector());
+    $model = new Matrix;
+    $model = Transform::translate($model, $lightPos);
     $model = $model->scale(0.2); // Make it a smaller cube
-    glUniformMatrix4fv($modelLoc, 1, GL_FALSE, \glm\value_ptr($model));
+    glUniformMatrix4fv($modelLoc, 1, GL_FALSE, $model->toRowVector());
     // Draw the light object (using light's vertex attributes)
     glBindVertexArray($lightVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);

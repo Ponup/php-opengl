@@ -3,9 +3,11 @@
 require 'bootstrap.php';
 require 'vendor/autoload.php';
 
-use \glm\vec3;
-use \glm\mat4;
-use \Ponup\ddd\Shader;
+use Mammoth\Graphic\ImageLoader;
+use \Mammoth\Graphic\Shader;
+use Mammoth\Math\Matrix;
+use Mammoth\Math\Transform;
+use Mammoth\Math\Vector;
 
 define('WIDTH', 800);
 define('HEIGHT', 600);
@@ -68,7 +70,7 @@ glEnableVertexAttribArray(2);
 
 glBindVertexArray(0); // Unbind VAO
 
-$imageLoader = new \Ponup\GlLoaders\ImageLoader;
+$imageLoader = new ImageLoader;
 
 // Load and create a texture 
 // ====================
@@ -129,13 +131,13 @@ while(true) {
     // Create transformations
     static $a = 0;
     $a -= 0.01;
-    $transform = new mat4;
-    $transform = \glm\translate($transform, new vec3(0.5, -0.5, 0.0));
-    $transform = \glm\rotate($transform, ($a * 50.0), new vec3(0.0, 0.0, 1.0));
+    $transform = new Matrix();
+    $transform = Transform::translate($transform, new Vector(0.5, -0.5, 0.0));
+    $transform = Transform::rotate($transform, ($a * 50.0), new Vector(0.0, 0.0, 1.0));
 
     // Get matrix's uniform location and set matrix
     $transformLoc = glGetUniformLocation($shaderProgram->getId(), "transform");
-    glUniformMatrix4fv($transformLoc, 1, GL_FALSE, \glm\value_ptr($transform));
+    glUniformMatrix4fv($transformLoc, 1, GL_FALSE, $transform->toRowVector());
     
     // Draw container
     glBindVertexArray($VAO);
