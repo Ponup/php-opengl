@@ -10,8 +10,8 @@ The extension only supports modern OpenGL and the core profile. The OpenGL compa
 
 ## Requirements
 
-- PHP7.3
-- [SDL extension for PHP](https://github.com/Ponup/phpsdl)
+- PHP8.1
+- [SDL extension for PHP](https://github.com/Ponup/php-sdl)
 - OpenGL library/framework
 - Linux/MacOS (Windows support coming soon)
 - The PHP GD extension is required to run some of the examples.
@@ -27,12 +27,12 @@ pecl install opengl-devel
 Or
 
 ```bash
-$ git clone git://github.com/phpopengl/extension.git --recursive phpopengl
-$ cd phpopengl
-$ phpize
-$ ./configure --enable-opengl
-$ make
-$ sudo make install
+git clone git@github.com:Ponup/php-opengl.git --recursive phpopengl
+cd php-opengl
+phpize
+./configure --with-opengl
+make
+sudo make install
 ```
 
 ## Examples

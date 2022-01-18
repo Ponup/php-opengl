@@ -32,3 +32,5 @@ tests/*.sh
 tests/*.php
 .DS_Store
 .vscode
+tags
+*.dep
