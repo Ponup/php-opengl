@@ -61,7 +61,3 @@ SDL_DestroyWindow($window);
 
 Complete examples can be found in the [examples](examples) folder.
 
-## License
-
-GPL-3.0+
-
