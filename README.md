@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Ponup/php-opengl.svg?branch=master)](https://travis-ci.org/Ponup/php-opengl)
+[![Build and test](https://github.com/Ponup/php-opengl/actions/workflows/build-test.yml/badge.svg)](https://github.com/Ponup/php-opengl/actions/workflows/build-test.yml)
 
 # PHP-OpenGL
 
